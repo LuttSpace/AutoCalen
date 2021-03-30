@@ -23,7 +23,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  syncfusion_flutter_calendar: ^18.4.49
 
+  intl: ^0.17.0 #dateformat
+  flutter_localizations: #한국어 지
+    sdk: flutter
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
