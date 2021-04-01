@@ -109,17 +109,17 @@ class _CalendarPageState extends State<CalendarPage> {
                 ),
               ),
               ListTile(
-                leading: Icon(Icons.favorite),
-                title: Text('Item1'),
+                leading: Icon(Icons.color_lens),
+                title: Text('태그 설정'),
                 onTap: (){
-                  print('item1');
+                  print('태그 설정');
                 },
               ),
               ListTile(
-                leading: Icon(Icons.favorite_border),
-                title: Text('Item2'),
+                leading: Icon(Icons.settings),
+                title: Text('설정'),
                 onTap: (){
-                  print('item2');
+                  print('설정');
                 },
               ),
             ],
