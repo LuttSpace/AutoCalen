@@ -119,6 +119,8 @@ class _CalendarPageState extends State<CalendarPage> {
   }
 }
 
+//파일 분리 하고 싶음
+
 class AddImgFAB extends StatefulWidget{
   @override
   _AddImgFABState createState() => _AddImgFABState();
@@ -126,7 +128,7 @@ class AddImgFAB extends StatefulWidget{
 
 class _AddImgFABState extends State<AddImgFAB> {
   //Camera (image_picker) Area
-  File _image;
+  File _image =null;
   final picker = ImagePicker();
   Future getImage(ImageSource imageSource) async{
     final pickedFile = await picker.getImage(source: imageSource);
@@ -139,13 +141,11 @@ class _AddImgFABState extends State<AddImgFAB> {
           builder: (context) {
             return AlertDialog(
                 content: Container(
-                  padding: EdgeInsets.zero,
-                  margin: EdgeInsets.zero,
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Container(
-                        child: _image!=null ? Icon(Icons.photo): Image.file(_image),
+                        child: _image!=null ? Image.file(_image): Icon(Icons.photo),
                       ),
                     ],
                   ),
@@ -167,70 +167,39 @@ class _AddImgFABState extends State<AddImgFAB> {
     });
     print('image_picker end');
   }
-  //FAB Controll Area
-  Icon _addIcon = Icon(Icons.add);
-  Color _addBColor = Colors.black;
-  Color _addFColor = Colors.white;
-  bool _isVisible = false;
 
-  void showFloatingBtns(){
-    setState(() {
-      _isVisible = !_isVisible;
-      if(_isVisible) {
-        _addIcon = Icon(Icons.clear);
-        _addBColor = Color(0xfff1f3f5);
-        _addFColor = Colors.black;
-      }
-      else {
-        _addIcon = Icon(Icons.add);
-        _addBColor = Colors.black;
-        _addFColor = Colors.white;
-      }
-    });
-
-    print(_isVisible);
-  }
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Visibility(
-          visible: _isVisible,
-          child: Container(
-            padding: EdgeInsets.only(bottom:120),
-            alignment: Alignment.bottomRight,
-            child: FloatingActionButton(
-              backgroundColor: Colors.black,
-              heroTag: "Personal",
-              onPressed: ()=>getImage(ImageSource.gallery),
-              child: Icon(Icons.photo_library),
-            ),
-          ),
-        ),
-        Visibility(
-          visible: _isVisible,
-          child: Container(
-            padding: EdgeInsets.only(bottom:60),
-            alignment:Alignment.bottomRight,
-            child: FloatingActionButton(
-              backgroundColor: Colors.black,
-              heroTag: "Camera",
-              onPressed:()=> getImage(ImageSource.camera),
-              child: Icon(Icons.camera_alt),
-            ),
-          ),
-        ),
-        Align(
-          alignment: Alignment.bottomRight,
-          child: FloatingActionButton(
-            heroTag: "AddSchedule",
-            backgroundColor: _addBColor,
-            foregroundColor: _addFColor,
-            onPressed: ()=> showFloatingBtns(),
-            child: _addIcon,
-          ),
-        ),
-      ],
+    return FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: (){
+          setState(() {
+            showDialog(
+                context: context,
+                builder: (context){
+                  return AlertDialog(
+                    content: Text('이미지를 불러주세요.'),
+                    actions: [
+                      IconButton(
+                          icon: Icon(Icons.photo),
+                          onPressed:(){
+                          getImage(ImageSource.gallery);
+                          Navigator.of(context).pop();
+                        }
+                      ),
+                      IconButton(
+                          icon: Icon(Icons.camera_alt),
+                          onPressed:(){
+                            getImage(ImageSource.camera);
+                            Navigator.of(context).pop();
+                          }
+                      ),
+                    ],
+                  );
+                }
+            );
+          }); //setState
+        },
     );
   }
 }
