@@ -164,6 +164,7 @@ class _CalendarPageState extends State<CalendarPage> {
             title: Text(details.appointments[i].title),
             subtitle: Text(subtitleDate(details.appointments[i].startTime, details.appointments[i].endTime)),
             onTap: () {// 일정 탭한 경우
+              _showDialogDebug(context, details.appointments[i]);
             },
           );
         },
@@ -172,6 +173,41 @@ class _CalendarPageState extends State<CalendarPage> {
         );},
       );
     }
+  }
+
+  void _showDialogDebug(BuildContext context, Schedule schedule) {
+    // 디버깅용 팝업창 -> 각 일정 탭 클릭 시
+    showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Container(child: new Text('각 일정 탭 클릭')),
+            content:Container(
+              height: MediaQuery.of(context).size.height*0.5,
+              width: MediaQuery.of(context).size.width*0.8,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text('제목 : ${schedule.title}'),
+                  Text('시작 날짜 : ${schedule.startTime}'),
+                  Text('종료 날짜 : ${schedule.endTime}'),
+                  Text('하루 종일 여부 : ${schedule.isAllDay}'),
+                  Text('색상 : ${schedule.tag}'),
+              ]),
+            ),
+            shape: RoundedRectangleBorder( // 모서리 둥글게
+                borderRadius: BorderRadius.all(Radius.circular(10.0))),
+            actions: <Widget>[
+              new TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: new Text('추가하기'),
+                  style: TextButton.styleFrom(primary: Colors.black)
+              )],
+          );
+        }
+    );
   }
 
   @override
