@@ -83,9 +83,6 @@ class _CalendarPageState extends State<CalendarPage> {
             fontStyle: FontStyle.normal,
             fontSize: 5
           ),
-          leading: IconButton(
-            icon: Icon(Icons.menu),
-          ),
           actions: [
             IconButton(
                 icon: Icon(Icons.expand_more),
@@ -93,7 +90,40 @@ class _CalendarPageState extends State<CalendarPage> {
                   print('today');
                 })
           ],
-          shadowColor: Colors.transparent,
+          elevation: 0.0, //입체감 제거
+        ),
+        drawer: Drawer(
+
+          child: ListView(
+            children: [
+              UserAccountsDrawerHeader(
+                arrowColor: Colors.pink,
+                accountEmail: Text('98sena@naver.com'),
+                accountName: Text('김예리'),
+                currentAccountPicture: CircleAvatar(
+                  child: Icon(Icons.person,color: Colors.black),
+                  backgroundColor: Colors.white,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.black12
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.color_lens),
+                title: Text('태그 설정'),
+                onTap: (){
+                  print('태그 설정');
+                },
+              ),
+              ListTile(
+                leading: Icon(Icons.settings),
+                title: Text('설정'),
+                onTap: (){
+                  print('설정');
+                },
+              ),
+            ],
+          )
         ),
         body: SafeArea(
           child: SfCalendar(
