@@ -6,6 +6,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 void main() {
@@ -48,9 +49,13 @@ class _CalendarPageState extends State<CalendarPage> {
   bool isEmpty = true;
   String _dateText ='';
 
+  //Calendar Controller
+  CalendarController _calendarController;
+
   @override
   void initState(){
     _dateText = '';
+    _calendarController = CalendarController();
     super.initState();
   }
 
@@ -237,13 +242,26 @@ class _CalendarPageState extends State<CalendarPage> {
             IconButton(
                 icon: Icon(Icons.expand_more),
                 onPressed: (){
-                  print('today');
+                  showMonthPicker(
+                    context: context,
+                    firstDate: DateTime(DateTime.now().year - 10),
+                    lastDate: DateTime(DateTime.now().year + 10),
+                    initialDate: DateTime.now(),
+                  ).then((date) {
+                    if (date != null) {
+                      setState(() {
+                        print("selected "+date.toString());
+                        //selectedDate = date;
+                        _calendarController.displayDate=DateTime(date.year,date.month,date.day);
+                      });
+                    }
+                  });
+
                 })
           ],
           elevation: 0.0, //입체감 제거
         ),
         drawer: Drawer(
-
           child: ListView(
             children: [
               UserAccountsDrawerHeader(
@@ -278,6 +296,7 @@ class _CalendarPageState extends State<CalendarPage> {
         body: SafeArea(
           child: SfCalendar(
             view: CalendarView.month,
+            controller: _calendarController,
             onViewChanged: viewChanged,
             todayTextStyle: TextStyle(color: Colors.white,fontSize: 11),
             headerHeight: 0,
