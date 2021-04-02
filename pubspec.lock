@@ -150,9 +150,11 @@ packages:
   month_picker_dialog:
     dependency: "direct main"
     description:
-      name: month_picker_dialog
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "."
+      ref: HEAD
+      resolved-ref: "1a1a76b7bbf518839e0da94019d8559802a43bc8"
+      url: "https://github.com/kinnyeri/month_picker_dialog.git"
+    source: git
     version: "0.4.0"
   path:
     dependency: transitive
