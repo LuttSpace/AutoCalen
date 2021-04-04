@@ -38,7 +38,16 @@ class _ScheduleInputFormState extends State<ScheduleInputForm> {
     return InputDecoration(
         contentPadding: EdgeInsets.fromLTRB(15, 15, 15, 5),
         hintText: _hintText,
-        labelText: _labelText
+        labelText: _labelText,
+        labelStyle: TextStyle(
+          color: Colors.black,
+        ),
+        enabledBorder: UnderlineInputBorder( // 입력창 밑줄 색상
+          borderSide: BorderSide(color: Colors.black45),
+        ),
+        focusedBorder: UnderlineInputBorder( // 입력창 밑줄 색상(포커스된 경우)
+          borderSide: BorderSide(color: Colors.black45),
+        ),
     );
   }
 
@@ -57,9 +66,6 @@ class _ScheduleInputFormState extends State<ScheduleInputForm> {
 
   @override
   Widget build(BuildContext context) {
-    print('startDate: $startDateInput , startTime: $startTimeInput');
-    print('endDate: $endDateInput , endTime: $endTimeInput');
-
     return Form(
       key: _formKey,
       child: ListView(
@@ -67,6 +73,7 @@ class _ScheduleInputFormState extends State<ScheduleInputForm> {
           children: <Widget>[
             TextFormField(
               style: inputTextStyle,
+              cursorColor: Colors.black,
               decoration: inputDecoration('일정 제목', '제목'),
               onSaved: (value){
                 print('제목 저장 : $value');
@@ -242,13 +249,14 @@ class _ScheduleInputFormState extends State<ScheduleInputForm> {
             ),
             TextFormField(
               style: inputTextStyle,
+              cursorColor: Colors.black,
               decoration: inputDecoration('일정 메모', '메모'),
               onSaved: (value){
-                print('제목 저장 : $value');
+                print('메모 저장 : $value');
               },
               validator: (value){
                 if(value.isEmpty){
-                  return '제목을 입력해주세요';
+                  return '메모를 입력해주세요';
                 }
                 return null;
               },
