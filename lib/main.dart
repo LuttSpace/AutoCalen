@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:autocalen/models/schedule.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
@@ -281,6 +283,7 @@ class _CalendarPageState extends State<CalendarPage> {
                 title: Text('태그 설정'),
                 onTap: (){
                   print('태그 설정');
+                  Navigator.push(context,MaterialPageRoute(builder: (context)=> TagSetting()));
                 },
               ),
               ListTile(
@@ -321,7 +324,97 @@ class _CalendarPageState extends State<CalendarPage> {
 }
 
 //파일 분리 하고 싶음
+//tag setting
+class TagSetting extends StatefulWidget{
+  @override
+  _TagSettingState createState() => _TagSettingState();
+}
 
+class _TagSettingState extends State<TagSetting> {
+  Color _currentColor = Colors.blueAccent;
+  Color _pickedColor = Colors.black;
+  void pickColor(Color color){
+    setState(() {
+      _pickedColor = color;
+    });
+  }
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+        theme: ThemeData(
+            primaryColor: Colors.white,
+            accentColor: Colors.black
+        ),
+        home: Scaffold(
+            appBar: AppBar(
+              title: Text('태그 설정'),
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back_ios),
+                onPressed: ()=> Navigator.of(context).pop(),
+              ),
+              actions: [
+                IconButton(
+                    icon: Icon(Icons.check),
+                    onPressed: ()=>Navigator.of(context).pop()
+                )
+              ],
+            ),
+            body: Column(
+                children: [
+                  Container(
+                    width : MediaQuery.of(context).size.width,
+                    margin: EdgeInsets.symmetric(vertical: 20,horizontal: 10),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width /8,
+                          height: MediaQuery.of(context).size.width /8 ,
+                          margin: EdgeInsets.symmetric(vertical: 0,horizontal: 5),
+                          // ignore: deprecated_member_use
+                          child: RaisedButton(
+                              color: _currentColor,
+                              onPressed: (){
+                                showDialog(
+                                    context: context,
+                                );
+                              }
+                          ),
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width - MediaQuery.of(context).size.width/4 - 50,
+                          height: MediaQuery.of(context).size.width /7,
+                          margin: EdgeInsets.symmetric(vertical: 0,horizontal: 5),
+                          child: TextField(
+                            decoration: InputDecoration(
+                                border:OutlineInputBorder(),
+                                focusedBorder: OutlineInputBorder(borderSide: BorderSide(color:Colors.black54,)),
+                                labelText: '넓은 범위일수록 좋아요!',
+                                labelStyle: TextStyle(color: Colors.black54)
+                            ),
+                          ),
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width /8,
+                          height: MediaQuery.of(context).size.width /8 ,
+                          margin: EdgeInsets.symmetric(vertical: 0,horizontal: 5),
+                          child: TextButton(
+                              child: Text('추가', style: TextStyle(color: Colors.black),),
+                              style: ButtonStyle(
+                              ),
+                              onPressed: ()=>print("done")
+                          ),
+                        )
+                      ],
+                    ),
+                  )
+                ],
+              ),
+        )
+    );
+  }
+}
+
+//floting button
 class AddImgFAB extends StatefulWidget{
   @override
   _AddImgFABState createState() => _AddImgFABState();
