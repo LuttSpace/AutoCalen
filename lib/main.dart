@@ -341,19 +341,87 @@ class Tag{
     _tagName = name;
   }
 }
-class TagTile extends StatelessWidget{
+class TagTile extends StatefulWidget{
   TagTile(this._tag);
   final Tag _tag;
+
+  @override
+  _TagTileState createState() => _TagTileState();
+}
+
+class _TagTileState extends State<TagTile> {
+  bool _isChangeMode=false;
+
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading : ElevatedButton(
-                  onPressed: ()=>print('nothing'),
-                  style: ButtonStyle(
-                      backgroundColor: MaterialStateProperty.all<Color>(_tag.getTagColor())
-                  ),
+    return Container(
+        margin: EdgeInsets.symmetric(vertical: 5,horizontal: 15),
+        height: MediaQuery.of(context).size.width /8,
+        child: ListTile(
+          leading : Container(
+            // width: MediaQuery.of(context).size.width /8,
+            // height: MediaQuery.of(context).size.width /8,
+            child: ElevatedButton(
+              onPressed: ()=>print('nothing'),
+              style: ButtonStyle(
+                backgroundColor: MaterialStateProperty.all<Color>(widget._tag.getTagColor()),
               ),
-      title: Text(_tag._tagName),
+            ),
+          ),
+          title: Text(widget._tag.getTagName()),
+          trailing: Container(
+            //이거 안먹힌다.
+            width: MediaQuery.of(context).size.width /4,
+            height: MediaQuery.of(context).size.width /8,
+            child: Row(
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width /8,
+                  height: MediaQuery.of(context).size.width /8,
+                  padding: EdgeInsets.all(0),
+                  child: TextButton(
+                    child: !_isChangeMode ? Text('삭제', style: TextStyle(color:Colors.red)) : Text('취소'),
+                    onPressed: (){
+                      if(!_isChangeMode){
+                        print('삭제');
+                      }
+                      else{
+                        setState(() {
+                          _isChangeMode = !_isChangeMode;
+                        });
+
+                        print('change Mode Back');
+                      }
+                    },
+                  ),
+                ),
+                Container(
+                  width: MediaQuery.of(context).size.width /8,
+                  height: MediaQuery.of(context).size.width /8,
+                  padding: EdgeInsets.all(0),
+                  child: TextButton(
+                    child: !_isChangeMode ? Text('변경', style: TextStyle(color:Colors.green)) : Text('확인'),
+                    onPressed: (){
+                      if(!_isChangeMode){
+                        print("변경 모드!!");
+                        setState(() {
+                          _isChangeMode = !_isChangeMode;
+                          print(_isChangeMode);
+                        });
+                      }
+                      else{
+                        print('확인');
+                        setState(() {
+                          _isChangeMode = !_isChangeMode;
+                        });
+                      }
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        )
     );
   }
 }
@@ -475,14 +543,7 @@ class _TagSettingState extends State<TagSetting> {
                     shrinkWrap: true,
                     itemCount: tags.length,
                     itemBuilder: (context,index){
-                      return Container(
-                        margin: EdgeInsets.symmetric(vertical: 5,horizontal: 20),
-                        height: 50,
-                        color: tags[index].getTagColor(),
-                        child: Center(
-                          child: Text('${tags[index].getTagName()}'),
-                        ),
-                      );
+                      return TagTile(tags[index]);
                     },
                   ),
                 ],
