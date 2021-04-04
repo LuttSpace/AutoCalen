@@ -439,7 +439,7 @@ class _TagSettingState extends State<TagSetting> {
     });
   }
   List<Tag> tags;
-
+  final controller = TextEditingController();
 
   @override
   void initState() {
@@ -522,6 +522,7 @@ class _TagSettingState extends State<TagSetting> {
                                 labelText: '넓은 범위일수록 좋아요!',
                                 labelStyle: TextStyle(color: Colors.black54)
                             ),
+                            controller: controller,
                           ),
                         ),
                         Container(
@@ -532,7 +533,14 @@ class _TagSettingState extends State<TagSetting> {
                               child: Text('추가', style: TextStyle(color: Colors.black),),
                               style: ButtonStyle(
                               ),
-                              onPressed: ()=>print("done")
+                              onPressed: () {
+                                print('add start');
+                                setState(() {
+                                  tags.add(new Tag(controller.text,_currentColor));
+                                  controller.clear();
+                                });
+                                print('done ${controller.text} & ${_currentColor.toString()}');
+                              }
                           ),
                         ),
                       ],
