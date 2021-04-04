@@ -325,6 +325,38 @@ class _CalendarPageState extends State<CalendarPage> {
 
 //파일 분리 하고 싶음
 //tag setting
+class Tag{
+  String _tagName;
+  Color _tagColor;
+
+  Tag(this._tagName,this._tagColor);
+
+  Color getTagColor() {return _tagColor; }
+  String getTagName() {return _tagName; }
+
+  void setTagColor(Color color){
+    _tagColor=color;
+  }
+  void setTagName(String name){
+    _tagName = name;
+  }
+}
+class TagTile extends StatelessWidget{
+  TagTile(this._tag);
+  final Tag _tag;
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading : ElevatedButton(
+                  onPressed: ()=>print('nothing'),
+                  style: ButtonStyle(
+                      backgroundColor: MaterialStateProperty.all<Color>(_tag.getTagColor())
+                  ),
+              ),
+      title: Text(_tag._tagName),
+    );
+  }
+}
 class TagSetting extends StatefulWidget{
   @override
   _TagSettingState createState() => _TagSettingState();
@@ -338,6 +370,16 @@ class _TagSettingState extends State<TagSetting> {
       _pickedColor = color;
     });
   }
+  List<Tag> tags;
+
+
+  @override
+  void initState() {
+    tags = [];
+    tags.add(new Tag('모임',Colors.deepPurple));
+    print('tag길이 '+tags.length.toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -376,6 +418,27 @@ class _TagSettingState extends State<TagSetting> {
                               onPressed: (){
                                 showDialog(
                                     context: context,
+                                    builder: (context){
+                                      return AlertDialog(
+                                        content: BlockPicker(
+                                            pickerColor: _currentColor,
+                                            onColorChanged: pickColor,
+                                             availableColors: [Colors.deepOrangeAccent,Colors.deepPurpleAccent],
+                                        ),
+                                        actions: [
+                                          TextButton(
+                                              onPressed: (){
+                                                print(_pickedColor.toString());
+                                                setState(() {
+                                                  _currentColor=_pickedColor;
+                                                });
+                                                Navigator.of(context).pop();
+                                              },
+                                              child: Text('확인')
+                                          )
+                                        ],
+                                      );
+                                    },
                                 );
                               }
                           ),
@@ -403,10 +466,25 @@ class _TagSettingState extends State<TagSetting> {
                               ),
                               onPressed: ()=>print("done")
                           ),
-                        )
+                        ),
                       ],
                     ),
-                  )
+                  ),
+                  ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: tags.length,
+                    itemBuilder: (context,index){
+                      return Container(
+                        margin: EdgeInsets.symmetric(vertical: 5,horizontal: 20),
+                        height: 50,
+                        color: tags[index].getTagColor(),
+                        child: Center(
+                          child: Text('${tags[index].getTagName()}'),
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ),
         )
