@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:flex_color_picker/flex_color_picker.dart' as Flex;
 
 void main() {
   runApp(MainPage());
@@ -379,14 +380,48 @@ class _TagTileState extends State<TagTile> {
                       context: context,
                       builder: (context){
                         return AlertDialog(
-                          content:BlockPicker(
-                            pickerColor: widget._tag._tagColor,
-                            onColorChanged: (color){
-                              setState(() {
-                                _pickedColor=color;
-                              });
-                            },
-                            availableColors: [Colors.deepOrangeAccent,Colors.deepPurpleAccent],
+                          content: Container(
+                            width: 320,height: 500,
+                            child: Flex.ColorPicker(
+                              color: _currentColor,
+                              onColorChanged: (color){
+                                setState(() {
+                                  _pickedColor=color;
+                                });
+                              },
+                              width: 40,
+                              height: 40,
+                              borderRadius: 4,
+                              spacing: 5,
+                              runSpacing: 5,
+                              wheelDiameter: 155,
+                              heading: Text(
+                                'Select color',
+                                style: Theme.of(context).textTheme.subtitle1,
+                              ),
+                              subheading: Text(
+                                'Select color shade',
+                                style: Theme.of(context).textTheme.subtitle1,
+                              ),
+                              wheelSubheading: Text(
+                                'Selected color and its shades',
+                                style: Theme.of(context).textTheme.subtitle1,
+                              ),
+                              showMaterialName: true,
+                              showColorName: true,
+                              showColorCode: true,
+                              materialNameTextStyle: Theme.of(context).textTheme.caption,
+                              colorNameTextStyle: Theme.of(context).textTheme.caption,
+                              colorCodeTextStyle: Theme.of(context).textTheme.caption,
+                              pickersEnabled: const <Flex.ColorPickerType, bool>{
+                                Flex.ColorPickerType.both: false,
+                                Flex.ColorPickerType.primary: true,
+                                Flex.ColorPickerType.accent: true,
+                                Flex.ColorPickerType.bw: false,
+                                Flex.ColorPickerType.custom: true,
+                                Flex.ColorPickerType.wheel: true,
+                              },
+                            ),
                           ),
                           actions: [
                             TextButton(
