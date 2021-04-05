@@ -341,6 +341,8 @@ class Tag{
     _tagName = name;
   }
 }
+
+List<Color> colorSet = [];
 class TagTile extends StatefulWidget{
   TagTile(this._tag);
   final Tag _tag;
@@ -351,6 +353,14 @@ class TagTile extends StatefulWidget{
 
 class _TagTileState extends State<TagTile> {
   bool _isChangeMode=false;
+  Color _currentColor;
+  var changeController;
+
+  @override
+  void initState() {
+    _currentColor =widget._tag.getTagColor();
+    changeController = TextEditingController(text: widget._tag.getTagName());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -362,13 +372,61 @@ class _TagTileState extends State<TagTile> {
             // width: MediaQuery.of(context).size.width /8,
             // height: MediaQuery.of(context).size.width /8,
             child: ElevatedButton(
-              onPressed: ()=>print('nothing'),
+              onPressed: (){
+                if(_isChangeMode){
+                  Color _pickedColor;
+                  showDialog(
+                      context: context,
+                      builder: (context){
+                        return AlertDialog(
+                          content:BlockPicker(
+                            pickerColor: widget._tag._tagColor,
+                            onColorChanged: (color){
+                              setState(() {
+                                _pickedColor=color;
+                              });
+                            },
+                            availableColors: [Colors.deepOrangeAccent,Colors.deepPurpleAccent],
+                          ),
+                          actions: [
+                            TextButton(
+                                onPressed: (){
+                                  print(_pickedColor.toString());
+                                  setState(() {
+                                   _currentColor=_pickedColor;
+                                  });
+                                  print(widget._tag._tagColor);
+                                  print(_currentColor);
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('확인')
+                            )
+                          ],
+                        );
+                      },
+                  );
+                }
+              },
               style: ButtonStyle(
-                backgroundColor: MaterialStateProperty.all<Color>(widget._tag.getTagColor()),
+                backgroundColor: MaterialStateProperty.all<Color>(!_isChangeMode? widget._tag.getTagColor():_currentColor),
               ),
             ),
           ),
-          title: Text(widget._tag.getTagName()),
+          title: !_isChangeMode?
+              Text(widget._tag.getTagName()) :
+              Container(
+                height: MediaQuery.of(context).size.width /7,
+                child: TextField(
+                  decoration: InputDecoration(
+                      border:OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(borderSide: BorderSide(color:Colors.black54,)),
+                      labelText: '넓은 범위일수록 좋아요!',
+                      labelStyle: TextStyle(color: Colors.black54),
+                  ),
+                  controller: changeController,
+
+                ),
+              ),
           trailing: Container(
             //이거 안먹힌다.
             width: MediaQuery.of(context).size.width /4,
@@ -387,10 +445,12 @@ class _TagTileState extends State<TagTile> {
                       }
                       else{
                         setState(() {
+                          //원상복귀
+                          _currentColor = widget._tag.getTagColor();
+                          changeController.text = widget._tag.getTagName();
                           _isChangeMode = !_isChangeMode;
                         });
-
-                        print('change Mode Back');
+                        print('변경 사항 없음');
                       }
                     },
                   ),
@@ -412,6 +472,10 @@ class _TagTileState extends State<TagTile> {
                       else{
                         print('확인');
                         setState(() {
+                          widget._tag.setTagColor(_currentColor);
+                          if(changeController.text !='') {
+                            widget._tag.setTagName(changeController.text);
+                          }
                           _isChangeMode = !_isChangeMode;
                         });
                       }
