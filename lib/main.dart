@@ -587,10 +587,48 @@ class _TagSettingState extends State<TagSetting> {
                                     context: context,
                                     builder: (context){
                                       return AlertDialog(
-                                        content: BlockPicker(
-                                            pickerColor: _currentColor,
-                                            onColorChanged: pickColor,
-                                             availableColors: [Colors.deepOrangeAccent,Colors.deepPurpleAccent],
+                                        content: Container(
+                                          width: 320,height: 500,
+                                          child: Flex.ColorPicker(
+                                            color: _currentColor,
+                                            onColorChanged: (color){
+                                              setState(() {
+                                                _pickedColor=color;
+                                              });
+                                            },
+                                            width: 40,
+                                            height: 40,
+                                            borderRadius: 4,
+                                            spacing: 5,
+                                            runSpacing: 5,
+                                            wheelDiameter: 155,
+                                            heading: Text(
+                                              'Select color',
+                                              style: Theme.of(context).textTheme.subtitle1,
+                                            ),
+                                            subheading: Text(
+                                              'Select color shade',
+                                              style: Theme.of(context).textTheme.subtitle1,
+                                            ),
+                                            wheelSubheading: Text(
+                                              'Selected color and its shades',
+                                              style: Theme.of(context).textTheme.subtitle1,
+                                            ),
+                                            showMaterialName: true,
+                                            showColorName: true,
+                                            showColorCode: true,
+                                            materialNameTextStyle: Theme.of(context).textTheme.caption,
+                                            colorNameTextStyle: Theme.of(context).textTheme.caption,
+                                            colorCodeTextStyle: Theme.of(context).textTheme.caption,
+                                            pickersEnabled: const <Flex.ColorPickerType, bool>{
+                                              Flex.ColorPickerType.both: false,
+                                              Flex.ColorPickerType.primary: true,
+                                              Flex.ColorPickerType.accent: true,
+                                              Flex.ColorPickerType.bw: false,
+                                              Flex.ColorPickerType.custom: true,
+                                              Flex.ColorPickerType.wheel: true,
+                                            },
+                                          ),
                                         ),
                                         actions: [
                                           TextButton(
