@@ -3,32 +3,34 @@ import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_datetime_picker/src/date_format.dart';
 
-class SchduleInputModal extends StatefulWidget{
+class ScheduleInputModal extends StatefulWidget{
   @override
-  _SchduleInputModalState createState() => _SchduleInputModalState();
+  _ScheduleInputModalState createState() => _ScheduleInputModalState();
 }
 
-class _SchduleInputModalState extends State<SchduleInputModal> {
+class _ScheduleInputModalState extends State<ScheduleInputModal> {
   @override
   Widget build(BuildContext context) {
-    return  AlertDialog(
-      //title: Container(child: new Text('각 일정 탭 클릭')),
-      content:Container(
-          height: MediaQuery.of(context).size.height*0.5,
-          width: MediaQuery.of(context).size.width*0.8,
-          child: ScheduleInputForm()
-      ),
-      shape: RoundedRectangleBorder( // 모서리 둥글게
-          borderRadius: BorderRadius.all(Radius.circular(10.0))),
-      actions: <Widget>[
-        new TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-            child: new Text('추가하기'),
-            style: TextButton.styleFrom(primary: Colors.black)
-        )],
-    );
+    return  Container(
+      padding: EdgeInsets.all(30.0),
+        height: MediaQuery.of(context).size.height*2,
+        width: MediaQuery.of(context).size.width*0.8,
+        child: ScheduleInputForm());
+    //   AlertDialog(
+    //   //title: Container(child: new Text('각 일정 탭 클릭')),
+    //   content:
+    //   ),
+    //   shape: RoundedRectangleBorder( // 모서리 둥글게
+    //       borderRadius: BorderRadius.all(Radius.circular(10.0))),
+    //   actions: <Widget>[
+    //     new TextButton(
+    //         onPressed: () {
+    //           Navigator.of(context).pop();
+    //         },
+    //         child: new Text('추가하기'),
+    //         style: TextButton.styleFrom(primary: Colors.black)
+    //     )],
+    // );
   }
 }
 
@@ -100,6 +102,12 @@ class _ScheduleInputFormState extends State<ScheduleInputForm> {
       child: ListView(
           padding: const EdgeInsets.symmetric(horizontal: 0),
           children: <Widget>[
+            Container(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                      onPressed: (){Navigator.of(context).pop();},
+                      icon:Icon(Icons.check)),
+            ),
             TextFormField(
               style: inputTextStyle,
               cursorColor: Colors.black,
