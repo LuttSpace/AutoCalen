@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 import 'ScheduleInputModal.dart';
@@ -51,14 +52,19 @@ class _ShowDayDialogState extends State<ShowDayDialog> {
             title: Text(details.appointments[i].title),
             subtitle: Text(subtitleDate(details.appointments[i].startTime, details.appointments[i].endTime)),
             onTap: () {// 일정 탭한 경우
-              showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    return MaterialApp(
-                      home: ScheduleInputForm(),
-                    );
-                  }
+              showBarModalBottomSheet(
+                context: context,
+                builder:(context)=> ScheduleInputModal(),
+                expand: true,
               );
+              // showDialog(
+              //     context: context,
+              //     builder: (BuildContext context) {
+              //       return MaterialApp(
+              //         home: ScheduleInputForm(),
+              //       );
+              //     }
+              // );
             },
           );
         },
@@ -74,7 +80,7 @@ class _ShowDayDialogState extends State<ShowDayDialog> {
     return AlertDialog(
             title: Container(
                 padding:EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
-                child: new Text('$widget._dateText')
+                child: new Text('${widget._dateText}')
             ),
             content:Container(
               height: MediaQuery.of(context).size.height*0.45,
