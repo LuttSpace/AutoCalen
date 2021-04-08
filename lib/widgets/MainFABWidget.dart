@@ -65,12 +65,12 @@ class _MainFABState extends State<MainFAB> {
     });
     print('image_picker end');
   }
-  Icon _addIcon = Icon(Icons.add);
   @override
   Widget build(BuildContext context) {
     return
       SpeedDial(
-        child: _addIcon,
+        child: Icon(Icons.add),
+        activeIcon: Icons.clear,
         overlayOpacity: 0.3,
         children: [ //stack 구조임
           SpeedDialChild(
