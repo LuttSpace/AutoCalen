@@ -39,6 +39,9 @@ dependencies:
 
   modal_bottom_sheet: ^2.0.0 # 모달
   flutter_speed_dial: ^3.0.5 # FAB
+  firebase_auth: ^1.0.3 # 파이어베이스 Auth
+  google_sign_in: ^5.0.1 # 구글 로그인
+  firebase_core: ^1.0.3
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
@@ -59,9 +62,9 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - images/
+    - images/icon/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
