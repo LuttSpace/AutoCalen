@@ -93,8 +93,8 @@ class _TagSelectMenuState extends State<TagSelectMenu>
         return Positioned(
           top: buttonPosition.dy + buttonSize.height,
           left: buttonPosition.dx,
-          width: buttonSize.width*6+20,
-          height: buttonSize.width*5,
+          width: buttonSize.width*5,
+          height: buttonSize.width*4.5,
           child: Material(
             color: Colors.transparent,
             child: Stack(
@@ -113,8 +113,8 @@ class _TagSelectMenuState extends State<TagSelectMenu>
                 Positioned(
                     top: 15.0,
                     child: Container(
-                      width: buttonSize.width*6,
-                      height: buttonSize.width*5,
+                      width: buttonSize.width*5,
+                      height: buttonSize.width*4.5,
                       decoration: BoxDecoration(
                         borderRadius: _borderRadius,
                         color: _backgroundColor,

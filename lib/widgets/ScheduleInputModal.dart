@@ -127,7 +127,7 @@ class _ScheduleInputFormState extends State<ScheduleInputForm> {
             Row(
               children: [
                 Container( // 색상 피커
-                  width: 50,
+                  width: 60,
                   child: Container(
                       child: TagSelectMenu(
                         tagList : _formList,
