@@ -6,12 +6,16 @@ import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:autocalen/models/User.dart' as userModel;
+
 class Login extends StatefulWidget {
   @override
   _LoginState createState() => _LoginState();
 }
 
 class _LoginState extends State<Login> {
+  FirebaseFirestore _firebaseFirestore = FirebaseFirestore.instance;
 
   // 구글 로그인 버튼 클릭시 호출
   Future<UserCredential> signInWithGoogle() async {
@@ -133,7 +137,7 @@ class _LoginState extends State<Login> {
             ),
             SizedBox(height: 45.0),
             ElevatedButton.icon(
-              onPressed: () => signInWithGoogle(),
+              onPressed: () => signInWithGoogle().then((value) => addNewUser(value.user, 'google')), // 구글 로그인 후 사용자 정보 저장
               icon: Padding(
                 padding: const EdgeInsets.only(right: 15.0),
                 child: Image.asset(
@@ -156,7 +160,7 @@ class _LoginState extends State<Login> {
             ),
             SizedBox(height: 20.0),
             ElevatedButton.icon(
-              onPressed: () =>signInWithKakao(),
+              onPressed: () =>signInWithKakao().then((value) => addNewUser(value.user, 'kakao')), // 카카오 로그인 후 사용자 정보 저장
               icon: Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: Icon(Icons.chat_bubble,
@@ -178,7 +182,7 @@ class _LoginState extends State<Login> {
             ),
             SizedBox(height: 20.0),
             ElevatedButton.icon(
-              onPressed: () => signInWithNaver(),
+              onPressed: () => signInWithNaver().then((value) => addNewUser(value.user, 'naver')), // 네이버 로그인 후 사용자 정보 저장
               icon: Padding(
                 padding: const EdgeInsets.only(right: 5.0),
                 child: Image.asset(
@@ -199,5 +203,22 @@ class _LoginState extends State<Login> {
         ),
       ),
     );
+  }
+
+  // Firestore에 사용자 정보 저장
+  void addNewUser(User currentUser, String signInWith){
+    CollectionReference users = _firebaseFirestore.collection("UserList");
+    users.doc(currentUser.uid)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (!documentSnapshot.exists) { // Firestore에 사용자 정보 없을 경우 추가
+        userModel.User user = userModel.User(currentUser.displayName, currentUser.email, currentUser.photoURL, signInWith);
+        users.doc(currentUser.uid).set(user.toJson());
+      }
+      else{ // Firestore에 사용자 정보 있는 경우 출력
+        userModel.User getUser = userModel.User.fromJson(documentSnapshot.data());
+        print(getUser.name+", "+ getUser.email+", "+ getUser.photoURL+", "+ getUser.signInWith);
+      }
+    });
   }
 }
