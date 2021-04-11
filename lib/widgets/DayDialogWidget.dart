@@ -30,48 +30,6 @@ class _ShowDayDialogState extends State<ShowDayDialog> {
 
 // 날짜 클릭시 뜨는 팝업창 내부 리스트 뷰 (해당 날짜에 저장된 일정 리스트로 뜨도록..)
   Widget _buildScheduleListView(BuildContext context, CalendarTapDetails details){
-    // return Scaffold(
-    //   body: widget.isEmpty?
-    //       Container(
-    //         padding: EdgeInsets.symmetric(horizontal:10.0, vertical: 5.0),
-    //         child: Text('등록된 일정이 없습니다')) :
-    //   ListView.separated(
-    //     itemCount: details.appointments.length,
-    //     itemBuilder: (BuildContext _context, int i){
-    //       return ListTile(
-    //         minLeadingWidth: 10, // leading 부분 최소 넓이
-    //         leading: SizedBox(
-    //           width: 5,
-    //           child: Container(
-    //               color: details.appointments[i].tag
-    //           ),
-    //         ),
-    //         minVerticalPadding: 4.0, // 각 일정 탭 별 padding 값
-    //         contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
-    //         title: Text(details.appointments[i].title),
-    //         subtitle: Text(subtitleDate(details.appointments[i].startTime, details.appointments[i].endTime)),
-    //         onTap: () {// 일정 탭한 경우
-    //           showBarModalBottomSheet(
-    //             context: context,
-    //             builder:(context)=> ScheduleInputModal(),
-    //             expand: true,
-    //           );
-    //           // showDialog(
-    //           //     context: context,
-    //           //     builder: (BuildContext context) {
-    //           //       return MaterialApp(
-    //           //         home: ScheduleInputForm(),
-    //           //       );
-    //           //     }
-    //           // );
-    //         },
-    //       );
-    //     },
-    //     separatorBuilder: (context, index) { return Divider(
-    //       height: 0.0, // 구분선 높이 조정
-    //     );},
-    //   ),
-    //);
 
     if(widget.isEmpty){ // 일정 없는 경우
       return Container(
@@ -100,14 +58,6 @@ class _ShowDayDialogState extends State<ShowDayDialog> {
                 builder:(context)=> ScheduleInputModal(),
                 expand: true,
               );
-              // showDialog(
-              //     context: context,
-              //     builder: (BuildContext context) {
-              //       return MaterialApp(
-              //         home: ScheduleInputForm(),
-              //       );
-              //     }
-              // );
             },
           );
         },

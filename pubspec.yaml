@@ -36,9 +36,10 @@ dependencies:
   flex_color_picker: ^1.1.5 #색상 피커
 
   flutter_datetime_picker: ^1.5.0 # 날짜,시간 피커
-
   modal_bottom_sheet: ^2.0.0 # 모달
   flutter_speed_dial: ^3.0.5 # FAB
+  flutter_dropdown: ^0.0.8 # 드롭다운 커스텀 용
+  # firebase #
   firebase_auth: ^1.0.3 # 파이어베이스 Auth
   google_sign_in: ^5.0.1 # 구글 로그인
   firebase_core: ^1.0.3

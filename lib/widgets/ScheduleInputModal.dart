@@ -1,3 +1,5 @@
+import 'package:autocalen/models/Tag.dart';
+import 'package:autocalen/widgets/TagListDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:intl/intl.dart';
@@ -16,23 +18,9 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
         height: MediaQuery.of(context).size.height*2,
         width: MediaQuery.of(context).size.width*0.8,
         child: ScheduleInputForm());
-    //   AlertDialog(
-    //   //title: Container(child: new Text('각 일정 탭 클릭')),
-    //   content:
-    //   ),
-    //   shape: RoundedRectangleBorder( // 모서리 둥글게
-    //       borderRadius: BorderRadius.all(Radius.circular(10.0))),
-    //   actions: <Widget>[
-    //     new TextButton(
-    //         onPressed: () {
-    //           Navigator.of(context).pop();
-    //         },
-    //         child: new Text('추가하기'),
-    //         style: TextButton.styleFrom(primary: Colors.black)
-    //     )],
-    // );
   }
 }
+
 
 class ScheduleInputForm extends StatefulWidget {
   @override
@@ -41,12 +29,28 @@ class ScheduleInputForm extends StatefulWidget {
 
 class _ScheduleInputFormState extends State<ScheduleInputForm> {
   final _formKey = GlobalKey<FormState>();
-  final _formList = [
-    DropdownMenuItem(child: Text('Conference'), value: 1),
-    DropdownMenuItem(child: Text('Meeting'), value: 2),
-    DropdownMenuItem(child: Text('Study'), value: 3),
-    DropdownMenuItem(child: Text('Play'), value: 4),
-    DropdownMenuItem(child: Text('Algorithm Study'), value: 5),
+
+  List<Tag> _formList = [
+      new Tag('학교',Colors.deepOrangeAccent),
+      new Tag('치과',Colors.purpleAccent),
+      new Tag('전시회',Colors.green),
+      new Tag('공모전',Colors.amber),
+      new Tag('우리의새벽은낮보다뜨거워',Colors.blue),
+      new Tag('학교',Colors.deepOrangeAccent),
+      new Tag('치과',Colors.purpleAccent),
+      new Tag('전시회',Colors.green),
+      new Tag('공모전',Colors.amber),
+      new Tag('해리포터',Colors.blue),
+    new Tag('학교',Colors.deepOrangeAccent),
+    new Tag('치과',Colors.purpleAccent),
+    new Tag('전시회',Colors.green),
+    new Tag('공모전',Colors.amber),
+    new Tag('해리포터',Colors.blue),
+    new Tag('학교',Colors.deepOrangeAccent),
+    new Tag('치과',Colors.purpleAccent),
+    new Tag('전시회',Colors.green),
+    new Tag('공모전',Colors.amber),
+    new Tag('해리포터',Colors.blue),
   ];
   int _selValue = 1;
 
@@ -91,8 +95,17 @@ class _ScheduleInputFormState extends State<ScheduleInputForm> {
       doneStyle: TextStyle(color: Colors.black, fontSize: 16));
 
   // 색상 선택 아이콘 눌렀을 때 > 색상 피커
-  void _onColorButtonPressed() {
-    print("color button clicked");
+  Tag _currentTag;
+
+
+  @override
+  void initState() {
+    if(true){
+      _currentTag=_formList[1];
+    }
+    else if(false){
+
+    }
   }
 
   @override
@@ -105,7 +118,10 @@ class _ScheduleInputFormState extends State<ScheduleInputForm> {
             Container(
               alignment: Alignment.topRight,
               child: IconButton(
-                      onPressed: (){Navigator.of(context).pop();},
+                      onPressed: (){
+                        print('last: '+_currentTag.getTagName());
+                        Navigator.of(context).pop();
+                        },
                       icon:Icon(Icons.check)),
             ),
             TextFormField(
@@ -131,37 +147,22 @@ class _ScheduleInputFormState extends State<ScheduleInputForm> {
                   flex: 5,
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: DropdownButtonFormField(
-                      style: inputTextStyle,
-                      value:_selValue,
-                      items: _formList,
-                      decoration: inputDecoration('태그 선택', '태그'),
-                      onSaved: (value){
-                        print('태그 저장 : $value');
-                      },
-                      validator: (value){
-                        if (value > 5)
-                          return '태그 중에 선택하세요';
-                        return null;
-                      },
-                      onChanged: (value){
-                        setState(() {
-                          _selValue = value;
-                        });
-                      },
-                    ),
                   ),
                 ),
-                Flexible(
+                Flexible( // 색상 피커
                   flex: 1,
-                  child: Padding(
-                      padding: const EdgeInsets.only(top: 15, right:10),
-                      child: IconButton(
-                        icon: Icon(Icons.label),
-                        iconSize: 40.0,
-                        color: Colors.indigoAccent,
-                        onPressed: (){ // 색상 선택 아이콘 버튼 -> 색상 피커
-                          _onColorButtonPressed();},
+                  child: Container(
+                      child: TagSelectMenu(
+                        tagList : _formList,
+                        iconColor: Colors.white,
+                        currentTag: _currentTag,
+                        onChange: (index)  {
+                          _currentTag =_formList[index];
+                        },
+                        addETC: (tag){
+                          _currentTag= tag;
+                          print(_currentTag.getTagColor());
+                        },
                       )
                   ),
                 ),

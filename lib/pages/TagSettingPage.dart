@@ -2,25 +2,9 @@
 
 import 'dart:ui';
 
+import 'package:autocalen/models/Tag.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
-
-class Tag{
-  String _tagName;
-  Color _tagColor;
-
-  Tag(this._tagName,this._tagColor);
-
-  Color getTagColor() {return _tagColor; }
-  String getTagName() {return _tagName; }
-
-  void setTagColor(Color color){
-    _tagColor=color;
-  }
-  void setTagName(String name){
-    _tagName = name;
-  }
-}
 
 List<Color> colorSet = [];
 class TagTile extends StatefulWidget{
@@ -109,7 +93,7 @@ class _TagTileState extends State<TagTile> {
                                 setState(() {
                                   _currentColor=_pickedColor;
                                 });
-                                print(widget._tag._tagColor);
+                                print(widget._tag.getTagColor());
                                 print(_currentColor);
                                 Navigator.of(context).pop();
                               },
