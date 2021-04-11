@@ -100,7 +100,7 @@ class _TagSelectMenuState extends State<TagSelectMenu>
             child: Stack(
               children: <Widget>[
                 Align(
-                  alignment: Alignment.topCenter,
+                  alignment: Alignment.topLeft,
                   child: ClipPath(
                     clipper: ArrowClipper(),
                     child: Container(

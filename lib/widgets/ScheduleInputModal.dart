@@ -124,33 +124,10 @@ class _ScheduleInputFormState extends State<ScheduleInputForm> {
                         },
                       icon:Icon(Icons.check)),
             ),
-            TextFormField(
-              style: inputTextStyle,
-              cursorColor: Colors.black,
-              decoration: inputDecoration('일정 제목', '제목'),
-              onSaved: (value){
-                print('제목 저장 : $value');
-              },
-              validator: (value){
-                if(value.isEmpty){
-                  return '제목을 입력해주세요';
-                }
-                return null;
-              },
-              onFieldSubmitted: (value){
-                print('submitted: $value');
-              },
-            ),
             Row(
               children: [
-                Flexible(
-                  flex: 5,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                  ),
-                ),
-                Flexible( // 색상 피커
-                  flex: 1,
+                Container( // 색상 피커
+                  width: 50,
                   child: Container(
                       child: TagSelectMenu(
                         tagList : _formList,
@@ -164,6 +141,28 @@ class _ScheduleInputFormState extends State<ScheduleInputForm> {
                           print(_currentTag.getTagColor());
                         },
                       )
+                  ),
+                ),
+                Expanded(
+                  child: Container(
+                    margin: EdgeInsets.only(left: 10),
+                    child: TextFormField(
+                      style: inputTextStyle,
+                      cursorColor: Colors.black,
+                      decoration: inputDecoration('일정 제목', '제목'),
+                      onSaved: (value){
+                        print('제목 저장 : $value');
+                      },
+                      validator: (value){
+                        if(value.isEmpty){
+                          return '제목을 입력해주세요';
+                        }
+                        return null;
+                      },
+                      onFieldSubmitted: (value){
+                        print('submitted: $value');
+                      },
+                    ),
                   ),
                 ),
               ],
