@@ -25,7 +25,9 @@ class _ShowDrawerState extends State<ShowDrawer> {
                 accountEmail: Text('${auth.currentUser.email}'),
                 accountName: Text('${auth.currentUser.displayName}'),
                 currentAccountPicture: CircleAvatar(
-                  backgroundImage: NetworkImage(auth.currentUser.photoURL),
+                  child: auth.currentUser.photoURL==null ? Icon(Icons.person,color: Colors.black): null,
+                  backgroundImage: auth.currentUser.photoURL!=null? NetworkImage(auth.currentUser.photoURL):null,
+                  backgroundColor: Colors.white,
                 ),
                 decoration: BoxDecoration(
                     color: Colors.black12
