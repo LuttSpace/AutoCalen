@@ -304,6 +304,11 @@ class _ScheduleInputFormState extends State<ScheduleInputForm> {
           ]),
     );
   }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
 }
 
 //a time picker model (시간 피커 커스텀)

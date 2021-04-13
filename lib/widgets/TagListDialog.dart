@@ -85,6 +85,14 @@ class _TagSelectMenuState extends State<TagSelectMenu>
       ),
     );
   }
+
+
+  @override
+  void dispose() {
+    closeMenu();
+    super.dispose();
+  }
+
   OverlayEntry _overlayEntryBuilder() {
     Color _backgroundColor = Color(0xffefefef);
 

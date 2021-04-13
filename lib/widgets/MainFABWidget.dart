@@ -34,6 +34,7 @@ class _MainFABState extends State<MainFAB> {
                     child: TextButton(
                       child: Text("확인",style: TextStyle(color: Colors.black),),
                       onPressed: (){
+                        print("img: "+_image.path.toString());
                         Navigator.of(context).pop();
                       },
                     ),
@@ -85,36 +86,6 @@ class _MainFABState extends State<MainFAB> {
         ],
 
       );
-    //   FloatingActionButton(
-    //   child: Icon(Icons.add),
-    //   onPressed: (){
-    //     setState(() {
-    //       showDialog(
-    //           context: context,
-    //           builder: (context){
-    //             return AlertDialog(
-    //               content: Text('이미지를 불러주세요.'),
-    //               actions: [
-    //                 IconButton(
-    //                     icon: Icon(Icons.photo),
-    //                     onPressed:(){
-    //                       getImage(ImageSource.gallery);
-    //                       Navigator.of(context).pop();
-    //                     }
-    //                 ),
-    //                 IconButton(
-    //                     icon: Icon(Icons.camera_alt),
-    //                     onPressed:(){
-    //                       getImage(ImageSource.camera);
-    //                       Navigator.of(context).pop();
-    //                     }
-    //                 ),
-    //               ],
-    //             );
-    //           }
-    //       );
-    //     }); //setState
-    //   },
-    // );
+
   }
 }
