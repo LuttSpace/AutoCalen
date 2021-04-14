@@ -118,15 +118,18 @@ class _CalendarPageState extends State<CalendarPage> {
     final DateTime endTime3 = DateTime(today.year, today.month, today.day+1);
 
     schedules.add(Schedule(
-        'Conference', startTime, endTime, const Color(0xFF0F8644), false));
+        '제주도 여행', DateTime(2021,4,10), DateTime(2021,4,10).add(Duration(days: 2)), const Color(0xFF0F8644), false));
     schedules.add(Schedule(
-        'Meeting', startTime2, endTime2, const Color(0xFFFF32e2), false));
+        '졸작 회의', startTime2, startTime2, const Color(0xFFFF32e2), false));
     schedules.add(Schedule(
-        'Study', startTime, endTime3, const Color(0xFF0032e2), false));
+        '만우절', DateTime(2021,4,1), DateTime(2021,4,1) , const Color(0xFF0032e2), false));
     schedules.add(Schedule(
-        'Play', startTime2, endTime, const Color(0xFFFF0000), false));
+        '미나리 보러가기', DateTime(2021,4,3), DateTime(2021,4,3), const Color(
+        0xFFBD1B5C), false));
     schedules.add(Schedule(
-        'Algorithm Study', startTime2, endTime2, const Color(0xFFFFFF00), false));
+        '샤이니 문명특급', startTime2, startTime2, Color(0xFF6341BD), false));
+    schedules.add(Schedule(
+        '샤이니 콘서트', DateTime(2021,4,25), DateTime(2021,4,25), Color(0xFF6341BD), false));
     return ScheduleDataSource(schedules);
   }
 
