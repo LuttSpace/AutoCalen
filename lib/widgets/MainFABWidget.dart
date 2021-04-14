@@ -35,7 +35,6 @@ class _MainFABState extends State<MainFAB> {
                     child: TextButton(
                       child: Text("확인",style: TextStyle(color: Colors.black),),
                       onPressed: (){
-                        print("img: "+_image.path.toString());
                         ImgUpload.uploadFile(_image);
                         Navigator.of(context).pop();
                       },

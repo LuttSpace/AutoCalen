@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:autocalen/Function/UploadImg.dart' as ImgUpload;
 
 class DayDialogFAB extends StatefulWidget {
   @override
@@ -35,6 +36,7 @@ class _DayDialogFABState extends State<DayDialogFAB> {
                     child: TextButton(
                       child: Text("확인",style: TextStyle(color: Colors.black),),
                       onPressed: (){
+                        ImgUpload.uploadFile(_image);
                         Navigator.of(context).pop();
                       },
                     ),
