@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:autocalen/models/UserData.dart';
 import 'package:autocalen/models/Tag.dart';
 import 'package:autocalen/models/schedule.dart';
 import 'package:autocalen/pages/LoginPage.dart';
@@ -15,6 +16,7 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
+import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
 void main() {
@@ -33,26 +35,32 @@ class MainPage extends StatelessWidget{
           );
         }
         if(snapshot.connectionState == ConnectionState.done){
-          return MaterialApp(
-            localizationsDelegates: [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-            ],
-            supportedLocales: [
-              const Locale('en'),
-              const Locale('ko')
-            ],
-            locale: const Locale('ko'), //기본 언어 설정
-            theme: ThemeData(
-                primaryColor: Colors.white,
-                accentColor: Colors.black
-            ),
-            initialRoute: '/',
-            routes: {
-              '/' :(context)=> CalendarPage(),
-              '/tagSetting':(context)=>TagSetting(),
-              '/login': (context)=>Login(),
-            },
+          return MultiProvider(
+              providers: [
+                ChangeNotifierProvider<UserData>(create: (_) => UserData()),
+                //Provider<String>.value(value: "Park")
+              ],
+              child: MaterialApp(
+                localizationsDelegates: [
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                ],
+                supportedLocales: [
+                  const Locale('en'),
+                  const Locale('ko')
+                ],
+                locale: const Locale('ko'), //기본 언어 설정
+                theme: ThemeData(
+                    primaryColor: Colors.white,
+                    accentColor: Colors.black
+                ),
+                initialRoute: '/',
+                routes: {
+                  '/' :(context)=> CalendarPage(),
+                  '/tagSetting':(context)=>TagSetting(),
+                  '/login': (context)=>Login(),
+                },
+              ),
           );
         }
         return CircularProgressIndicator();
@@ -133,8 +141,18 @@ class _CalendarPageState extends State<CalendarPage> {
     return ScheduleDataSource(schedules);
   }
 
+  // 처음 인지 체크함
+  bool isItFirstData = true;
+
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserData>(context, listen: false);
+    if(userProvider.getUid()!='' &&userProvider.getUid()!=null ){
+      print('main page~~~~~ '+ userProvider.getEmail());
+    }
+    else{
+      print('main page~~~~~ user data null');
+    }
     return Scaffold(
         appBar: loginState? AppBar(
           title: Center(
@@ -183,56 +201,70 @@ class _CalendarPageState extends State<CalendarPage> {
         body: StreamBuilder(
           stream: FirebaseAuth.instance.authStateChanges(),
           builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
-            if(!snapshot.hasData){
-              if(loginState){
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  setState(() {
-                    loginState= false;
+          // 처음 데이터인가? 스피너를 돌리기 (로그인으로 인식할 때까지)
+          if (isItFirstData) {
+            isItFirstData = false;
+            return CircularProgressIndicator();
+          } else {
+              if (!snapshot.hasData) {
+                print("logout 상태!!!!");
+                if (loginState) {
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    setState(() {
+                      loginState = false;
+                    });
                   });
-                });
+                }
+                return Login();
               }
-              return Login();
-            }
-            else{
-              loginState = true;
-              return SafeArea(
-                child: SfCalendar(
-                    view: CalendarView.month,
-                    controller: _calendarController,
-                    onViewChanged: viewChanged,
-                    todayTextStyle: TextStyle(color: Colors.white,fontSize: 11),
-                    headerHeight: 0,
-                    monthViewSettings: MonthViewSettings(
-                        appointmentDisplayMode: MonthAppointmentDisplayMode.appointment,
-                        monthCellStyle: MonthCellStyle(
-                            trailingDatesTextStyle: TextStyle(color: Colors.black26,fontSize: 11),
-                            leadingDatesTextStyle: TextStyle(color:Colors.black26,fontSize: 11),
-                            textStyle: TextStyle(color: Colors.black,fontSize: 11,)
-                        )
-                    ),
-                    selectionDecoration: BoxDecoration(
-                        color: Colors.transparent
-                    ),
-                    dataSource: getCalendarDataSource(),
-                    onTap: (details) {
-                      if (details.targetElement == CalendarElement.calendarCell) {
-                        _dateText = DateFormat('yyyy년 MM월 dd일 (E)', 'ko')
-                            .format(details.date)
-                            .toString();
-                        // 선택한 날짜에 일정이 있는 경우
-                        if (details.appointments.length > 0) isEmpty = false;
-                        // 선택한 날짜에 일정이 없는 경우
-                        else isEmpty = true;
-                        showDialog(
-                            context:context,
-                            builder:(context){
-                              return ShowDayDialog(_dateText, isEmpty, details);
-                            }
-                        );
+              else {
+                loginState = true;
+                return SafeArea(
+                  child: SfCalendar(
+                      view: CalendarView.month,
+                      controller: _calendarController,
+                      onViewChanged: viewChanged,
+                      todayTextStyle: TextStyle(
+                          color: Colors.white, fontSize: 11),
+                      headerHeight: 0,
+                      monthViewSettings: MonthViewSettings(
+                          appointmentDisplayMode: MonthAppointmentDisplayMode
+                              .appointment,
+                          monthCellStyle: MonthCellStyle(
+                              trailingDatesTextStyle: TextStyle(
+                                  color: Colors.black26, fontSize: 11),
+                              leadingDatesTextStyle: TextStyle(
+                                  color: Colors.black26, fontSize: 11),
+                              textStyle: TextStyle(
+                                color: Colors.black, fontSize: 11,)
+                          )
+                      ),
+                      selectionDecoration: BoxDecoration(
+                          color: Colors.transparent
+                      ),
+                      dataSource: getCalendarDataSource(),
+                      onTap: (details) {
+                        if (details.targetElement ==
+                            CalendarElement.calendarCell) {
+                          _dateText = DateFormat('yyyy년 MM월 dd일 (E)', 'ko')
+                              .format(details.date)
+                              .toString();
+                          // 선택한 날짜에 일정이 있는 경우
+                          if (details.appointments.length > 0) isEmpty = false;
+                          // 선택한 날짜에 일정이 없는 경우
+                          else
+                            isEmpty = true;
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return ShowDayDialog(_dateText, isEmpty, details);
+                              }
+                          );
+                        }
                       }
-                    }
-                ),
-              );
+                  ),
+                );
+              }
             }
           }
         ),

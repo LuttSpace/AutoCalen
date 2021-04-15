@@ -1,7 +1,9 @@
+import 'package:autocalen/models/UserData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -120,6 +122,7 @@ class _LoginState extends State<Login> {
   Widget build(BuildContext context) {
     double btnWidth = MediaQuery.of(context).size.width*0.6;
     double btnHeight = MediaQuery.of(context).size.height*0.08;
+    final userProvider = Provider.of<UserData>(context, listen: false);
 
     return Scaffold(
       body: Center(
@@ -137,7 +140,10 @@ class _LoginState extends State<Login> {
             ),
             SizedBox(height: 45.0),
             ElevatedButton.icon(
-              onPressed: () => signInWithGoogle().then((value) => addNewUser(value.user, 'google')), // 구글 로그인 후 사용자 정보 저장
+              onPressed: () => signInWithGoogle().then((value) {
+                addNewUser(context, value.user, 'google');
+                userProvider.setUserData('google');
+              }), // 구글 로그인 후 사용자 정보 저장
               icon: Padding(
                 padding: const EdgeInsets.only(right: 15.0),
                 child: Image.asset(
@@ -160,7 +166,10 @@ class _LoginState extends State<Login> {
             ),
             SizedBox(height: 20.0),
             ElevatedButton.icon(
-              onPressed: () =>signInWithKakao().then((value) => addNewUser(value.user, 'kakao')), // 카카오 로그인 후 사용자 정보 저장
+              onPressed: () =>signInWithKakao().then((value) {
+                addNewUser(context, value.user, 'kakao');
+                userProvider.setUserData('kakao');
+              }), // 카카오 로그인 후 사용자 정보 저장
               icon: Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: Icon(Icons.chat_bubble,
@@ -182,7 +191,10 @@ class _LoginState extends State<Login> {
             ),
             SizedBox(height: 20.0),
             ElevatedButton.icon(
-              onPressed: () => signInWithNaver().then((value) => addNewUser(value.user, 'naver')), // 네이버 로그인 후 사용자 정보 저장
+              onPressed: () => signInWithNaver().then((value) {
+                addNewUser(context, value.user, 'naver');
+                userProvider.setUserData('naver');
+              }), // 네이버 로그인 후 사용자 정보 저장
               icon: Padding(
                 padding: const EdgeInsets.only(right: 5.0),
                 child: Image.asset(
@@ -206,7 +218,7 @@ class _LoginState extends State<Login> {
   }
 
   // Firestore에 사용자 정보 저장
-  void addNewUser(User currentUser, String signInWith){
+  void addNewUser(BuildContext context, User currentUser, String signInWith){
     CollectionReference users = _firebaseFirestore.collection("UserList");
     users.doc(currentUser.uid)
         .get()
