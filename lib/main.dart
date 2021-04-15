@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:autocalen/models/Tag.dart';
 import 'package:autocalen/models/schedule.dart';
 import 'package:autocalen/pages/LoginPage.dart';
 import 'package:autocalen/pages/TagSettingPage.dart';
@@ -118,18 +119,17 @@ class _CalendarPageState extends State<CalendarPage> {
     final DateTime endTime3 = DateTime(today.year, today.month, today.day+1);
 
     schedules.add(Schedule(
-        '제주도 여행', DateTime(2021,4,10), DateTime(2021,4,10).add(Duration(days: 2)), const Color(0xFF0F8644), false));
+        '제주도 여행', DateTime(2021,4,10), DateTime(2021,4,10).add(Duration(days: 2)), new Tag('여행',Colors.purpleAccent), false));
     schedules.add(Schedule(
-        '졸작 회의', startTime2, startTime2, const Color(0xFFFF32e2), false));
+        '졸작 회의', startTime2, startTime2, new Tag('학교',Colors.deepOrangeAccent), false));
     schedules.add(Schedule(
-        '만우절', DateTime(2021,4,1), DateTime(2021,4,1) , const Color(0xFF0032e2), false));
+        '만우절', DateTime(2021,4,1), DateTime(2021,4,1) , new Tag('해리포터',Colors.blue), false));
     schedules.add(Schedule(
-        '미나리 보러가기', DateTime(2021,4,3), DateTime(2021,4,3), const Color(
-        0xFFBD1B5C), false));
+        '미나리 보러가기', DateTime(2021,4,3), DateTime(2021,4,3), new Tag('영화',Colors.green), false));
     schedules.add(Schedule(
-        '샤이니 문명특급', startTime2, startTime2, Color(0xFF6341BD), false));
+        '샤이니 문명특급', startTime2, startTime2, new Tag('샤이니',Color(0xFF6341BD)), false));
     schedules.add(Schedule(
-        '샤이니 콘서트', DateTime(2021,4,25), DateTime(2021,4,25), Color(0xFF6341BD), false));
+        '샤이니 콘서트', DateTime(2021,4,25), DateTime(2021,4,25), new Tag('샤이니',Color(0xFF6341BD)), false));
     return ScheduleDataSource(schedules);
   }
 
