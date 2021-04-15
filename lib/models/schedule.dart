@@ -1,3 +1,4 @@
+import 'package:autocalen/models/Tag.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
@@ -5,19 +6,20 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 /// information about the event data which will be rendered in calendar.
 class Schedule {
   /// Creates a schedule class with required details.
-  Schedule(this.title, this.startTime, this.endTime, this.tag, this.isAllDay);
+  Schedule(this.title, this.start, this.end, this.tag, this.isAllDay);
 
   /// Event name which is equivalent to subject property of [Appointment].
   String title; // 일정 제목
 
   /// From which is equivalent to start time property of [Appointment].
-  DateTime startTime; // 시작 날짜, 시간
+  DateTime start; // 시작 날짜, 시간
 
   /// To which is equivalent to end time property of [Appointment].
-  DateTime endTime; // 종료 날짜, 시간
+  DateTime end; // 종료 날짜, 시간
 
   /// Background which is equivalent to color property of [Appointment].
-  Color tag; // 배경색
+  Color color;
+  Tag tag; // 배경색
 
   /// 일단은 주석,, 나중에
   // String memo; // 메모
@@ -37,12 +39,12 @@ class ScheduleDataSource extends CalendarDataSource {
 
   @override
   DateTime getStartTime(int index) {
-    return appointments[index].startTime;
+    return appointments[index].start;
   }
 
   @override
   DateTime getEndTime(int index) {
-    return appointments[index].endTime;
+    return appointments[index].end;
   }
 
   @override
@@ -51,12 +53,19 @@ class ScheduleDataSource extends CalendarDataSource {
   }
 
   @override
-  Color getColor(int index) {
+  Tag getTag(int index) {
     return appointments[index].tag;
+  }
+
+  @override
+  Color getColor(int index){
+    return appointments[index].tag.getTagColor();
   }
 
   @override
   bool isAllDay(int index) {
     return appointments[index].isAllDay;
   }
+
+
 }
