@@ -1,7 +1,7 @@
 
 import 'dart:io';
 
-import 'package:autocalen/widgets/ScheduleInputModal.dart';
+import 'package:autocalen/widgets/ScheduleInputModal.dart' as ScheduleInputModal;
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,7 +13,8 @@ class DayDialogFAB extends StatefulWidget {
   _DayDialogFABState createState() => _DayDialogFABState();
 }
 
-class _DayDialogFABState extends State<DayDialogFAB> {
+class _DayDialogFABState extends State<DayDialogFAB>
+    with SingleTickerProviderStateMixin {
   //Camera (image_picker) Area
   File _image =null;
   final picker = ImagePicker();
@@ -59,18 +60,18 @@ class _DayDialogFABState extends State<DayDialogFAB> {
     });
     print('image_picker end');
   }
-  Icon _addIcon = Icon(Icons.add);
+
   @override
   Widget build(BuildContext context) {
-    return SpeedDial(
-      child: _addIcon,
+    return
+      SpeedDial(
+      child: Icon(Icons.add),
       activeIcon: Icons.clear,
       overlayOpacity: 0,
-      overlayColor: Colors.transparent,
       children: [ //stack 구조임
         SpeedDialChild(
           child: Icon(Icons.edit),
-          onTap: ()=> ScheduleInputModal() ,
+          onTap: ()=>ScheduleInputModal.show(context),
         ),
         SpeedDialChild(
           child:Icon(Icons.camera_alt),

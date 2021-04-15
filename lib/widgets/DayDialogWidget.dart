@@ -1,10 +1,9 @@
 import 'package:autocalen/widgets/DayDialogFABWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:autocalen/widgets/ScheduleInputModal.dart' as ScheduleInputModal;
 
-import 'ScheduleInputModal.dart';
 
 
 class ShowDayDialog extends StatefulWidget{
@@ -45,20 +44,14 @@ class _ShowDayDialogState extends State<ShowDayDialog> {
             leading: SizedBox(
               width: 8,
               child: Container(
-                  color: details.appointments[i].tag
+                  color: details.appointments[i].tag.getTagColor()
               ),
             ),
             minVerticalPadding: 4.0, // 각 일정 탭 별 padding 값
             contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
             title: Text(details.appointments[i].title),
-            subtitle: Text(subtitleDate(details.appointments[i].startTime, details.appointments[i].endTime)),
-            onTap: () {// 일정 탭한 경우
-              showBarModalBottomSheet(
-                context: context,
-                builder:(context)=> ScheduleInputModal(),
-                expand: true,
-              );
-            },
+            subtitle: Text(subtitleDate(details.appointments[i].start, details.appointments[i].end)),
+            onTap: () => ScheduleInputModal.show(context,details.appointments[i]),
           );
         },
         separatorBuilder: (context, index) { return Divider(

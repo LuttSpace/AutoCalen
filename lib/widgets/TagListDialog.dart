@@ -56,9 +56,11 @@ class _TagSelectMenuState extends State<TagSelectMenu>
   }
 
   void closeMenu() {
-    if(_overlayEntry!=null) _overlayEntry.remove();
-
-    isMenuOpen = !isMenuOpen;
+    if(_overlayEntry!=null) {
+      _overlayEntry.remove();
+      _overlayEntry=null;
+      isMenuOpen = !isMenuOpen;
+    }
   }
 
   void openMenu() {
