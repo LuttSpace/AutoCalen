@@ -6,8 +6,9 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 /// information about the event data which will be rendered in calendar.
 class Schedule {
   /// Creates a schedule class with required details.
-  Schedule(this.title, this.start, this.end, this.tag, this.isAllDay);
+  Schedule(this.sid, this.title, this.start, this.end, this.tag, this.isAllDay);
 
+  String sid;
   /// Event name which is equivalent to subject property of [Appointment].
   String title; // 일정 제목
 
@@ -26,6 +27,24 @@ class Schedule {
 
   /// IsAllDay which is equivalent to isAllDay property of [Appointment].
   bool isAllDay; // 하루종일 여부
+
+  setTitle(String _title)=> title =_title;
+  void setStart(DateTime s) {this.start=s;}
+  void setEnd(DateTime e) {this.end=e;}
+  void setTag(Tag t) {this.tag=t;}
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    return {
+      'title': title,
+      'start': start,
+      'end': end,
+      'tag': tag.toJson(),
+    };
+  }
+
+
+
 }
 
 /// An object to set the appointment collection data source to calendar, which
@@ -66,6 +85,4 @@ class ScheduleDataSource extends CalendarDataSource {
   bool isAllDay(int index) {
     return appointments[index].isAllDay;
   }
-
-
 }

@@ -1,4 +1,3 @@
-
 import 'dart:ui';
 
 class Tag{
@@ -15,5 +14,13 @@ class Tag{
   }
   void setTagName(String name){
     _tagName = name;
+  }
+
+  Map<String, dynamic> toJson() {
+    final Map<String, dynamic> data = new Map<String, dynamic>();
+    return {
+      'name': _tagName,
+      'color': _tagColor.toString(),
+    };
   }
 }
