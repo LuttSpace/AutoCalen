@@ -23,19 +23,6 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 void main() {
   runApp(MainPage());
 }
-//Schedule Provide Class
-class SchedulesData with ChangeNotifier{
-  List<Schedule> _schedules;
-  SchedulesData(this._schedules);
-
-  getSchedules() => _schedules;
-  setSchedules(List<Schedule> schedules) => _schedules=schedules;
-
-  void uploadNew(){
-    notifyListeners();
-  }
-}
-
 
 class MainPage extends StatelessWidget{
   List<Schedule> schedules = [];
@@ -104,13 +91,18 @@ class _CalendarPageState extends State<CalendarPage> {
 
   //Calendar Controller
   CalendarController _calendarController;
-
+  // 캘린더 데이터
   List<Schedule> schedules = <Schedule>[];
 
   @override
   void initState(){
     _dateText = '';
     _calendarController = CalendarController();
+
+    // FirebaseAuth auth = FirebaseAuth.instance;
+    // print('user id '+auth.currentUser.uid);
+    // refresh(auth.currentUser.uid);
+    // print('refresh called');
     super.initState();
   }
 
@@ -141,46 +133,34 @@ class _CalendarPageState extends State<CalendarPage> {
   // 처음 인지 체크함
   bool isItFirstData = true;
 
-  //Schedule data 가져오기
-  void refresh(String uid){
-    CollectionReference scheduleHub = FirebaseFirestore.instance.collection('UserList').doc(uid).collection('ScheduleHub');
-    schedules.clear();
-    scheduleHub.get()
-        .then((QuerySnapshot qs){
-      qs.docs.forEach((doc){
-        print('doc '+doc.id);
-        schedules.add(new Schedule(doc.id,doc['title'],doc['start'].toDate(),doc['end'].toDate(),
-            new Tag(doc['tag']['name'],Color(int.parse(doc['tag']['color'].toString().substring(6,16)))),false));
-
-        print(int.parse(doc['tag']['color'].toString().substring(6,16)));
-      });
-      print('in '+ schedules.length.toString());
-    });
-
-  }
-
+  // Schedule data 가져오기
+  // void refresh(String uid){
+  //   schedules.clear();
+  //   scheduleHub.get()
+  //       .then((QuerySnapshot qs){
+  //     qs.docs.forEach((doc){
+  //       print('doc '+doc.id);
+  //       schedules.add(new Schedule(doc.id,doc['title'],doc['start'].toDate(),doc['end'].toDate(),
+  //           new Tag(doc['tag']['name'],Color(int.parse(doc['tag']['color'].toString().substring(6,16)))),false));
+  //
+  //       print(int.parse(doc['tag']['color'].toString().substring(6,16)));
+  //     });
+  //     print('in '+ schedules.length.toString());
+  //   });
+  //
+  // }
+  int authCalled = 0;
+  int snapCalled=0;
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserData>(context, listen: false);
     if(userProvider.getUid()!='' &&userProvider.getUid()!=null ){
       print('main page~~~~~ '+ userProvider.getEmail());
-      refresh(userProvider.getUid());
-      // CollectionReference scheduleHub = FirebaseFirestore.instance.collection('UserList').doc(userProvider.getUid()).collection('ScheduleHub');
-      // scheduleHub.get()
-      //     .then((QuerySnapshot qs){
-      //   qs.docs.forEach((doc){
-      //     print('doc '+doc.id);
-      //     schedules.add(new Schedule(doc.id,doc['title'],doc['start'].toDate(),doc['end'].toDate(),
-      //         new Tag(doc['tag']['name'],Color(int.parse(doc['tag']['color'].toString().substring(6,16)))),false));
-      //
-      //     print(int.parse(doc['tag']['color'].toString().substring(6,16)));
-      //   });
-      //   print('in '+ schedules.length.toString());
-      // });
     }
     else{
       print('main page~~~~~ ');
     }
+    var userAuth = FirebaseAuth.instance;
     return Scaffold(
         appBar: loginState? AppBar(
           title: Center(
@@ -227,8 +207,9 @@ class _CalendarPageState extends State<CalendarPage> {
         ): null,
         drawer: ShowDrawer(),
         body: StreamBuilder(
-            stream: FirebaseAuth.instance.authStateChanges(),
+            stream: userAuth.authStateChanges(),//FirebaseAuth.instance.authStateChanges(),
             builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+              print('auth ${authCalled++}');
               // 처음 데이터인가? 스피너를 돌리기 (로그인으로 인식할 때까지)
               if (isItFirstData) {
                 isItFirstData = false;
@@ -247,55 +228,77 @@ class _CalendarPageState extends State<CalendarPage> {
                 }
                 else {
                   loginState = true;
-                  return SafeArea(
-                    child: SfCalendar(
-                        view: CalendarView.month,
-                        controller: _calendarController,
-                        onViewChanged: viewChanged,
-                        todayTextStyle: TextStyle(
-                            color: Colors.white, fontSize: 11),
-                        headerHeight: 0,
-                        monthViewSettings: MonthViewSettings(
-                            appointmentDisplayMode: MonthAppointmentDisplayMode
-                                .appointment,
-                            monthCellStyle: MonthCellStyle(
-                                trailingDatesTextStyle: TextStyle(
-                                    color: Colors.black26, fontSize: 11),
-                                leadingDatesTextStyle: TextStyle(
-                                    color: Colors.black26, fontSize: 11),
-                                textStyle: TextStyle(
-                                  color: Colors.black, fontSize: 11,)
-                            )
-                        ),
-                        selectionDecoration: BoxDecoration(
-                            color: Colors.transparent
-                        ),
-                        dataSource: getCalendarDataSource(userProvider.getUid()), //firestore에서 데이터 가져오기
-                        onTap: (details) {
-                          if (details.targetElement ==
-                              CalendarElement.calendarCell) {
-                            _dateText = DateFormat('yyyy년 MM월 dd일 (E)', 'ko')
-                                .format(details.date)
-                                .toString();
-                            // 선택한 날짜에 일정이 있는 경우
-                            if (details.appointments.length > 0) isEmpty = false;
-                            // 선택한 날짜에 일정이 없는 경우
-                            else
-                              isEmpty = true;
-                            showDialog(
-                                context: context,
-                                builder: (context) {
-                                  return ShowDayDialog(_dateText, isEmpty, details);
+                  print('query uid ${userAuth.currentUser.uid}');
+                  return StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance.collection('UserList').doc(userAuth.currentUser.uid).collection('ScheduleHub').snapshots(),
+                    builder: (context, snapshot) {
+                      print('snap ${snapCalled++}');
+                      //if (snapshot.hasError) { return Text('Something went wrong'); }
+                      //if (snapshot.connectionState == ConnectionState.waiting) { Future.delayed(Duration(seconds: 3),()=>print('waiting')); }
+                      if(snapshot.data==null) {
+                        print('isEmpty ${snapshot.data}');
+                        return Center(child: Text('로딩'));
+                      }
+                      else {
+                        print('start calling data on ${snapCalled} ');
+                        schedules.clear();
+                        snapshot.data.docs.forEach((doc) {
+                          print('doc ' + doc.id);
+                          schedules.add(new Schedule(doc.id, doc['title'], doc['start'].toDate(), doc['end'].toDate(),
+                              new Tag(doc['tag']['name'], Color(int.parse(doc['tag']['color'].toString().substring(6, 16)))), false));
+
+                          print(int.parse(doc['tag']['color'].toString().substring(6, 16)));
+                        });
+                        return SafeArea(
+                          child: SfCalendar(
+                              view: CalendarView.month,
+                              controller: _calendarController,
+                              onViewChanged: viewChanged,
+                              todayTextStyle: TextStyle(
+                                  color: Colors.white, fontSize: 11),
+                              headerHeight: 0,
+                              monthViewSettings: MonthViewSettings(
+                                  appointmentDisplayMode: MonthAppointmentDisplayMode
+                                      .appointment,
+                                  monthCellStyle: MonthCellStyle(
+                                      trailingDatesTextStyle: TextStyle(
+                                          color: Colors.black26, fontSize: 11),
+                                      leadingDatesTextStyle: TextStyle(
+                                          color: Colors.black26, fontSize: 11),
+                                      textStyle: TextStyle(
+                                        color: Colors.black, fontSize: 11,)
+                                  )
+                              ),
+                              selectionDecoration: BoxDecoration(
+                                  color: Colors.transparent
+                              ),
+                              dataSource: getCalendarDataSource(userProvider
+                                  .getUid()),
+                              //firestore에서 데이터 가져오기
+                              onTap: (details) {
+                                if (details.targetElement ==
+                                    CalendarElement.calendarCell) {
+                                  _dateText =
+                                      DateFormat('yyyy년 MM월 dd일 (E)', 'ko')
+                                          .format(details.date)
+                                          .toString();
+                                  // 선택한 날짜에 일정이 있는 경우
+                                  if (details.appointments.length > 0)
+                                    isEmpty = false;
+                                  // 선택한 날짜에 일정이 없는 경우
+                                  else
+                                    isEmpty = true;
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return ShowDayDialog(_dateText, isEmpty, details);}
+                                  );
                                 }
-                            ).then((value){
-                              setState(() {
-                                print('refresh');
-                                //refresh(userProvider.getUid());
-                              });
-                            });
-                          }
-                        }
-                    ),
+                              }
+                          ),
+                        );
+                      }
+                    },
                   );
                 }
               }
