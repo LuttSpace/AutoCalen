@@ -20,7 +20,12 @@ import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 
-void main() {
+void main() async {
+  print('======================= void main 시작 ! ==================================');
+  WidgetsFlutterBinding.ensureInitialized();
+  print('======================= WidgetsFlutterBinding.. 완료 ! ====================');
+  await Firebase.initializeApp();
+  print('======================= Firebase initializeApp().. 완료 ! =================');
   runApp(MainPage());
 }
 
@@ -28,45 +33,70 @@ class MainPage extends StatelessWidget{
   List<Schedule> schedules = [];
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: Firebase.initializeApp(),
-      builder: (context, snapshot){
-        if(snapshot.hasError){
-          return Center(
-            child: Text("firebase load fail"),
-          );
+    print('=======================Main Page Build==============================');
+    return MultiProvider(
+        providers: [
+          ChangeNotifierProvider<UserData>(create: (_) => UserData()),
+          //Provider<String>.value(value: "Park")
+        ],
+        child: MaterialApp(
+          localizationsDelegates: [
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+          ],
+          supportedLocales: [
+            const Locale('en'),
+            const Locale('ko')
+          ],
+          locale: const Locale('ko'), //기본 언어 설정
+          theme: ThemeData(
+              primaryColor: Colors.white,
+              accentColor: Colors.black
+          ),
+          initialRoute: '/',
+          routes: {
+            '/' :(context)=> HomePage(),
+            '/tagSetting':(context)=>TagSetting(),
+            '/login': (context)=>Login(),
+          },
+        ),
+    );
+  }
+}
+
+// 처음 인지 체크함
+bool isItFirstData = true;
+int authCalled = 0;
+var userAuth = FirebaseAuth.instance;
+
+class HomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    print('=======================Home Page Build==============================');
+    return StreamBuilder(
+        stream: userAuth.authStateChanges(),//FirebaseAuth.instance.authStateChanges(),
+        builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
+          print('auth ${++authCalled}');
+          // 처음 데이터인가? 스피너를 돌리기 (로그인으로 인식할 때까지)
+          if (isItFirstData) {
+            print('auth 로딩중');
+            isItFirstData=false;
+            return Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(),
+                )
+            );
+          } else {
+            if (!snapshot.hasData) {
+              print('auth 데이타 없음');
+              return Login();
+            }
+            else {
+              print('query uid ${userAuth.currentUser.uid}');
+              return CalendarPage();
+            }
+          }
         }
-        if(snapshot.connectionState == ConnectionState.done){
-          return MultiProvider(
-            providers: [
-              ChangeNotifierProvider<UserData>(create: (_) => UserData()),
-              //Provider<String>.value(value: "Park")
-            ],
-            child: MaterialApp(
-              localizationsDelegates: [
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-              ],
-              supportedLocales: [
-                const Locale('en'),
-                const Locale('ko')
-              ],
-              locale: const Locale('ko'), //기본 언어 설정
-              theme: ThemeData(
-                  primaryColor: Colors.white,
-                  accentColor: Colors.black
-              ),
-              initialRoute: '/',
-              routes: {
-                '/' :(context)=> CalendarPage(),
-                '/tagSetting':(context)=>TagSetting(),
-                '/login': (context)=>Login(),
-              },
-            ),
-          );
-        }
-        return CircularProgressIndicator();
-      },
     );
   }
 }
@@ -79,7 +109,7 @@ class CalendarPage extends StatefulWidget{
 }
 
 class _CalendarPageState extends State<CalendarPage> {
-  bool loginState = false; // 로그인 상태 확인
+  // bool loginState = false; // 로그인 상태 확인
 
   //appbar
   String _monthName ='';
@@ -111,6 +141,7 @@ class _CalendarPageState extends State<CalendarPage> {
     SchedulerBinding.instance
         .addPostFrameCallback((timeStamp) {
       setState(() {
+        print('!!!!!!!!!!!!!!!! setstate !!!!!!!!!!!!!!!!!!!!!');
         _monthName = DateFormat('MMM','ko').format(viewChangedDetails
             .visibleDates[viewChangedDetails.visibleDates.length ~/ 2]).toString();
         _yearName = DateFormat('yyyy').format(viewChangedDetails
@@ -124,7 +155,7 @@ class _CalendarPageState extends State<CalendarPage> {
     //showTheImage();
   }
 
-  ScheduleDataSource getCalendarDataSource(String uid) {
+  ScheduleDataSource getCalendarDataSource() {
     // 스케줄 데이터 추가
     print('real '+schedules.length.toString());
     return ScheduleDataSource(schedules);
@@ -149,10 +180,13 @@ class _CalendarPageState extends State<CalendarPage> {
   //   });
   //
   // }
-  int authCalled = 0;
+
   int snapCalled=0;
+  int buildCalled =0;
   @override
   Widget build(BuildContext context) {
+    print('=======================Calendar Page Build==========================');
+    print('빌드 횟수!!! ${++buildCalled}');
     final userProvider = Provider.of<UserData>(context, listen: false);
     if(userProvider.getUid()!='' &&userProvider.getUid()!=null ){
       print('main page~~~~~ '+ userProvider.getEmail());
@@ -162,7 +196,7 @@ class _CalendarPageState extends State<CalendarPage> {
     }
     var userAuth = FirebaseAuth.instance;
     return Scaffold(
-        appBar: loginState? AppBar(
+        appBar: AppBar(
           title: Center(
             child: TextButton(
               onPressed: (){
@@ -193,118 +227,91 @@ class _CalendarPageState extends State<CalendarPage> {
                     initialDate: DateTime.now(),
                   ).then((date) {
                     if (date != null) {
-                      setState(() {
-                        print("selected "+date.toString());
-                        //selectedDate = date;
-                        _calendarController.displayDate=DateTime(date.year,date.month,date.day);
-                      });
+                      _calendarController.displayDate=DateTime(date.year,date.month,date.day);
+                      // setState(() {
+                      //   print("selected "+date.toString());
+                      //   //selectedDate = date;
+                      //   _calendarController.displayDate=DateTime(date.year,date.month,date.day);
+                      // });
                     }
                   });
 
                 })
           ],
           elevation: 0.0, //입체감 제거
-        ): null,
+        ),
         drawer: ShowDrawer(),
-        body: StreamBuilder(
-            stream: userAuth.authStateChanges(),//FirebaseAuth.instance.authStateChanges(),
-            builder: (BuildContext context, AsyncSnapshot<User> snapshot) {
-              print('auth ${authCalled++}');
-              // 처음 데이터인가? 스피너를 돌리기 (로그인으로 인식할 때까지)
-              if (isItFirstData) {
-                isItFirstData = false;
-                return CircularProgressIndicator();
-              } else {
-                if (!snapshot.hasData) {
-                  print("logout 상태!!!!");
-                  if (loginState) {
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      setState(() {
-                        loginState = false;
-                      });
-                    });
-                  }
-                  return Login();
-                }
-                else {
-                  loginState = true;
-                  print('query uid ${userAuth.currentUser.uid}');
-                  return StreamBuilder<QuerySnapshot>(
-                    stream: FirebaseFirestore.instance.collection('UserList').doc(userAuth.currentUser.uid).collection('ScheduleHub').snapshots(),
-                    builder: (context, snapshot) {
-                      print('snap ${snapCalled++}');
-                      //if (snapshot.hasError) { return Text('Something went wrong'); }
-                      //if (snapshot.connectionState == ConnectionState.waiting) { Future.delayed(Duration(seconds: 3),()=>print('waiting')); }
-                      if(snapshot.data==null) {
-                        print('isEmpty ${snapshot.data}');
-                        return Center(child: Text('로딩'));
-                      }
-                      else {
-                        print('start calling data on ${snapCalled} ');
-                        schedules.clear();
-                        snapshot.data.docs.forEach((doc) {
-                          print('doc ' + doc.id);
-                          schedules.add(new Schedule(doc.id, doc['title'], doc['start'].toDate(), doc['end'].toDate(),
-                              new Tag(doc['tag']['name'], Color(int.parse(doc['tag']['color'].toString().substring(6, 16)))), false));
+        body: StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('UserList').doc(userAuth.currentUser.uid).collection('ScheduleHub').snapshots(),
+          builder: (context, snapshot) {
+            print('snap ${++snapCalled}');
+            //if (snapshot.hasError) { return Text('Something went wrong'); }
+            //if (snapshot.connectionState == ConnectionState.waiting) { Future.delayed(Duration(seconds: 3),()=>print('waiting')); }
+            if(snapshot.data==null) {
+              print('isEmpty ${snapshot.data}');
+              return Center(child: Text('로딩'));
+            }
+            else {
+              print('start calling data on ${snapCalled} ');
+              schedules.clear();
+              snapshot.data.docs.forEach((doc) {
+                print('doc ' + doc.id);
+                schedules.add(new Schedule(doc.id, doc['title'], doc['start'].toDate(), doc['end'].toDate(),
+                    new Tag(doc['tag']['name'], Color(int.parse(doc['tag']['color'].toString().substring(6, 16)))), false));
 
-                          print(int.parse(doc['tag']['color'].toString().substring(6, 16)));
-                        });
-                        return SafeArea(
-                          child: SfCalendar(
-                              view: CalendarView.month,
-                              controller: _calendarController,
-                              onViewChanged: viewChanged,
-                              todayTextStyle: TextStyle(
-                                  color: Colors.white, fontSize: 11),
-                              headerHeight: 0,
-                              monthViewSettings: MonthViewSettings(
-                                  appointmentDisplayMode: MonthAppointmentDisplayMode
-                                      .appointment,
-                                  monthCellStyle: MonthCellStyle(
-                                      trailingDatesTextStyle: TextStyle(
-                                          color: Colors.black26, fontSize: 11),
-                                      leadingDatesTextStyle: TextStyle(
-                                          color: Colors.black26, fontSize: 11),
-                                      textStyle: TextStyle(
-                                        color: Colors.black, fontSize: 11,)
-                                  )
-                              ),
-                              selectionDecoration: BoxDecoration(
-                                  color: Colors.transparent
-                              ),
-                              dataSource: getCalendarDataSource(userProvider
-                                  .getUid()),
-                              //firestore에서 데이터 가져오기
-                              onTap: (details) {
-                                if (details.targetElement ==
-                                    CalendarElement.calendarCell) {
-                                  _dateText =
-                                      DateFormat('yyyy년 MM월 dd일 (E)', 'ko')
-                                          .format(details.date)
-                                          .toString();
-                                  // 선택한 날짜에 일정이 있는 경우
-                                  if (details.appointments.length > 0)
-                                    isEmpty = false;
-                                  // 선택한 날짜에 일정이 없는 경우
-                                  else
-                                    isEmpty = true;
-                                  showDialog(
-                                      context: context,
-                                      builder: (context) {
-                                        return ShowDayDialog(_dateText, isEmpty, details);}
-                                  );
-                                }
-                              }
-                          ),
+                print(int.parse(doc['tag']['color'].toString().substring(6, 16)));
+              });
+              return SafeArea(
+                child: SfCalendar(
+                    view: CalendarView.month,
+                    controller: _calendarController,
+                    onViewChanged: viewChanged,
+                    todayTextStyle: TextStyle(
+                        color: Colors.white, fontSize: 11),
+                    headerHeight: 0,
+                    monthViewSettings: MonthViewSettings(
+                        appointmentDisplayMode: MonthAppointmentDisplayMode
+                            .appointment,
+                        monthCellStyle: MonthCellStyle(
+                            trailingDatesTextStyle: TextStyle(
+                                color: Colors.black26, fontSize: 11),
+                            leadingDatesTextStyle: TextStyle(
+                                color: Colors.black26, fontSize: 11),
+                            textStyle: TextStyle(
+                              color: Colors.black, fontSize: 11,)
+                        )
+                    ),
+                    selectionDecoration: BoxDecoration(
+                        color: Colors.transparent
+                    ),
+                    dataSource: getCalendarDataSource(),
+                    //firestore에서 데이터 가져오기
+                    onTap: (details) {
+                      if (details.targetElement ==
+                          CalendarElement.calendarCell) {
+                        _dateText =
+                            DateFormat('yyyy년 MM월 dd일 (E)', 'ko')
+                                .format(details.date)
+                                .toString();
+                        // 선택한 날짜에 일정이 있는 경우
+                        if (details.appointments.length > 0)
+                          isEmpty = false;
+                        // 선택한 날짜에 일정이 없는 경우
+                        else
+                          isEmpty = true;
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return ShowDayDialog(_dateText, isEmpty, details);}
                         );
                       }
-                    },
-                  );
-                }
-              }
+                    }
+                ),
+              );
             }
+          },
         ),
-        floatingActionButton: loginState? MainFAB(): null
+        floatingActionButton:  MainFAB()
     );
   }
 }
