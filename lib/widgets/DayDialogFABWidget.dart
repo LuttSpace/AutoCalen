@@ -9,6 +9,8 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:autocalen/Function/UploadImg.dart' as ImgUpload;
 
 class DayDialogFAB extends StatefulWidget {
+  DateTime _date;
+  DayDialogFAB(this._date);
   @override
   _DayDialogFABState createState() => _DayDialogFABState();
 }
@@ -71,7 +73,7 @@ class _DayDialogFABState extends State<DayDialogFAB>
       children: [ //stack 구조임
         SpeedDialChild(
           child: Icon(Icons.edit),
-          onTap: ()=>ScheduleInputModal.show(context),
+          onTap: ()=>ScheduleInputModal.show(context,null, date: widget._date),
         ),
         SpeedDialChild(
           child:Icon(Icons.camera_alt),

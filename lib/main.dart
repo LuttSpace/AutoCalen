@@ -110,14 +110,13 @@ class CalendarPage extends StatefulWidget{
 
 class _CalendarPageState extends State<CalendarPage> {
   // bool loginState = false; // 로그인 상태 확인
-
   //appbar
   String _monthName ='';
   String _yearName='';
 
   // 선택한 날짜에 등록된 일정 있는지
   bool isEmpty = true;
-  String _dateText ='';
+  DateTime _date;
 
   //Calendar Controller
   CalendarController _calendarController;
@@ -126,13 +125,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
   @override
   void initState(){
-    _dateText = '';
     _calendarController = CalendarController();
-
-    // FirebaseAuth auth = FirebaseAuth.instance;
-    // print('user id '+auth.currentUser.uid);
-    // refresh(auth.currentUser.uid);
-    // print('refresh called');
     super.initState();
   }
 
@@ -163,23 +156,6 @@ class _CalendarPageState extends State<CalendarPage> {
 
   // 처음 인지 체크함
   bool isItFirstData = true;
-
-  // Schedule data 가져오기
-  // void refresh(String uid){
-  //   schedules.clear();
-  //   scheduleHub.get()
-  //       .then((QuerySnapshot qs){
-  //     qs.docs.forEach((doc){
-  //       print('doc '+doc.id);
-  //       schedules.add(new Schedule(doc.id,doc['title'],doc['start'].toDate(),doc['end'].toDate(),
-  //           new Tag(doc['tag']['name'],Color(int.parse(doc['tag']['color'].toString().substring(6,16)))),false));
-  //
-  //       print(int.parse(doc['tag']['color'].toString().substring(6,16)));
-  //     });
-  //     print('in '+ schedules.length.toString());
-  //   });
-  //
-  // }
 
   int snapCalled=0;
   int buildCalled =0;
@@ -228,11 +204,6 @@ class _CalendarPageState extends State<CalendarPage> {
                   ).then((date) {
                     if (date != null) {
                       _calendarController.displayDate=DateTime(date.year,date.month,date.day);
-                      // setState(() {
-                      //   print("selected "+date.toString());
-                      //   //selectedDate = date;
-                      //   _calendarController.displayDate=DateTime(date.year,date.month,date.day);
-                      // });
                     }
                   });
 
@@ -245,8 +216,6 @@ class _CalendarPageState extends State<CalendarPage> {
           stream: FirebaseFirestore.instance.collection('UserList').doc(userAuth.currentUser.uid).collection('ScheduleHub').snapshots(),
           builder: (context, snapshot) {
             print('snap ${++snapCalled}');
-            //if (snapshot.hasError) { return Text('Something went wrong'); }
-            //if (snapshot.connectionState == ConnectionState.waiting) { Future.delayed(Duration(seconds: 3),()=>print('waiting')); }
             if(snapshot.data==null) {
               print('isEmpty ${snapshot.data}');
               return Center(child: Text('로딩'));
@@ -258,8 +227,6 @@ class _CalendarPageState extends State<CalendarPage> {
                 print('doc ' + doc.id);
                 schedules.add(new Schedule(doc.id, doc['title'], doc['start'].toDate(), doc['end'].toDate(),
                     new Tag(doc['tag']['name'], Color(int.parse(doc['tag']['color'].toString().substring(6, 16)))), false));
-
-                print(int.parse(doc['tag']['color'].toString().substring(6, 16)));
               });
               return SafeArea(
                 child: SfCalendar(
@@ -289,10 +256,7 @@ class _CalendarPageState extends State<CalendarPage> {
                     onTap: (details) {
                       if (details.targetElement ==
                           CalendarElement.calendarCell) {
-                        _dateText =
-                            DateFormat('yyyy년 MM월 dd일 (E)', 'ko')
-                                .format(details.date)
-                                .toString();
+                        _date = details.date;
                         // 선택한 날짜에 일정이 있는 경우
                         if (details.appointments.length > 0)
                           isEmpty = false;
@@ -302,7 +266,7 @@ class _CalendarPageState extends State<CalendarPage> {
                         showDialog(
                             context: context,
                             builder: (context) {
-                              return ShowDayDialog(_dateText, isEmpty, details);}
+                              return ShowDayDialog(_date, isEmpty, details);}
                         );
                       }
                     }

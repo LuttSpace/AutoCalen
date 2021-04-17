@@ -10,10 +10,10 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-void show(BuildContext context, [Schedule details]){
+void show(BuildContext context, Schedule details, {DateTime date}){
   showBarModalBottomSheet(
     context: context,
-    builder:(context)=> ScheduleInputModal(details),
+    builder:(context)=> ScheduleInputModal(details,date),
     expand: true,
   ).then((value){
     Navigator.of(context).pop();
@@ -23,7 +23,8 @@ void show(BuildContext context, [Schedule details]){
 // ignore: must_be_immutable
 class ScheduleInputModal extends StatefulWidget{
   Schedule _details;
-  ScheduleInputModal(this._details);
+  DateTime _date;
+  ScheduleInputModal(this._details,this._date);
 
   @override
   _ScheduleInputModalState createState() => _ScheduleInputModalState();
@@ -107,16 +108,16 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
   @override
   void initState() {
     userProvider = Provider.of<UserData>(context, listen: false);
-    if(widget._details!=null){
+    if(widget._details!=null){ // details!=null (o) && date==null (x)
       print('sid '+widget._details.sid);
       _currentTag = widget._details.tag;
       titleController = TextEditingController(text: widget._details.tag.getTagName());
       startInput = widget._details.start; endInput = widget._details.end;
     }
-    else{
+    else{ // details==null && date!=null
       _currentTag = _tagList[0];
       titleController = TextEditingController();
-      startInput = DateTime.now(); endInput = DateTime.now().add(Duration(hours: 1));
+      startInput = widget._date; endInput = widget._date.add(Duration(hours: 1));
     }
     startDateController = TextEditingController(text : DateFormat('yyyy/MM/dd', 'ko').format(startInput).toString());
     startTimeController = TextEditingController(text : DateFormat('a h:mm', 'ko').format(startInput).toString());
@@ -139,23 +140,44 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                   alignment: Alignment.topRight,
                   child: IconButton(
                       onPressed: (){
-                        print('last: '+_currentTag.getTagName());
-                        print('submit');
-                        print('title: ${titleController.text}');
-                        print('startDate: ${startDateController.text}');
-                        print('endDate: ${endDateController.text}');
-                        print('startTime: ${startTimeController.text}');
-                        print('endTime: ${endTimeController.text}');
+                        if(endInput.difference(startInput).isNegative){ // 시간 설정 오류시 처리
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              Future.delayed(Duration(seconds: 1), () {Navigator.pop(context);});
+                              return AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0)
+                                ),
+                                content: SizedBox(
+                                    height: 50,
+                                    child: Center(child: Text('시간 설정을 다시 해주세요.'))
+                                ),
+                              );
+                            },
+                          );
+                        }
+                        else{ //정상 처리
+                          print('diffrence ${endInput.difference(startInput).isNegative}');
+                          print('last: '+_currentTag.getTagName());
+                          print('submit');
+                          print('title: ${titleController.text}');
+                          print('startDate: ${startDateController.text}');
+                          print('endDate: ${endDateController.text}');
+                          print('startTime: ${startTimeController.text}');
+                          print('endTime: ${endTimeController.text}');
 
-                        if(widget._details!=null){
-                          widget._details = new Schedule(widget._details.sid,titleController.text,startInput,endInput,_currentTag,false);
-                          uploadSchedule(true,widget._details);
-                        } else{
-                          widget._details = new Schedule('',titleController.text,startInput,endInput,_currentTag,false);
-                          uploadSchedule(false,widget._details);
+                          if(widget._details!=null){
+                            widget._details = new Schedule(widget._details.sid,titleController.text,startInput,endInput,_currentTag,false);
+                            uploadSchedule(true,widget._details);
+                          } else{
+                            widget._details = new Schedule('',titleController.text,startInput,endInput,_currentTag,false);
+                            uploadSchedule(false,widget._details);
+                          }
+
+                          Navigator.of(context).pop();
                         }
 
-                        Navigator.of(context).pop();
                       },
                       icon:Icon(Icons.check)),
                 ),

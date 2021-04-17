@@ -7,15 +7,16 @@ import 'package:autocalen/widgets/ScheduleInputModal.dart' as ScheduleInputModal
 
 
 class ShowDayDialog extends StatefulWidget{
-  String _dateText;
+  DateTime _date;
   bool isEmpty;
   CalendarTapDetails details;
-  ShowDayDialog(this._dateText,this.isEmpty,this.details);
+  ShowDayDialog(this._date,this.isEmpty,this.details);
   @override
   _ShowDayDialogState createState() => _ShowDayDialogState();
 }
 
 class _ShowDayDialogState extends State<ShowDayDialog> {
+  String _dateText;
   String subtitleDate(DateTime startTime, DateTime endTime){
     String subtitle;
     // 시작날짜, 종료 날짜 비교
@@ -61,6 +62,14 @@ class _ShowDayDialogState extends State<ShowDayDialog> {
     }
   }
 
+
+  @override
+  void initState() {
+    _dateText = DateFormat('yyyy년 MM월 dd일 (E)', 'ko').format(widget._date).toString();
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Dialog(
@@ -76,7 +85,7 @@ class _ShowDayDialogState extends State<ShowDayDialog> {
                       alignment: Alignment.topCenter,
                       padding:EdgeInsets.symmetric(horizontal: 0.0, vertical: 15.0),
                       child: new Text(
-                        '${widget._dateText}',
+                        '${_dateText}',
                         style: TextStyle(
                             fontSize: 22
                         ),
@@ -99,29 +108,12 @@ class _ShowDayDialogState extends State<ShowDayDialog> {
                     height: MediaQuery.of(context).size.height*0.45,
                     width: MediaQuery.of(context).size.width*0.9,
                     alignment: Alignment.bottomRight,
-                    child: DayDialogFAB(),
+                    child: DayDialogFAB(widget._date),
                   )
               ),
           ],
         ),
       ),
     );
-
-
-      // AlertDialog(
-      //       title: Container(
-      //           padding:EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
-      //           child: new Text('${widget._dateText}')
-      //       ),
-      //       content:Container(
-      //         height: MediaQuery.of(context).size.height*0.45,
-      //         width: MediaQuery.of(context).size.width*0.8,
-      //         child: _buildScheduleListView(context, widget.details),
-      //       ),
-      //       shape: RoundedRectangleBorder( // 모서리 둥글게
-      //           borderRadius: BorderRadius.all(Radius.circular(10.0))),
-      //       actions: <Widget>[
-      //       ],
-      //     );
   }
 }
