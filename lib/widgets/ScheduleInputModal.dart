@@ -11,9 +11,28 @@ import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 void show(BuildContext context, Schedule details, {DateTime date}){
+  final userProvider = Provider.of<UserData>(context, listen: false);
   showBarModalBottomSheet(
     context: context,
-    builder:(context)=> ScheduleInputModal(details,date),
+    builder:(context){
+      return StreamBuilder<QuerySnapshot>(
+          stream: FirebaseFirestore.instance.collection('UserList').doc(userProvider.getUid()).collection('TagHub').snapshots(),
+          builder: (context, snapshot) {
+            if(snapshot.data==null) {
+              print('isEmpty ${snapshot.data}');
+              return Center(child: Text('로딩'));
+            }
+            else{
+              List<DocumentSnapshot> documents = snapshot.data.docs;
+              return ScheduleInputModal(details,date, userProvider,
+                  documents.map((e){
+                    return new Tag(e.id,e['name'],Color(int.parse(e['color'].toString().substring(6,16))));
+                  }).toList()
+              );
+            }
+          }
+      );
+    },
     expand: true,
   ).then((value){
     Navigator.of(context).pop();
@@ -24,7 +43,9 @@ void show(BuildContext context, Schedule details, {DateTime date}){
 class ScheduleInputModal extends StatefulWidget{
   Schedule _details;
   DateTime _date;
-  ScheduleInputModal(this._details,this._date);
+  List<Tag> _tagList;
+  final _userProvider;
+  ScheduleInputModal(this._details,this._date,this._userProvider,this._tagList);
 
   @override
   _ScheduleInputModalState createState() => _ScheduleInputModalState();
@@ -32,16 +53,6 @@ class ScheduleInputModal extends StatefulWidget{
 
 class _ScheduleInputModalState extends State<ScheduleInputModal> {
   final _formKey = GlobalKey<FormState>();
-  var userProvider ;
-
-  List<Tag> _tagList = [
-    new Tag('학교',Color(0xFFA70A0A)),
-    new Tag('여행',Color(0xFFFF6637)),
-    new Tag('영화',Color(0xFFFFCD37)),
-    new Tag('공모전',Color(0xFF19C90F)),
-    new Tag('해리포터',Color(0xFF3780FF)),
-    new Tag('샤이니',Color(0xFF6341BD)),
-  ];
 
   // 입력 글자 스타일
   TextStyle inputTextStyle =TextStyle(
@@ -87,7 +98,7 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
   DateTime startInput, endInput;
 
   void uploadSchedule(bool isChangeMode, Schedule newSchedule){
-    CollectionReference scheduleHub = FirebaseFirestore.instance.collection("UserList").doc(userProvider.getUid()).collection('ScheduleHub');
+    CollectionReference scheduleHub = FirebaseFirestore.instance.collection("UserList").doc(widget._userProvider.getUid()).collection('ScheduleHub');
     if(isChangeMode){
       scheduleHub.doc(newSchedule.sid)
           .update(newSchedule.toJson())
@@ -101,13 +112,12 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
           .then((value){
         print('sucess');
       });
-
     }
   }
 
   @override
   void initState() {
-    userProvider = Provider.of<UserData>(context, listen: false);
+    print('init ${widget._tagList.length}');
     if(widget._details!=null){ // details!=null (o) && date==null (x)
       print('sid '+widget._details.sid);
       _currentTag = widget._details.tag;
@@ -115,7 +125,7 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
       startInput = widget._details.start; endInput = widget._details.end;
     }
     else{ // details==null && date!=null
-      _currentTag = _tagList[0];
+      _currentTag = widget._tagList[0];
       titleController = TextEditingController();
       startInput = widget._date; endInput = widget._date.add(Duration(hours: 1));
     }
@@ -187,11 +197,11 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                       width: 60,
                       child: Container(
                           child: TagSelectMenu(
-                            tagList : _tagList,
+                            tagList : widget._tagList,
                             iconColor: Colors.white,
                             currentTag: _currentTag,
                             onChange: (index)  {
-                              _currentTag =_tagList[index];
+                              _currentTag = widget._tagList[index];
                             },
                             addETC: (tag){
                               _currentTag= tag;
