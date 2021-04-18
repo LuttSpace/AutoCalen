@@ -253,12 +253,6 @@ class _TagSettingState extends State<TagSetting> {
               icon: Icon(Icons.arrow_back_ios),
               onPressed: ()=> Navigator.of(context).pop(),
             ),
-            actions: [
-              IconButton(
-                  icon: Icon(Icons.check),
-                  onPressed: ()=>Navigator.of(context).pop()
-              )
-            ],
           ),
           body: Column(
             children: [
