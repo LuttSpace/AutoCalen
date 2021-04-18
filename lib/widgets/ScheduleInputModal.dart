@@ -121,7 +121,7 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
     if(widget._details!=null){ // details!=null (o) && date==null (x)
       print('sid '+widget._details.sid);
       _currentTag = widget._details.tag;
-      titleController = TextEditingController(text: widget._details.tag.getTagName());
+      titleController = TextEditingController(text: widget._details.title);
       startInput = widget._details.start; endInput = widget._details.end;
     }
     else{ // details==null && date!=null
@@ -247,11 +247,11 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                                 onChanged: (date){
                                   print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
                                 },onConfirm: (date) {
-                                  startInput = date;
                                   startDateController.text = DateFormat('yyyy/MM/dd', 'ko')
                                       .format(date)
-                                      .toString(); // 데이터 바꾸
-                                  print('confirm $date');
+                                      .toString(); // 데이터 바꾸기
+                                  startInput = DateFormat('yyyy/MM/dd a h:mm', 'ko').parse(startDateController.text+" "+startTimeController.text);
+                                  print('confirm data! $startInput');
                                 }, currentTime: startInput, locale: LocaleType.ko);
                           },
                         ),
@@ -303,11 +303,11 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                                 onChanged: (date){
                                   print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
                                 },onConfirm: (date) {
-                                  endInput = date;
                                   endDateController.text = DateFormat('yyyy/MM/dd', 'ko')
                                       .format(date)
                                       .toString();
-                                  print('confirm $date');
+                                  endInput = DateFormat('yyyy/MM/dd a h:mm', 'ko').parse(endDateController.text+" "+endTimeController.text);
+                                  print('confirm date! $endInput');
                                 }, currentTime: endInput, locale: LocaleType.ko);
                           },
                         ),
