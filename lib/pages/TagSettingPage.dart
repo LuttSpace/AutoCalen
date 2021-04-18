@@ -1,14 +1,17 @@
 
-
 import 'dart:ui';
 
 import 'package:autocalen/models/Tag.dart';
+import 'package:autocalen/models/UserData.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 List<Color> colorSet = [];
 class TagTile extends StatefulWidget{
-  TagTile(this._tag);
+  TagTile(this._tag,this.userProvider);
+  final userProvider;
   final Tag _tag;
 
   @override
@@ -20,6 +23,18 @@ class _TagTileState extends State<TagTile> {
   Color _currentColor;
   var changeController;
 
+  void updateTag(Tag currentTag){
+    CollectionReference scheduleHub = FirebaseFirestore.instance.collection("UserList").doc(widget.userProvider.getUid()).collection('TagHub');
+    scheduleHub.doc(currentTag.tid)
+          .update(currentTag.toJson())
+          .then((value){
+        print('sucess updating');
+      });
+  }
+  void deleteTag(Tag currentTag){
+    CollectionReference scheduleHub = FirebaseFirestore.instance.collection("UserList").doc(widget.userProvider.getUid()).collection('TagHub');
+    scheduleHub.doc(currentTag.tid).delete().then((value) => print('succes deleting'));
+  }
   @override
   void initState() {
     _currentColor =widget._tag.getTagColor();
@@ -139,6 +154,7 @@ class _TagTileState extends State<TagTile> {
                     child: !_isChangeMode ? Text('삭제', style: TextStyle(color:Colors.red)) : Text('취소'),
                     onPressed: (){
                       if(!_isChangeMode){
+                        deleteTag(widget._tag);
                         print('삭제');
                       }
                       else{
@@ -160,22 +176,26 @@ class _TagTileState extends State<TagTile> {
                   child: TextButton(
                     child: !_isChangeMode ? Text('변경', style: TextStyle(color:Colors.green)) : Text('확인'),
                     onPressed: (){
-                      if(!_isChangeMode){
-                        print("변경 모드!!");
+                      if(!_isChangeMode){ //변경 모드로 바꿈!
+                        print("변경 모드!! ${widget._tag.tid}");
                         setState(() {
+                          _currentColor =widget._tag.getTagColor();
+                          changeController = TextEditingController(text: widget._tag.getTagName());
                           _isChangeMode = !_isChangeMode;
                           print(_isChangeMode);
                         });
                       }
-                      else{
+                      else{ //변경하기 > 변경모드 해제
                         print('확인');
                         setState(() {
-                          widget._tag.setTagColor(_currentColor);
-                          if(changeController.text !='') {
-                            widget._tag.setTagName(changeController.text);
-                          }
+                          // widget._tag.setTagColor(_currentColor);
+                          // if(changeController.text !='') {
+                          //   widget._tag.setTagName(changeController.text);
+                          // }
+                          //updateTag(widget._tag);
                           _isChangeMode = !_isChangeMode;
                         });
+                        updateTag(new Tag(widget._tag.tid,changeController.text,_currentColor));
                       }
                     },
                   ),
@@ -193,8 +213,10 @@ class TagSetting extends StatefulWidget{
 }
 
 class _TagSettingState extends State<TagSetting> {
-  Color _currentColor = Colors.blueAccent;
-  Color _pickedColor = Colors.black;
+  Color _currentColor = Color(0xff276cce);
+  Color _pickedColor = Color(0xff276cce);
+  var userProvider ;
+
   void pickColor(Color color){
     setState(() {
       _pickedColor = color;
@@ -202,11 +224,18 @@ class _TagSettingState extends State<TagSetting> {
   }
   List<Tag> tags;
   final controller = TextEditingController();
-
+  void uploadTag(Tag newTag){
+    CollectionReference scheduleHub = FirebaseFirestore.instance.collection("UserList").doc(userProvider.getUid()).collection('TagHub');
+    scheduleHub.doc()
+        .set(newTag.toJson())
+        .then((value){
+      print('sucess');
+    });
+  }
   @override
   void initState() {
+    userProvider = Provider.of<UserData>(context, listen: false);
     tags = [];
-    tags.add(new Tag('모임',Colors.deepPurple));
     print('tag길이 '+tags.length.toString());
   }
 
@@ -224,19 +253,13 @@ class _TagSettingState extends State<TagSetting> {
               icon: Icon(Icons.arrow_back_ios),
               onPressed: ()=> Navigator.of(context).pop(),
             ),
-            actions: [
-              IconButton(
-                  icon: Icon(Icons.check),
-                  onPressed: ()=>Navigator.of(context).pop()
-              )
-            ],
           ),
           body: Column(
             children: [
               Container(
                 width : MediaQuery.of(context).size.width,
                 margin: EdgeInsets.symmetric(vertical: 20,horizontal: 10),
-                child: Row(
+                child: Row( // 이거 한데로 모으든가 해야함.. 두개로 분할 ^^ 돼있음
                   children: [
                     Container(
                       width: MediaQuery.of(context).size.width /8,
@@ -295,7 +318,7 @@ class _TagSettingState extends State<TagSetting> {
                                   ),
                                   actions: [
                                     TextButton(
-                                        onPressed: (){
+                                        onPressed: (){ //색깔 고르기
                                           print(_pickedColor.toString());
                                           setState(() {
                                             _currentColor=_pickedColor;
@@ -336,7 +359,9 @@ class _TagSettingState extends State<TagSetting> {
                           onPressed: () {
                             print('add start');
                             setState(() {
-                              tags.add(new Tag(controller.text,_currentColor));
+                              //tags.add(new Tag('',controller.text,_currentColor));
+                              tags.clear();
+                              uploadTag(new Tag('',controller.text,_currentColor)); //tid 아직 없음
                               controller.clear();
                             });
                             print('done ${controller.text} & ${_currentColor.toString()}');
@@ -346,13 +371,23 @@ class _TagSettingState extends State<TagSetting> {
                   ],
                 ),
               ),
-              ListView.builder(
-                scrollDirection: Axis.vertical,
-                shrinkWrap: true,
-                itemCount: tags.length,
-                itemBuilder: (context,index){
-                  return TagTile(tags[index]);
-                },
+              StreamBuilder<QuerySnapshot>(
+                stream: FirebaseFirestore.instance.collection('UserList').doc(userProvider.getUid()).collection('TagHub').snapshots(),
+                builder: (context, snapshot) {
+                  if(snapshot.data==null) {
+                    print('isEmpty ${snapshot.data}');
+                    return Center(child: Text('로딩'));
+                  }
+                  else{
+                    List<DocumentSnapshot> documents = snapshot.data.docs;
+                    return ListView(
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      children: documents.map((eachDocument) => TagTile(new Tag(eachDocument.id, eachDocument['name'],
+                            Color(int.parse(eachDocument['color'].toString().substring(6, 16)))),userProvider)).toList(),
+                      );
+                    }
+                  }
               ),
             ],
           ),
