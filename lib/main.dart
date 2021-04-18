@@ -226,7 +226,7 @@ class _CalendarPageState extends State<CalendarPage> {
               snapshot.data.docs.forEach((doc) {
                 print('doc ' + doc.id);
                 schedules.add(new Schedule(doc.id, doc['title'], doc['start'].toDate(), doc['end'].toDate(),
-                    new Tag(doc['tag']['name'], Color(int.parse(doc['tag']['color'].toString().substring(6, 16)))), false));
+                    new Tag('',doc['tag']['name'], Color(int.parse(doc['tag']['color'].toString().substring(6, 16)))), false));
               });
               return SafeArea(
                 child: SfCalendar(

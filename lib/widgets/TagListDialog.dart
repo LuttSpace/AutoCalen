@@ -203,7 +203,7 @@ class _TagSelectMenuState extends State<TagSelectMenu>
                                                               print(_pickedColor.toString());
                                                               setState(() {
                                                                 currentColor=_pickedColor;
-                                                                currentTag= new Tag('기타',_pickedColor);
+                                                                currentTag= new Tag('','기타',_pickedColor);
                                                                 widget.addETC(currentTag);
                                                               });
                                                               Navigator.pop(context);
