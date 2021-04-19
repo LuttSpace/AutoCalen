@@ -173,24 +173,12 @@ class _CalendarPageState extends State<CalendarPage> {
     var userAuth = FirebaseAuth.instance;
     return Scaffold(
         appBar: AppBar(
-          title: Center(
-            child: TextButton(
-              onPressed: (){
-                print(_yearName+'년 '+_monthName);
-              },
-              child: Text('$_yearName년 $_monthName'),
-              style: TextButton.styleFrom(
-                primary: Colors.black,
-                padding: EdgeInsets.all(0),
-                textStyle: TextStyle(
-                    fontSize: 19
-                ),
-              ),
+          title: Text(
+            '$_yearName년 $_monthName',
+            style: TextStyle(
+                color: Colors.black,
+                fontSize: 18
             ),
-          ),
-          titleTextStyle: TextStyle(
-              fontStyle: FontStyle.normal,
-              fontSize: 5
           ),
           actions: [
             IconButton(
