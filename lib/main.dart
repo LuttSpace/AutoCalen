@@ -82,6 +82,7 @@ class HomePage extends StatelessWidget {
             print('auth 로딩중');
             isItFirstData=false;
             return Scaffold(
+                resizeToAvoidBottomInset: false,
                 body: Center(
                   child: CircularProgressIndicator(),
                 )

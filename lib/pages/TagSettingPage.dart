@@ -247,6 +247,7 @@ class _TagSettingState extends State<TagSetting> {
             accentColor: Colors.black
         ),
         home: Scaffold(
+          resizeToAvoidBottomInset: false,
           appBar: AppBar(
             title: Text('태그 설정'),
             leading: IconButton(
