@@ -20,6 +20,7 @@ class Tag{
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     return { //tid
+      'tid': tid,
       'name': _tagName,
       'color': _tagColor.toString(),
     };
