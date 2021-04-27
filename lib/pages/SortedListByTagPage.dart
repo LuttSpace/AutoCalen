@@ -1,6 +1,7 @@
 
 import 'package:autocalen/models/Tag.dart';
 import 'package:autocalen/models/UserData.dart';
+import 'package:autocalen/pages/TagCalendarPage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -47,6 +48,7 @@ class _SortedListByTagState extends State<SortedListByTag> {
                   crossAxisCount: 3,
                   mainAxisSpacing: 20,
                   crossAxisSpacing: 20,
+                  childAspectRatio: (1/0.8)
                 ),
                 scrollDirection: Axis.vertical,
                 shrinkWrap: true,
@@ -81,9 +83,8 @@ class _TagTileState extends State<TagTile> {
         child: GridTile(
           child: Container(
             decoration: BoxDecoration(
-                //color: widget._tag.getTagColor(), // 골라달라!
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(color:Color(0xff474747),width: 0.5),
+                //borderRadius: BorderRadius.circular(5),
+                //border: Border.all(color:Color(0xff474747),width: 0.5),
             ),
             child: ElevatedButton(
                style: ElevatedButton.styleFrom(
@@ -93,13 +94,13 @@ class _TagTileState extends State<TagTile> {
                  shadowColor: Colors.transparent,
                ),
                 onPressed: (){
-
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context)=> TagCalendar(widget._tag)));
                 },
                 child: Center(
                   child: Column(
                     children: [
                       Container(
-                          margin: EdgeInsets.symmetric(vertical: 20,horizontal: 0),
+                          margin: EdgeInsets.symmetric(vertical: 10,horizontal: 0),
                           width: 70,
                           height: 34,
                           decoration: BoxDecoration(
@@ -107,7 +108,7 @@ class _TagTileState extends State<TagTile> {
                             borderRadius: BorderRadius.circular(5)
                           ),
                       ),
-                      Text(widget._tag.getTagName()),
+                      Text(widget._tag.getTagName(),overflow: TextOverflow.ellipsis,),
                     ],
                   ),
                 )

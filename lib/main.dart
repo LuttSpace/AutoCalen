@@ -59,7 +59,6 @@ class MainPage extends StatelessWidget{
             '/' :(context)=> HomePage(),
             '/tagSetting':(context)=>TagSetting(),
             '/sortedListByTag':(context)=>SortedListByTag(),
-            '/sortedListByTag/TagCalendar':(context)=>SortedListByTag(),
             '/login': (context)=>Login(),
           },
         ),
