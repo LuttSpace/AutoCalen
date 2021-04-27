@@ -17,13 +17,17 @@ class ShowDayDialog extends StatefulWidget{
 
 class _ShowDayDialogState extends State<ShowDayDialog> {
   String _dateText;
-  String subtitleDate(DateTime startTime, DateTime endTime){
+  String subtitleDate(DateTime startTime, DateTime endTime, bool isAllDay){
     String subtitle;
+    String formatString = isAllDay? 'M월 d일' : 'M월 d일 a h:mm';
     // 시작날짜, 종료 날짜 비교
     if(startTime.difference(endTime).inDays==0){ // 시작날짜, 종료날짜가 같으면
-      subtitle= DateFormat('MM월 dd일').format(startTime).toString();
+      subtitle= DateFormat(formatString, 'ko').format(startTime).toString();
+      if((startTime.difference(endTime).inHours!=0||startTime.difference(endTime).inMinutes!=0)&& !isAllDay){ // 시간이 같지 않으면
+        subtitle= '${DateFormat(formatString, 'ko').format(startTime).toString()} - ${DateFormat('a h:mm', 'ko').format(endTime).toString()}';
+      }
     } else{
-      subtitle='${DateFormat('MM월 dd일').format(startTime).toString()} - ${DateFormat('MM월 dd일').format(endTime).toString()}';
+      subtitle='${DateFormat(formatString, 'ko').format(startTime).toString()} - ${DateFormat(formatString, 'ko').format(endTime).toString()}';
     }
     return subtitle;
   }
@@ -51,7 +55,7 @@ class _ShowDayDialogState extends State<ShowDayDialog> {
             minVerticalPadding: 4.0, // 각 일정 탭 별 padding 값
             contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
             title: Text(details.appointments[i].title),
-            subtitle: Text(subtitleDate(details.appointments[i].start, details.appointments[i].end)),
+            subtitle: Text(subtitleDate(details.appointments[i].start, details.appointments[i].end, details.appointments[i].isAllDay)),
             onTap: () => ScheduleInputModal.show(context,details.appointments[i]),
           );
         },

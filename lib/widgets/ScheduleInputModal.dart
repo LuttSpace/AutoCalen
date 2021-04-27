@@ -4,6 +4,7 @@ import 'package:autocalen/models/UserData.dart';
 import 'package:autocalen/widgets/TagListDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_datetime_picker/src/date_format.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
@@ -94,8 +95,10 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
   var startTimeController = TextEditingController();
   var endDateController = TextEditingController();
   var endTimeController = TextEditingController();
+  var memoController;
 
   DateTime startInput, endInput;
+  String memoInput;
 
   void uploadSchedule(bool isChangeMode, Schedule newSchedule){
     CollectionReference scheduleHub = FirebaseFirestore.instance.collection("UserList").doc(widget._userProvider.getUid()).collection('ScheduleHub');
@@ -115,6 +118,10 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
     }
   }
 
+  bool isAllDay = false; // 하루종일 선택
+  Color isAllDayTextColor = Colors.grey;
+  bool isMemo = false; // 메모 옵션
+
   @override
   void initState() {
     print('init ${widget._tagList.length}');
@@ -123,16 +130,23 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
       _currentTag = widget._details.tag;
       titleController = TextEditingController(text: widget._details.title);
       startInput = widget._details.start; endInput = widget._details.end;
+      if(widget._details.memo != ''&& widget._details.memo != null){
+        isMemo = true;
+        memoController = TextEditingController(text: widget._details.memo);
+      }
+      isAllDay = widget._details.isAllDay;
     }
     else{ // details==null && date!=null
       _currentTag = widget._tagList[0];
       titleController = TextEditingController();
       startInput = widget._date; endInput = widget._date.add(Duration(hours: 1));
+
     }
     startDateController = TextEditingController(text : DateFormat('yyyy/MM/dd', 'ko').format(startInput).toString());
     startTimeController = TextEditingController(text : DateFormat('a h:mm', 'ko').format(startInput).toString());
     endDateController = TextEditingController(text : DateFormat('yyyy/MM/dd', 'ko').format(endInput).toString());
     endTimeController = TextEditingController(text : DateFormat('a h:mm', 'ko').format(endInput).toString());
+    isAllDayTextColor = isAllDay? Colors.black: Colors.grey;
   }
 
   @override
@@ -178,10 +192,10 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                           print('endTime: ${endTimeController.text}');
 
                           if(widget._details!=null){
-                            widget._details = new Schedule(widget._details.sid,titleController.text,startInput,endInput,_currentTag,false);
+                            widget._details = new Schedule(widget._details.sid,titleController.text,startInput,endInput,_currentTag,memoInput,isAllDay);
                             uploadSchedule(true,widget._details);
                           } else{
-                            widget._details = new Schedule('',titleController.text,startInput,endInput,_currentTag,false);
+                            widget._details = new Schedule('',titleController.text,startInput,endInput,_currentTag,memoInput,isAllDay);
                             uploadSchedule(false,widget._details);
                           }
 
@@ -229,6 +243,29 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                     ),
                   ],
                 ),
+                Container(
+                  padding: EdgeInsets.fromLTRB(15.0, 20.0, 15.0, 0.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('하루종일', style: TextStyle(fontSize: 20.0, color: isAllDayTextColor)),
+                      FlutterSwitch(
+                          width: 60.0,
+                          height: 25.0,
+                          value: isAllDay,
+                          activeColor: Colors.black,
+                          onToggle: (val){
+                            setState((){
+                              isAllDay = val;
+                              print(isAllDay);
+                              if(isAllDay) isAllDayTextColor = Colors.black87;
+                              else isAllDayTextColor = Colors.grey;
+                            });
+                          }
+                      ),
+                    ],
+                  ),
+                ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -257,7 +294,7 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                         ),
                       ),
                     ),
-                    Flexible(
+                    isAllDay? SizedBox(width: 0,height: 0):Flexible(
                       child: Padding(
                         padding: const EdgeInsets.only(left: 15),
                         child: TextField(
@@ -313,7 +350,7 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                         ),
                       ),
                     ),
-                    Flexible(
+                    isAllDay? SizedBox(width: 0,height: 0): Flexible(
                       child: Padding(
                         padding: const EdgeInsets.only(left: 15),
                         child: TextField(
@@ -338,7 +375,7 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                     ),
                   ],
                 ),
-                TextFormField(
+                isMemo? TextFormField(
                   style: inputTextStyle,
                   cursorColor: Colors.black,
                   decoration: inputDecoration('일정 메모', '메모'),
@@ -354,6 +391,32 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                   onFieldSubmitted: (value){
                     print('submitted: $value');
                   },
+                ): Container(
+                  padding: EdgeInsets.fromLTRB(15.0, 20.0, 15.0, 0.0),
+                  child: Row(
+                    children: [
+                      Text('+', style: TextStyle(fontSize: 20.0, color: Colors.black)),
+                      Container(
+                          margin: EdgeInsets.only(left: 10.0),
+                          child: ElevatedButton.icon(
+                            onPressed: () {
+                              setState(() {
+                                isMemo = true;
+                              });  // Respond to button press
+                            },
+                            style: ElevatedButton.styleFrom(
+                              primary: Colors.black, // background
+                              onPrimary: Colors.white, // foreground
+                              shape: new RoundedRectangleBorder(
+                                borderRadius: new BorderRadius.circular(30.0),
+                              ),
+                            ),
+                            icon: Icon(Icons.article_outlined, size: 18, color: Colors.white,),
+                            label: Text("메모", style : TextStyle(color: Colors.white)),
+                          )
+                      )
+                    ],
+                  ),
                 ),
               ]),
         )
