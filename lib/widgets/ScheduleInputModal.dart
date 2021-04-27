@@ -4,6 +4,7 @@ import 'package:autocalen/models/UserData.dart';
 import 'package:autocalen/widgets/TagListDialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_datetime_picker/src/date_format.dart';
@@ -21,7 +22,9 @@ void show(BuildContext context, Schedule details, {DateTime date}){
           builder: (context, snapshot) {
             if(snapshot.data==null) {
               print('isEmpty ${snapshot.data}');
-              return Center(child: Text('로딩'));
+              return Center(child: SpinKitFadingCircle(
+                color: Colors.black,
+              ));
             }
             else{
               List<DocumentSnapshot> documents = snapshot.data.docs;
