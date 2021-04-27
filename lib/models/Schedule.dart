@@ -6,7 +6,7 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 /// information about the event data which will be rendered in calendar.
 class Schedule {
   /// Creates a schedule class with required details.
-  Schedule(this.sid, this.title, this.start, this.end, this.tag, this.isAllDay);
+  Schedule(this.sid, this.title, this.start, this.end, this.tag, this.memo, this.isAllDay);
 
   String sid;
   /// Event name which is equivalent to subject property of [Appointment].
@@ -22,8 +22,8 @@ class Schedule {
   Color color;
   Tag tag; // 배경색
 
-  /// 일단은 주석,, 나중에
-  // String memo; // 메모
+  /// 옵션으로.. 메모 없으면 빈 문자열로
+  String memo; // 메모
 
   /// IsAllDay which is equivalent to isAllDay property of [Appointment].
   bool isAllDay; // 하루종일 여부
@@ -32,6 +32,7 @@ class Schedule {
   void setStart(DateTime s) {this.start=s;}
   void setEnd(DateTime e) {this.end=e;}
   void setTag(Tag t) {this.tag=t;}
+  void setMemo(String m) {this.memo = m;}
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -40,6 +41,8 @@ class Schedule {
       'start': start,
       'end': end,
       'tag': tag.toJson(),
+      'memo': memo,
+      'isAllDay': isAllDay,
     };
   }
 
@@ -79,6 +82,11 @@ class ScheduleDataSource extends CalendarDataSource {
   @override
   Color getColor(int index){
     return appointments[index].tag.getTagColor();
+  }
+
+  @override
+  String getNotes(int index){
+    return appointments[index].memo;
   }
 
   @override
