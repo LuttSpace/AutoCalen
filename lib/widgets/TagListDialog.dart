@@ -232,6 +232,7 @@ class _TagSelectMenuState extends State<TagSelectMenu>
                                               color: tagList[index].getTagColor(),
                                               onPressed: () {
                                                 setState(() {
+                                                  print('tid: ${tagList[index].tid}');
                                                   currentColor = tagList[index].getTagColor();
                                                   currentTag = tagList[index];
                                                   widget.onChange(index);

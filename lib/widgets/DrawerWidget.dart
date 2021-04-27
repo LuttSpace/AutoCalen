@@ -37,6 +37,13 @@ class _ShowDrawerState extends State<ShowDrawer> {
             ),
             ListTile(
               leading: Icon(Icons.color_lens),
+              title: Text('태그별 일정'),
+              onTap: () {
+                //Navigator.push(context, MaterialPageRoute(builder: (context)=> TagSetting()));
+                Navigator.pushNamed(context, '/sortedListByTag');
+              },
+            ),ListTile(
+              leading: Icon(Icons.color_lens),
               title: Text('태그 설정'),
               onTap: () {
                 print('태그 설정');

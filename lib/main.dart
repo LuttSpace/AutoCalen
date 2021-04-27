@@ -4,6 +4,7 @@ import 'package:autocalen/models/UserData.dart';
 import 'package:autocalen/models/Tag.dart';
 import 'package:autocalen/models/Schedule.dart';
 import 'package:autocalen/pages/LoginPage.dart';
+import 'package:autocalen/pages/SortedListByTagPage.dart';
 import 'package:autocalen/pages/TagSettingPage.dart';
 import 'package:autocalen/widgets/DayDialogWidget.dart';
 import 'package:autocalen/widgets/DrawerWidget.dart';
@@ -57,6 +58,7 @@ class MainPage extends StatelessWidget{
           routes: {
             '/' :(context)=> HomePage(),
             '/tagSetting':(context)=>TagSetting(),
+            '/sortedListByTag':(context)=>SortedListByTag(),
             '/login': (context)=>Login(),
           },
         ),
