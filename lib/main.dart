@@ -5,6 +5,7 @@ import 'package:autocalen/models/Tag.dart';
 import 'package:autocalen/models/Schedule.dart';
 import 'package:autocalen/pages/LoginPage.dart';
 import 'package:autocalen/pages/SortedListByTagPage.dart';
+import 'package:autocalen/pages/SplashScreen.dart';
 import 'package:autocalen/pages/TagSettingPage.dart';
 import 'package:autocalen/widgets/DayDialogWidget.dart';
 import 'package:autocalen/widgets/DrawerWidget.dart';
@@ -16,6 +17,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:provider/provider.dart';
@@ -54,12 +56,13 @@ class MainPage extends StatelessWidget{
               primaryColor: Colors.white,
               accentColor: Colors.black
           ),
-          initialRoute: '/',
+          initialRoute: '/splash',
           routes: {
-            '/' :(context)=> HomePage(),
+            '/home' :(context)=> HomePage(),
             '/tagSetting':(context)=>TagSetting(),
             '/sortedListByTag':(context)=>SortedListByTag(),
             '/login': (context)=>Login(),
+            '/splash': (context) => SplashScreen(),
           },
         ),
     );
@@ -209,7 +212,9 @@ class _CalendarPageState extends State<CalendarPage> {
             print('snap ${++snapCalled}');
             if(snapshot.data==null) {
               print('isEmpty ${snapshot.data}');
-              return Center(child: Text('로딩'));
+              return Center(child: SpinKitFadingCircle(
+                color: Colors.black,
+              ));
             }
             else {
               print('start calling data on ${snapCalled} ');
