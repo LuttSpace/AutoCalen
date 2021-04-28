@@ -24,17 +24,41 @@ class _TagTileState extends State<TagTile> {
   var changeController;
 
   void updateTag(Tag currentTag){
-    CollectionReference scheduleHub = FirebaseFirestore.instance.collection("UserList").doc(widget.userProvider.getUid()).collection('TagHub');
-    scheduleHub.doc(currentTag.tid)
+    //태그 정보 업데이트
+    CollectionReference tagHub = FirebaseFirestore.instance.collection("UserList").doc(widget.userProvider.getUid()).collection('TagHub');
+
+    tagHub.doc(currentTag.tid)
           .update(currentTag.toJson())
           .then((value){
         print('sucess updating');
       });
+    // 일정 마다 태그 업데이트.
+    CollectionReference scheduleHub = FirebaseFirestore.instance.collection("UserList").doc(widget.userProvider.getUid()).collection('ScheduleHub');
+
+    scheduleHub.where('tag.tid',isEqualTo: currentTag.tid).get().then((response){
+        response.docs.forEach((doc){
+            print('doc id ${doc.id}');
+            var docRef = scheduleHub.doc(doc.id);
+            docRef.update({'tag':currentTag.toJson()}).then((value) {print('tag update');});
+        });
+    });
+
   }
   void deleteTag(Tag currentTag){
-    CollectionReference scheduleHub = FirebaseFirestore.instance.collection("UserList").doc(widget.userProvider.getUid()).collection('TagHub');
-    scheduleHub.doc(currentTag.tid).delete().then((value) => print('succes deleting'));
+    CollectionReference tagHub = FirebaseFirestore.instance.collection("UserList").doc(widget.userProvider.getUid()).collection('TagHub');
+    tagHub.doc(currentTag.tid).delete().then((value) => print('succes deleting'));
+    //태그 일정들 기타로 옮기기
+    CollectionReference scheduleHub = FirebaseFirestore.instance.collection("UserList").doc(widget.userProvider.getUid()).collection('ScheduleHub');
+
+    scheduleHub.where('tag.tid',isEqualTo: currentTag.tid).get().then((response){
+      response.docs.forEach((doc){
+        print('doc id ${doc.id}');
+        var docRef = scheduleHub.doc(doc.id);
+        docRef.update({'tag.tid':'','tag.name':'기타'}).then((value) {print('tag delete');});
+      });
+    });
   }
+
   @override
   void initState() {
     _currentColor =widget._tag.getTagColor();
