@@ -8,14 +8,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:autocalen/Function/UploadImg.dart' as ImgUpload;
 
-class DayDialogFAB extends StatefulWidget {
-  DateTime _date;
-  DayDialogFAB(this._date);
+class AddScheduleFAB extends StatefulWidget {
+  bool isMain;
+  DateTime date;
+  AddScheduleFAB(this.isMain,{this.date});
   @override
-  _DayDialogFABState createState() => _DayDialogFABState();
+  _AddScheduleFABState createState() => _AddScheduleFABState();
 }
 
-class _DayDialogFABState extends State<DayDialogFAB>
+class _AddScheduleFABState extends State<AddScheduleFAB>
     with SingleTickerProviderStateMixin {
   //Camera (image_picker) Area
   File _image =null;
@@ -73,7 +74,10 @@ class _DayDialogFABState extends State<DayDialogFAB>
       children: [ //stack 구조임
         SpeedDialChild(
           child: Icon(Icons.edit),
-          onTap: ()=>ScheduleInputModal.show(context,null, date: widget._date),
+          onTap: (){
+            if(!widget.isMain) ScheduleInputModal.show(widget.isMain,context,null, date:widget.date);
+            else ScheduleInputModal.show(widget.isMain,context, null, date:DateTime.now());
+          },
         ),
         SpeedDialChild(
           child:Icon(Icons.camera_alt),

@@ -12,7 +12,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-void show(BuildContext context, Schedule details, {DateTime date}){
+void show(bool isMain,BuildContext context, Schedule details, {DateTime date}){
   final userProvider = Provider.of<UserData>(context, listen: false);
   showBarModalBottomSheet(
     context: context,
@@ -39,7 +39,7 @@ void show(BuildContext context, Schedule details, {DateTime date}){
     },
     expand: true,
   ).then((value){
-    Navigator.of(context).pop();
+    if(!isMain) Navigator.of(context).pop();
   });
 }
 

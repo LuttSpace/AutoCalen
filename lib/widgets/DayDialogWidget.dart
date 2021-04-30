@@ -1,9 +1,8 @@
-import 'package:autocalen/widgets/DayDialogFABWidget.dart';
+import 'package:autocalen/widgets/AddScheduleFAB.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
 import 'package:autocalen/widgets/ScheduleInputModal.dart' as ScheduleInputModal;
-
 
 
 class ShowDayDialog extends StatefulWidget{
@@ -57,7 +56,7 @@ class _ShowDayDialogState extends State<ShowDayDialog> {
             contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
             title: Text(details.appointments[i].title),
             subtitle: Text(subtitleDate(details.appointments[i].start, details.appointments[i].end, details.appointments[i].isAllDay)),
-            onTap: () => ScheduleInputModal.show(context,details.appointments[i]),
+            onTap: () => ScheduleInputModal.show(false,context,details.appointments[i]),
           );
         },
         separatorBuilder: (context, index) { return Divider(
@@ -113,7 +112,7 @@ class _ShowDayDialogState extends State<ShowDayDialog> {
                     height: MediaQuery.of(context).size.height*0.45,
                     width: MediaQuery.of(context).size.width*0.9,
                     alignment: Alignment.bottomRight,
-                    child: widget.isOrigin? DayDialogFAB(widget._date) : null,
+                    child: widget.isOrigin? AddScheduleFAB(false, date:widget._date) : null,
                   )
               ),
           ],

@@ -7,9 +7,9 @@ import 'package:autocalen/pages/LoginPage.dart';
 import 'package:autocalen/pages/SortedListByTagPage.dart';
 import 'package:autocalen/pages/SplashScreen.dart';
 import 'package:autocalen/pages/TagSettingPage.dart';
+import 'package:autocalen/widgets/AddScheduleFAB.dart';
 import 'package:autocalen/widgets/DayDialogWidget.dart';
 import 'package:autocalen/widgets/DrawerWidget.dart';
-import 'package:autocalen/widgets/MainFABWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -272,7 +272,7 @@ class _CalendarPageState extends State<CalendarPage> {
             }
           },
         ),
-        floatingActionButton:  MainFAB()
+        floatingActionButton:  AddScheduleFAB(true)
     );
   }
 }
