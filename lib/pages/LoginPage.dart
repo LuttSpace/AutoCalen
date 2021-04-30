@@ -186,10 +186,15 @@ class _LoginState extends State<Login> {
                         child: Container(
                           width: 30,
                           height: 30,
-                          color: Colors.yellow,
+                          decoration: BoxDecoration(
+                            color: Colors.yellow,
+                            borderRadius: BorderRadius.all(
+                                Radius.circular(5.0) //
+                            ),
+                          ),
                           child: Icon(Icons.chat_bubble,
                           color: Color(0xFF000000),
-                          size: 25,
+                          size: 20,
                         ),
                       )),
                       Expanded(
