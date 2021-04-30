@@ -130,85 +130,120 @@ class _LoginState extends State<Login> {
           mainAxisAlignment: MainAxisAlignment.center,
 
           children: [
-            Hero(
-              tag: 'hero',
-              child: CircleAvatar(
-                child: Icon(Icons.calendar_today, size: 50.0,),
-                backgroundColor: Colors.transparent,
-                radius: 58.0,
-              ),
+            Container(
+              child: Image.asset('images/logo/logo_only.png', width: 250.0, height: 250),
             ),
-            SizedBox(height: 45.0),
-            ElevatedButton.icon(
+            SizedBox(height: 25.0),
+            ElevatedButton(
               onPressed: () => signInWithGoogle().then((value) {
                 addNewUser(context, value.user, 'google');
                 userProvider.setUserData('google');
               }), // 구글 로그인 후 사용자 정보 저장
-              icon: Padding(
-                padding: const EdgeInsets.only(right: 15.0),
-                child: Image.asset(
-                  'images/icon/google_icon.png',
-                  width: 25,
-                  height: 25,
-                ),
-              ),
-              label: Text("구글 로그인",
-                style: TextStyle(
-                  color: Colors.black87,
-                ),
+              child: SizedBox(
+                  width: 300,
+                  height: 60,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Image.asset(
+                          'images/icon/google_icon.png',
+                          width: 25,
+                          height: 25,
+                        ),
+                      ),
+                      Expanded(
+                        flex: 8,
+                        child: Text("구글 로그인",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
               ),
               style: ElevatedButton.styleFrom(
                 // background color
-                primary: Colors.white70,
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                //minimumSize: Size(300,50),
+                primary: Colors.white,
+                //padding: EdgeInsets.fromLTRB(20, 10, 50, 10),
                 textStyle: TextStyle(fontSize: 20, color: Colors.black87),
               ),
             ),
-            SizedBox(height: 20.0),
-            ElevatedButton.icon(
+            SizedBox(height: 15.0),
+            ElevatedButton(
               onPressed: () =>signInWithKakao().then((value) {
                 addNewUser(context, value.user, 'kakao');
                 userProvider.setUserData('kakao');
-              }), // 카카오 로그인 후 사용자 정보 저장
-              icon: Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: Icon(Icons.chat_bubble,
-                  color: Color(0xFF000000),
-                  size: 25,
-                ),
-              ),
-              label: Text("카카오 로그인",
-                style: TextStyle(
-                  color: Colors.black87,
-                ),
+              }), //
+              child: SizedBox(
+                  width: 300,
+                  height: 60,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Container(
+                          width: 30,
+                          height: 30,
+                          color: Colors.yellow,
+                          child: Icon(Icons.chat_bubble,
+                          color: Color(0xFF000000),
+                          size: 25,
+                        ),
+                      )),
+                      Expanded(
+                        flex: 8,
+                        child: Text("카카오 로그인",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
               ),
               style: ElevatedButton.styleFrom(
                 // background color
-                primary: Color(0xFFFEE500),
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
+                primary: Colors.white, //Color(0xFFFEE500),
+                //padding: EdgeInsets.fromLTRB(20, 10, 50, 10),
                 textStyle: TextStyle(fontSize: 20, color: Colors.black87),
               ),
             ),
-            SizedBox(height: 20.0),
-            ElevatedButton.icon(
+            SizedBox(height: 15.0),
+            ElevatedButton(
               onPressed: () => signInWithNaver().then((value) {
                 addNewUser(context, value.user, 'naver');
                 userProvider.setUserData('naver');
-              }), // 네이버 로그인 후 사용자 정보 저장
-              icon: Padding(
-                padding: const EdgeInsets.only(right: 5.0),
-                child: Image.asset(
-                  'images/icon/naver_icon.png',
-                  width: 30,
-                  height: 30,
-                ),
-              ),//Icon(Icons.add, size: 18),
-              label: Text("네이버 로그인",),
+              }),
+              child: SizedBox(
+                  width: 300,
+                  height: 60,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Image.asset(
+                          'images/icon/naver_icon.png',
+                          width: 30,
+                          height: 30,
+                        ),
+                      ),
+                      Expanded(
+                        flex: 8,
+                        child: Text("네이버 로그인",textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.black87,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+              ),
               style: ElevatedButton.styleFrom(
                 // background color
-                primary: Color(0xFF1EC800),
-                padding: EdgeInsets.symmetric(horizontal: 30, vertical: 10),
-                textStyle: TextStyle(fontSize: 20),
+                primary: Colors.white, //Color(0xFF1EC800),
+                textStyle: TextStyle(fontSize: 20, color: Colors.black87),
               ),
             ),
           ],

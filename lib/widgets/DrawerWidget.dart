@@ -19,6 +19,8 @@ class _ShowDrawerState extends State<ShowDrawer> {
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserData>(context, listen: false);
+    final theme = Theme.of(context).copyWith(dividerColor: Colors.transparent);
+
     return Drawer(
         child: userProvider.getUid() != null? ListView(
           children: [
@@ -35,21 +37,34 @@ class _ShowDrawerState extends State<ShowDrawer> {
                   color: Colors.black12
               ),
             ),
-            ListTile(
-              leading: Icon(Icons.color_lens),
-              title: Text('태그별 일정'),
-              onTap: () {
-                //Navigator.push(context, MaterialPageRoute(builder: (context)=> TagSetting()));
-                Navigator.pushNamed(context, '/sortedListByTag');
-              },
-            ),ListTile(
-              leading: Icon(Icons.color_lens),
-              title: Text('태그 설정'),
-              onTap: () {
-                print('태그 설정');
-                //Navigator.push(context, MaterialPageRoute(builder: (context)=> TagSetting()));
-                Navigator.pushNamed(context, '/tagSetting');
-              },
+            Theme(
+              data: theme,
+              child: ExpansionTile(
+                  leading: Icon(Icons.color_lens),
+                  title: Text('태그'),
+                  children: [
+                    ListTile(
+                      //contentPadding: EdgeInsets.only(left: 70),
+                      //leading: null, //Icon(Icons.color_lens, color: Colors.white,),
+                      leading: Icon(Icons.color_lens, color: Colors.transparent,),
+                      title: Text('일정'),
+                      onTap: () {
+                        //Navigator.push(context, MaterialPageRoute(builder: (context)=> TagSetting()));
+                        Navigator.pushNamed(context, '/sortedListByTag');
+                      },
+                    ),ListTile(
+                      //contentPadding: EdgeInsets.only(left: 70),
+                      //leading: null,
+                      leading: Icon(Icons.color_lens, color: Colors.transparent,),
+                      title: Text('설정'),
+                      onTap: () {
+                        print('설정');
+                        //Navigator.push(context, MaterialPageRoute(builder: (context)=> TagSetting()));
+                        Navigator.pushNamed(context, '/tagSetting');
+                      },
+                    ),
+                  ]
+              ),
             ),
             ListTile(
               leading: Icon(Icons.settings),

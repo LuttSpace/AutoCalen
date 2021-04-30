@@ -137,12 +137,14 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
         isMemo = true;
         memoController = TextEditingController(text: widget._details.memo);
       }
+      else memoController = TextEditingController();
       isAllDay = widget._details.isAllDay;
     }
     else{ // details==null && date!=null
       _currentTag = widget._tagList[0];
       titleController = TextEditingController();
       startInput = widget._date; endInput = widget._date.add(Duration(hours: 1));
+      memoController = TextEditingController();
 
     }
     startDateController = TextEditingController(text : DateFormat('yyyy/MM/dd', 'ko').format(startInput).toString());
@@ -193,6 +195,11 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                           print('endDate: ${endDateController.text}');
                           print('startTime: ${startTimeController.text}');
                           print('endTime: ${endTimeController.text}');
+
+                          if(memoController!= null){
+                            memoInput = memoController.text;
+                            print('memo: ${memoController.text}');
+                          }
 
                           if(widget._details!=null){
                             widget._details = new Schedule(widget._details.sid,titleController.text,startInput,endInput,_currentTag,memoInput,isAllDay);
@@ -380,6 +387,7 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                 ),
                 isMemo? TextFormField(
                   style: inputTextStyle,
+                  controller: memoController,
                   cursorColor: Colors.black,
                   decoration: inputDecoration('일정 메모', '메모'),
                   onSaved: (value){
