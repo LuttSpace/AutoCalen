@@ -24,7 +24,7 @@ class _ShowDayDialogState extends State<ShowDayDialog> {
     if(startTime.difference(endTime).inDays==0){ // 시작날짜, 종료날짜가 같으면
       subtitle= DateFormat(formatString, 'ko').format(startTime).toString();
       if((startTime.difference(endTime).inHours!=0||startTime.difference(endTime).inMinutes!=0)&& !isAllDay){ // 시간이 같지 않으면
-        subtitle= '${DateFormat(formatString, 'ko').format(startTime).toString()} - ${DateFormat('a h:mm', 'ko').format(endTime).toString()}';
+        subtitle= '${DateFormat('a h:mm', 'ko').format(startTime).toString()} - ${DateFormat('a h:mm', 'ko').format(endTime).toString()}';
       }
     } else{
       subtitle='${DateFormat(formatString, 'ko').format(startTime).toString()} - ${DateFormat(formatString, 'ko').format(endTime).toString()}';

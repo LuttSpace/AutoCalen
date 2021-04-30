@@ -24,17 +24,34 @@ class _ShowDrawerState extends State<ShowDrawer> {
     return Drawer(
         child: userProvider.getUid() != null? ListView(
           children: [
-            UserAccountsDrawerHeader(
-              arrowColor: Colors.pink,
-              accountEmail: Text('${userProvider.getEmail()}'),
-              accountName: Text('${userProvider.getName()}'),
-              currentAccountPicture: CircleAvatar(
-                child: userProvider.getPhotoURL()==null ? Icon(Icons.person,color: Colors.black): null,
-                backgroundImage: userProvider.getPhotoURL()!=null? NetworkImage(userProvider.getPhotoURL()):null,
-                backgroundColor: Colors.white,
-              ),
-              decoration: BoxDecoration(
-                  color: Colors.black12
+            Container(
+              height: 100,
+              child: DrawerHeader(
+                padding: EdgeInsets.all(0.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                        padding: EdgeInsets.only(left: 30),
+                        child: Text("${userProvider.getName()}",
+                          style: TextStyle(color: Colors.black),)),
+                    SizedBox(height: 5,),
+                    Padding(
+                        padding: EdgeInsets.only(left: 30),
+                        child: Text("${userProvider.getEmail()}",
+                          style: TextStyle(color: Colors.black),))
+                  ],
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  image: DecorationImage(
+                    colorFilter: new ColorFilter.mode(Colors.white.withOpacity(0.2), BlendMode.dstATop),
+                    image: AssetImage("images/logo/logo_only.png"),
+                    fit: BoxFit.fitHeight,
+                  ),
+                ),
               ),
             ),
             Theme(
