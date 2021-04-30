@@ -1,18 +1,23 @@
 
 import 'dart:io';
 
+import 'package:autocalen/widgets/ScheduleInputModal.dart' as ScheduleInputModal;
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:autocalen/Function/UploadImg.dart' as ImgUpload;
 
-class MainFAB extends StatefulWidget{
+class AddScheduleFAB extends StatefulWidget {
+  bool isMain;
+  DateTime date;
+  AddScheduleFAB(this.isMain,{this.date});
   @override
-  _MainFABState createState() => _MainFABState();
+  _AddScheduleFABState createState() => _AddScheduleFABState();
 }
 
-class _MainFABState extends State<MainFAB> {
+class _AddScheduleFABState extends State<AddScheduleFAB>
+    with SingleTickerProviderStateMixin {
   //Camera (image_picker) Area
   File _image =null;
   final picker = ImagePicker();
@@ -50,15 +55,6 @@ class _MainFABState extends State<MainFAB> {
                 ],
               ),
             );
-            //     actions: [
-            //       IconButton(
-            //           onPressed: (){
-            //             Navigator.of(context).pop();
-            //           },
-            //           icon: Icon(Icons.check, color: Colors.black,)
-            //       )
-            //     ]
-            // );
           },
         );
       } else {
@@ -67,26 +63,39 @@ class _MainFABState extends State<MainFAB> {
     });
     print('image_picker end');
   }
+
   @override
   Widget build(BuildContext context) {
     return
       SpeedDial(
-        child: Icon(Icons.add),
-        activeIcon: Icons.clear,
-        overlayOpacity: 0.3,
-        children: [ //stack 구조임
-          SpeedDialChild(
-
-            child:Icon(Icons.camera_alt),
-            onTap: ()=>getImage(ImageSource.camera),
-          ),
-          SpeedDialChild(
-            child:Icon(Icons.photo),
-            onTap: ()=>getImage(ImageSource.gallery),
-          )
-        ],
-
-      );
-
+      child: Icon(Icons.add),
+      backgroundColor: Color(0xFF323232),
+      foregroundColor: Color(0xffefefef),
+      activeIcon: Icons.clear,
+      overlayOpacity: 0,
+      children: [ //stack 구조임
+        SpeedDialChild(
+          child: Icon(Icons.edit),
+          backgroundColor: Color(0xFF323232),
+          foregroundColor: Color(0xffefefef),
+          onTap: (){
+            if(!widget.isMain) ScheduleInputModal.show(widget.isMain,context,null, date:widget.date);
+            else ScheduleInputModal.show(widget.isMain,context, null, date:DateTime.now());
+          },
+        ),
+        SpeedDialChild(
+          child:Icon(Icons.camera_alt),
+          backgroundColor: Color(0xFF323232),
+          foregroundColor: Color(0xffefefef),
+          onTap: ()=>getImage(ImageSource.camera),
+        ),
+        SpeedDialChild(
+          child:Icon(Icons.photo),
+          backgroundColor: Color(0xFF323232),
+          foregroundColor: Color(0xffefefef),
+          onTap: ()=>getImage(ImageSource.gallery),
+        )
+      ],
+    );
   }
 }

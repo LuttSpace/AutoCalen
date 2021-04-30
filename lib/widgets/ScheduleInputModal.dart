@@ -12,7 +12,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-void show(BuildContext context, Schedule details, {DateTime date}){
+void show(bool isMain,BuildContext context, Schedule details, {DateTime date}){
   final userProvider = Provider.of<UserData>(context, listen: false);
   showBarModalBottomSheet(
     context: context,
@@ -39,7 +39,7 @@ void show(BuildContext context, Schedule details, {DateTime date}){
     },
     expand: true,
   ).then((value){
-    Navigator.of(context).pop();
+    if(!isMain) Navigator.of(context).pop();
   });
 }
 
@@ -181,6 +181,23 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                                 content: SizedBox(
                                     height: 50,
                                     child: Center(child: Text('시간 설정을 다시 해주세요.'))
+                                ),
+                              );
+                            },
+                          );
+                        }
+                        else if(titleController.text == ''){
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              Future.delayed(Duration(seconds: 1), () {Navigator.pop(context);});
+                              return AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0)
+                                ),
+                                content: SizedBox(
+                                    height: 50,
+                                    child: Center(child: Text('제목을 적어주세요.'))
                                 ),
                               );
                             },

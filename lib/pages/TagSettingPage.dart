@@ -271,7 +271,7 @@ class _TagSettingState extends State<TagSetting> {
             accentColor: Colors.black
         ),
         home: Scaffold(
-          resizeToAvoidBottomInset: false,
+          //resizeToAvoidBottomInset: false,
           appBar: AppBar(
             title: Text('태그 설정'),
             leading: IconButton(
@@ -279,143 +279,147 @@ class _TagSettingState extends State<TagSetting> {
               onPressed: ()=> Navigator.of(context).pop(),
             ),
           ),
-          body: Column(
-            children: [
-              Container(
-                width : MediaQuery.of(context).size.width,
-                margin: EdgeInsets.symmetric(vertical: 20,horizontal: 10),
-                child: Row( // 이거 한데로 모으든가 해야함.. 두개로 분할 ^^ 돼있음
-                  children: [
-                    Container(
-                      width: MediaQuery.of(context).size.width /8,
-                      height: MediaQuery.of(context).size.width /8 ,
-                      margin: EdgeInsets.symmetric(vertical: 0,horizontal: 5),
-                      // ignore: deprecated_member_use
-                      child: RaisedButton(
-                          color: _currentColor,
-                          onPressed: (){
-                            showDialog(
-                              context: context,
-                              builder: (context){
-                                return AlertDialog(
-                                  content: Container(
-                                    width: 320,height: 500,
-                                    child: ColorPicker(
-                                      color: _currentColor,
-                                      onColorChanged: (color){
-                                        setState(() {
-                                          _pickedColor=color;
-                                        });
-                                      },
-                                      width: 40,
-                                      height: 40,
-                                      borderRadius: 4,
-                                      spacing: 5,
-                                      runSpacing: 5,
-                                      wheelDiameter: 155,
-                                      heading: Text(
-                                        'Select color',
-                                        style: Theme.of(context).textTheme.subtitle1,
-                                      ),
-                                      subheading: Text(
-                                        'Select color shade',
-                                        style: Theme.of(context).textTheme.subtitle1,
-                                      ),
-                                      wheelSubheading: Text(
-                                        'Selected color and its shades',
-                                        style: Theme.of(context).textTheme.subtitle1,
-                                      ),
-                                      showMaterialName: true,
-                                      showColorName: true,
-                                      showColorCode: true,
-                                      materialNameTextStyle: Theme.of(context).textTheme.caption,
-                                      colorNameTextStyle: Theme.of(context).textTheme.caption,
-                                      colorCodeTextStyle: Theme.of(context).textTheme.caption,
-                                      pickersEnabled: const <ColorPickerType, bool>{
-                                        ColorPickerType.both: false,
-                                        ColorPickerType.primary: true,
-                                        ColorPickerType.accent: true,
-                                        ColorPickerType.bw: false,
-                                        ColorPickerType.custom: true,
-                                        ColorPickerType.wheel: true,
-                                      },
-                                    ),
-                                  ),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: (){ //색깔 고르기
-                                          print(_pickedColor.toString());
+          body: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            child:Column(
+              children: [
+                Container(
+                  width : MediaQuery.of(context).size.width,
+                  margin: EdgeInsets.symmetric(vertical: 20,horizontal: 10),
+                  child: Row( // 이거 한데로 모으든가 해야함.. 두개로 분할 ^^ 돼있음
+                    children: [
+                      Container(
+                        width: MediaQuery.of(context).size.width /8,
+                        height: MediaQuery.of(context).size.width /8 ,
+                        margin: EdgeInsets.symmetric(vertical: 0,horizontal: 5),
+                        // ignore: deprecated_member_use
+                        child: RaisedButton(
+                            color: _currentColor,
+                            onPressed: (){
+                              showDialog(
+                                context: context,
+                                builder: (context){
+                                  return AlertDialog(
+                                    content: Container(
+                                      width: 320,height: 500,
+                                      child: ColorPicker(
+                                        color: _currentColor,
+                                        onColorChanged: (color){
                                           setState(() {
-                                            _currentColor=_pickedColor;
+                                            _pickedColor=color;
                                           });
-                                          Navigator.of(context).pop();
                                         },
-                                        child: Text('확인')
-                                    )
-                                  ],
-                                );
-                              },
-                            );
-                          }
-                      ),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width - MediaQuery.of(context).size.width/4 - 50,
-                      height: MediaQuery.of(context).size.width /7,
-                      margin: EdgeInsets.symmetric(vertical: 0,horizontal: 5),
-                      child: TextField(
-                        decoration: InputDecoration(
-                            border:OutlineInputBorder(),
-                            focusedBorder: OutlineInputBorder(borderSide: BorderSide(color:Colors.black54,)),
-                            labelText: '넓은 범위일수록 좋아요!',
-                            labelStyle: TextStyle(color: Colors.black54)
+                                        width: 40,
+                                        height: 40,
+                                        borderRadius: 4,
+                                        spacing: 5,
+                                        runSpacing: 5,
+                                        wheelDiameter: 155,
+                                        heading: Text(
+                                          'Select color',
+                                          style: Theme.of(context).textTheme.subtitle1,
+                                        ),
+                                        subheading: Text(
+                                          'Select color shade',
+                                          style: Theme.of(context).textTheme.subtitle1,
+                                        ),
+                                        wheelSubheading: Text(
+                                          'Selected color and its shades',
+                                          style: Theme.of(context).textTheme.subtitle1,
+                                        ),
+                                        showMaterialName: true,
+                                        showColorName: true,
+                                        showColorCode: true,
+                                        materialNameTextStyle: Theme.of(context).textTheme.caption,
+                                        colorNameTextStyle: Theme.of(context).textTheme.caption,
+                                        colorCodeTextStyle: Theme.of(context).textTheme.caption,
+                                        pickersEnabled: const <ColorPickerType, bool>{
+                                          ColorPickerType.both: false,
+                                          ColorPickerType.primary: true,
+                                          ColorPickerType.accent: true,
+                                          ColorPickerType.bw: false,
+                                          ColorPickerType.custom: true,
+                                          ColorPickerType.wheel: true,
+                                        },
+                                      ),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                          onPressed: (){ //색깔 고르기
+                                            print(_pickedColor.toString());
+                                            setState(() {
+                                              _currentColor=_pickedColor;
+                                            });
+                                            Navigator.of(context).pop();
+                                          },
+                                          child: Text('확인')
+                                      )
+                                    ],
+                                  );
+                                },
+                              );
+                            }
                         ),
-                        controller: controller,
                       ),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width /8,
-                      height: MediaQuery.of(context).size.width /8 ,
-                      margin: EdgeInsets.symmetric(vertical: 0,horizontal: 5),
-                      child: TextButton(
-                          child: Text('추가', style: TextStyle(color: Colors.black),),
-                          style: ButtonStyle(
+                      Container(
+                        width: MediaQuery.of(context).size.width - MediaQuery.of(context).size.width/4 - 50,
+                        height: MediaQuery.of(context).size.width /7,
+                        margin: EdgeInsets.symmetric(vertical: 0,horizontal: 5),
+                        child: TextField(
+                          decoration: InputDecoration(
+                              border:OutlineInputBorder(),
+                              focusedBorder: OutlineInputBorder(borderSide: BorderSide(color:Colors.black54,)),
+                              labelText: '넓은 범위일수록 좋아요!',
+                              labelStyle: TextStyle(color: Colors.black54)
                           ),
-                          onPressed: () {
-                            print('add start');
-                            setState(() {
-                              //tags.add(new Tag('',controller.text,_currentColor));
-                              tags.clear();
-                              uploadTag(new Tag('',controller.text,_currentColor)); //tid 아직 없음
-                              controller.clear();
-                            });
-                            print('done ${controller.text} & ${_currentColor.toString()}');
-                          }
+                          controller: controller,
+                        ),
                       ),
-                    ),
-                  ],
+                      Container(
+                        width: MediaQuery.of(context).size.width /8,
+                        height: MediaQuery.of(context).size.width /8 ,
+                        margin: EdgeInsets.symmetric(vertical: 0,horizontal: 5),
+                        child: TextButton(
+                            child: Text('추가', style: TextStyle(color: Colors.black),),
+                            style: ButtonStyle(
+                            ),
+                            onPressed: () {
+                              print('add start');
+                              setState(() {
+                                //tags.add(new Tag('',controller.text,_currentColor));
+                                tags.clear();
+                                uploadTag(new Tag('',controller.text,_currentColor)); //tid 아직 없음
+                                controller.clear();
+                              });
+                              print('done ${controller.text} & ${_currentColor.toString()}');
+                            }
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              StreamBuilder<QuerySnapshot>(
-                stream: FirebaseFirestore.instance.collection('UserList').doc(userProvider.getUid()).collection('TagHub').snapshots(),
-                builder: (context, snapshot) {
-                  if(snapshot.data==null) {
-                    print('isEmpty ${snapshot.data}');
-                    return Center(child: Text('로딩'));
-                  }
-                  else{
-                    List<DocumentSnapshot> documents = snapshot.data.docs;
-                    return ListView(
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      children: documents.map((eachDocument) => TagTile(new Tag(eachDocument.id, eachDocument['name'],
-                            Color(int.parse(eachDocument['color'].toString().substring(6, 16)))),userProvider)).toList(),
-                      );
+                StreamBuilder<QuerySnapshot>(
+                    stream: FirebaseFirestore.instance.collection('UserList').doc(userProvider.getUid()).collection('TagHub').snapshots(),
+                    builder: (context, snapshot) {
+                      if(snapshot.data==null) {
+                        print('isEmpty ${snapshot.data}');
+                        return Center(child: Text('로딩'));
+                      }
+                      else{
+                        List<DocumentSnapshot> documents = snapshot.data.docs;
+                        return ListView(
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          children: documents.map((eachDocument) => TagTile(new Tag(eachDocument.id, eachDocument['name'],
+                              Color(int.parse(eachDocument['color'].toString().substring(6, 16)))),userProvider)).toList(),
+                        );
+                      }
                     }
-                  }
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+          )
+
         )
     );
   }
