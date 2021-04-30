@@ -40,23 +40,36 @@ class _ShowDrawerState extends State<ShowDrawer> {
             Theme(
               data: theme,
               child: ExpansionTile(
-                  leading: Icon(Icons.color_lens),
+                  leading: Icon(Icons.tag),
                   title: Text('태그'),
                   children: [
                     ListTile(
-                      //contentPadding: EdgeInsets.only(left: 70),
-                      //leading: null, //Icon(Icons.color_lens, color: Colors.white,),
                       leading: Icon(Icons.color_lens, color: Colors.transparent,),
-                      title: Text('일정'),
+                      title: Row(
+                        children: [
+                          Icon(Icons.calendar_today),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text('한 눈에 보기'),
+                          ),
+                        ],
+                      ),
                       onTap: () {
                         //Navigator.push(context, MaterialPageRoute(builder: (context)=> TagSetting()));
                         Navigator.pushNamed(context, '/sortedListByTag');
                       },
-                    ),ListTile(
-                      //contentPadding: EdgeInsets.only(left: 70),
-                      //leading: null,
+                    ),
+                    ListTile(
                       leading: Icon(Icons.color_lens, color: Colors.transparent,),
-                      title: Text('설정'),
+                      title: Row(
+                        children: [
+                          Icon(Icons.color_lens),
+                          Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            child: Text('설정'),
+                          ),
+                        ],
+                      ),
                       onTap: () {
                         print('설정');
                         //Navigator.push(context, MaterialPageRoute(builder: (context)=> TagSetting()));
