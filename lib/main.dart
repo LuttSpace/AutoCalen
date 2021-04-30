@@ -263,7 +263,7 @@ class _CalendarPageState extends State<CalendarPage> {
                         showDialog(
                             context: context,
                             builder: (context) {
-                              return ShowDayDialog(_date, isEmpty, details);}
+                              return ShowDayDialog(true,_date, isEmpty, details);}
                         );
                       }
                     }
