@@ -186,6 +186,23 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                             },
                           );
                         }
+                        else if(titleController.text == ''){
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              Future.delayed(Duration(seconds: 1), () {Navigator.pop(context);});
+                              return AlertDialog(
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8.0)
+                                ),
+                                content: SizedBox(
+                                    height: 50,
+                                    child: Center(child: Text('제목을 적어주세요.'))
+                                ),
+                              );
+                            },
+                          );
+                        }
                         else{ //정상 처리
                           print('diffrence ${endInput.difference(startInput).isNegative}');
                           print('last: '+_currentTag.getTagName());
