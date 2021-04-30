@@ -7,10 +7,11 @@ import 'package:autocalen/widgets/ScheduleInputModal.dart' as ScheduleInputModal
 
 
 class ShowDayDialog extends StatefulWidget{
+  bool isOrigin;
   DateTime _date;
   bool isEmpty;
   CalendarTapDetails details;
-  ShowDayDialog(this._date,this.isEmpty,this.details);
+  ShowDayDialog(this.isOrigin,this._date,this.isEmpty,this.details);
   @override
   _ShowDayDialogState createState() => _ShowDayDialogState();
 }
@@ -87,7 +88,7 @@ class _ShowDayDialogState extends State<ShowDayDialog> {
               Positioned(
                   child: Container(
                       alignment: Alignment.topCenter,
-                      padding:EdgeInsets.symmetric(horizontal: 0.0, vertical: 15.0),
+                      padding:EdgeInsets.symmetric(horizontal: 0.0, vertical: 20.0),
                       child: new Text(
                         '${_dateText}',
                         style: TextStyle(
@@ -102,7 +103,7 @@ class _ShowDayDialogState extends State<ShowDayDialog> {
                     height: MediaQuery.of(context).size.height*1.8,
                     width: MediaQuery.of(context).size.width*0.9,
                     child: _buildScheduleListView(context, widget.details),
-                    padding: EdgeInsets.symmetric(horizontal: 10,vertical: 0),
+                    padding: EdgeInsets.symmetric(horizontal: 10,vertical: 10),
                   ),
               ),
               Positioned(
@@ -112,7 +113,7 @@ class _ShowDayDialogState extends State<ShowDayDialog> {
                     height: MediaQuery.of(context).size.height*0.45,
                     width: MediaQuery.of(context).size.width*0.9,
                     alignment: Alignment.bottomRight,
-                    child: DayDialogFAB(widget._date),
+                    child: widget.isOrigin? DayDialogFAB(widget._date) : null,
                   )
               ),
           ],

@@ -1,6 +1,7 @@
 import 'package:autocalen/models/Schedule.dart';
 import 'package:autocalen/models/Tag.dart';
 import 'package:autocalen/models/UserData.dart';
+import 'package:autocalen/widgets/DayDialogWidget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -26,7 +27,9 @@ class _TagCalendarState extends State<TagCalendar> {
   String _yearName='';
   //Calendar Controller
   CalendarController _calendarController;
-
+  // 선택한 날짜에 등록된 일정 있는지
+  bool isEmpty = true;
+  DateTime _date;
   void changeAppBarDateView(ViewChangedDetails viewChangedDetails){
     //앱바에 년월 바꾸기
     SchedulerBinding.instance
@@ -141,21 +144,21 @@ class _TagCalendarState extends State<TagCalendar> {
                       ),
                       dataSource: ScheduleDataSource(schedules),
                       onTap: (details) {
-                        // if (details.targetElement ==
-                        //     CalendarElement.calendarCell) {
-                        //   _date = details.date;
-                        //   // 선택한 날짜에 일정이 있는 경우
-                        //   if (details.appointments.length > 0)
-                        //     isEmpty = false;
-                        //   // 선택한 날짜에 일정이 없는 경우
-                        //   else
-                        //     isEmpty = true;
-                        //   showDialog(
-                        //       context: context,
-                        //       builder: (context) {
-                        //         return ShowDayDialog(_date, isEmpty, details);}
-                        //   );
-                        // }
+                        if (details.targetElement ==
+                            CalendarElement.calendarCell) {
+                          _date = details.date;
+                          // 선택한 날짜에 일정이 있는 경우
+                          if (details.appointments.length > 0)
+                            isEmpty = false;
+                          // 선택한 날짜에 일정이 없는 경우
+                          else
+                            isEmpty = true;
+                          showDialog(
+                              context: context,
+                              builder: (context) {
+                                return ShowDayDialog(false,_date, isEmpty, details);}
+                          );
+                        }
                       }
                   ),
                 );
