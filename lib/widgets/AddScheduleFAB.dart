@@ -69,11 +69,15 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
     return
       SpeedDial(
       child: Icon(Icons.add),
+      backgroundColor: Color(0xFF323232),
+      foregroundColor: Color(0xffefefef),
       activeIcon: Icons.clear,
       overlayOpacity: 0,
       children: [ //stack 구조임
         SpeedDialChild(
           child: Icon(Icons.edit),
+          backgroundColor: Color(0xFF323232),
+          foregroundColor: Color(0xffefefef),
           onTap: (){
             if(!widget.isMain) ScheduleInputModal.show(widget.isMain,context,null, date:widget.date);
             else ScheduleInputModal.show(widget.isMain,context, null, date:DateTime.now());
@@ -81,10 +85,14 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
         ),
         SpeedDialChild(
           child:Icon(Icons.camera_alt),
+          backgroundColor: Color(0xFF323232),
+          foregroundColor: Color(0xffefefef),
           onTap: ()=>getImage(ImageSource.camera),
         ),
         SpeedDialChild(
           child:Icon(Icons.photo),
+          backgroundColor: Color(0xFF323232),
+          foregroundColor: Color(0xffefefef),
           onTap: ()=>getImage(ImageSource.gallery),
         )
       ],
