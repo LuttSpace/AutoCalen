@@ -97,6 +97,8 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
     double height = MediaQuery.of(context).size.height;
     print('=======================Splash Screen Build==============================');
 
+    double size = 250;
+
     return Scaffold(
       body: Builder(
           builder: (context) => Center(
@@ -106,42 +108,45 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                     alignment: Alignment.center,
                     child: SlideTransition(
                         position: _animation1,
-                        child: Image.asset('images/logo/logo_right_top.png')//Text('animation2', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        child: Image.asset('images/logo/logo_right_top.png',
+                        width: size, height: size,)//Text('animation2', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                     ),
                   ),
                   Align(
                     alignment: Alignment.center,
                     child: SlideTransition(
                         position: _animation2,
-                        child: Image.asset('images/logo/logo_right_bottom.png')//Text('animation3', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        child: Image.asset('images/logo/logo_right_bottom.png',
+                          width: size, height: size,)//Text('animation3', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                     ),
                   ),
                   Align(
                     alignment: Alignment.center,
                     child: SlideTransition(
                         position: _animation3,
-                        child: Image.asset('images/logo/logo_left_bottom.png')//Text('animation3', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        child: Image.asset('images/logo/logo_left_bottom.png',
+                          width: size, height: size,)//Text('animation3', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                     ),
                   ),
                   Align(
                     alignment: Alignment.center,
                     child: SlideTransition(
                         position: _animation4,
-                        child:Image.asset('images/logo/logo_left_top.png') //Text('animation1', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        child:Image.asset('images/logo/logo_left_top.png',
+                          width: size, height: size,) //Text('animation1', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                     ),
                   ),
-                  Positioned(
-                    left: 100,
-                    right: 100,
-                    bottom: 150,
-                    child: FadeTransition(
-                      opacity: _animation5,
-                      child: Text('오또칼렌',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-                    ),
-                  ),
-
+                  // Positioned(
+                  //   left: 100,
+                  //   right: 100,
+                  //   bottom: 150,
+                  //   child: FadeTransition(
+                  //     opacity: _animation5,
+                  //     child: Text('오또칼렌',
+                  //         textAlign: TextAlign.center,
+                  //         style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                  //   ),
+                  // ),
                 ],
               )
           )
