@@ -12,7 +12,7 @@ import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
 import 'package:provider/provider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-void show(bool isMain,BuildContext context, Schedule details, {DateTime date}){
+void show(bool isUpdate,bool isMain,BuildContext context, Schedule details, {DateTime date}){
   final userProvider = Provider.of<UserData>(context, listen: false);
   showBarModalBottomSheet(
     context: context,
@@ -28,7 +28,7 @@ void show(bool isMain,BuildContext context, Schedule details, {DateTime date}){
             }
             else{
               List<DocumentSnapshot> documents = snapshot.data.docs;
-              return ScheduleInputModal(details,date, userProvider,
+              return ScheduleInputModal(isUpdate,details,date, userProvider,
                   documents.map((e){
                     return new Tag(e.id,e['name'],Color(int.parse(e['color'].toString().substring(6,16))));
                   }).toList()
@@ -49,7 +49,8 @@ class ScheduleInputModal extends StatefulWidget{
   DateTime _date;
   List<Tag> _tagList;
   final _userProvider;
-  ScheduleInputModal(this._details,this._date,this._userProvider,this._tagList);
+  bool _isUpdate;
+  ScheduleInputModal(this._isUpdate,this._details,this._date,this._userProvider,this._tagList);
 
   @override
   _ScheduleInputModalState createState() => _ScheduleInputModalState();
@@ -214,27 +215,67 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
       Navigator.of(context).pop();
     }
   }
+  void delete(){
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        //Future.delayed(Duration(seconds: 1), () {Navigator.pop(context);});
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0)
+          ),
+          content: SizedBox(
+              height: 70,
+              //width: 150,
+              child: Center(child: Text('              😥\n정말 삭제 하실 건가요?\n복구하실 수 없습니다.'))
+          ),
+          actions: [
+            TextButton(
+                onPressed: ()=> Navigator.pop(context),
+                child: Text('취소',style: TextStyle(color: Colors.black),)
+            ),
+            TextButton(
+                onPressed: (){
+                  CollectionReference scheduleHub = FirebaseFirestore.instance.collection("UserList").doc(widget._userProvider.getUid()).collection('ScheduleHub');
+                  scheduleHub.doc(widget._details.sid)
+                  .delete().then((value) {
+                    Navigator.of(context).pop();
+                  });
+                  Navigator.of(context).pop();
+                },
+                child: Text('확인',style: TextStyle(color: Colors.black),)
+            )
+          ],
+        );
+      },
+    );
+  }
   @override
   Widget build(BuildContext context) {
     return  Form(
           key: _formKey,
           child: ListView(
               children: <Widget>[
-                Container( // Submit 버튼
-                  alignment: Alignment.topRight,
-                  child: Row(
-                    children: [
-                      IconButton(
-                          onPressed:() => submit(),
-                          icon:Icon(Icons.check)
-                      ),
-                    ],
+                  Container( // 버튼
+                    margin: EdgeInsets.fromLTRB(0, 15, 5, 0),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                          width: 305,
+                        ),
+                        widget._isUpdate? IconButton(
+                            onPressed:() => delete(),
+                            icon:Icon(Icons.delete_forever)
+                        ) : SizedBox(width: 50),
+                        IconButton(
+                            onPressed:() => submit(),
+                            icon:Icon(Icons.check)
+                        ),
+                      ],
                   )
                 ),
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 35.0) ,//.all(30.0),
-                  height: MediaQuery.of(context).size.height*2,
-                  width: MediaQuery.of(context).size.width*0.8,
                   child: Column(
                     children: [
                       Row(
