@@ -5,16 +5,16 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:firebase_core/firebase_core.dart' as firebase_core;
 import 'package:http/http.dart' as http;
 
-String uploadName = 'file-to-upload.png';
 
-Future<void> uploadFile(File imgFile) async {
-
+Future<void> uploadFile(File imgFile, dynamic userProvider) async {
+  String uploadName = userProvider.getUid()+'_img';
   try {
     await firebase_storage.FirebaseStorage.instance
         .ref(uploadName)
         .putFile(imgFile).then((snapshot) {
           print('업로드 성공');
-          downloadURLExample();
+          print(uploadName);
+          downloadURLExample(uploadName);
           print('url 성공');
         });
   } on firebase_core.FirebaseException catch (e) {
@@ -24,7 +24,7 @@ Future<void> uploadFile(File imgFile) async {
 
 }
 
-Future<void> downloadURLExample() async {
+Future<void> downloadURLExample(String uploadName) async {
   try{
     String downloadURL = await firebase_storage.FirebaseStorage.instance
         .ref(uploadName)

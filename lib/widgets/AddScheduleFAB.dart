@@ -1,12 +1,14 @@
 
 import 'dart:io';
 
+import 'package:autocalen/function/UploadImg.dart' as ImgUpload;
+import 'package:autocalen/models/UserData.dart';
 import 'package:autocalen/widgets/ScheduleInputModal.dart' as ScheduleInputModal;
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
-import 'package:autocalen/Function/UploadImg.dart' as ImgUpload;
+import 'package:provider/provider.dart';
 
 class AddScheduleFAB extends StatefulWidget {
   bool isMain;
@@ -21,6 +23,7 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
   //Camera (image_picker) Area
   File _image =null;
   final picker = ImagePicker();
+
   Future getImage(ImageSource imageSource) async{
     final pickedFile = await picker.getImage(source: imageSource);
     print('image_picker start');
@@ -40,7 +43,8 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
                     child: TextButton(
                       child: Text("확인",style: TextStyle(color: Colors.black),),
                       onPressed: (){
-                        ImgUpload.uploadFile(_image);
+                        var userProvider = Provider.of<UserData>(context, listen: false);
+                        ImgUpload.uploadFile(_image, userProvider);
                         Navigator.of(context).pop();
                       },
                     ),
