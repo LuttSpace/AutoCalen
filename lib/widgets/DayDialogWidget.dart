@@ -56,7 +56,7 @@ class _ShowDayDialogState extends State<ShowDayDialog> {
             contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
             title: Text(details.appointments[i].title),
             subtitle: Text(subtitleDate(details.appointments[i].start, details.appointments[i].end, details.appointments[i].isAllDay)),
-            onTap: () => ScheduleInputModal.show(false,context,details.appointments[i]),
+            onTap: () => ScheduleInputModal.show(true,false,context,details.appointments[i]),
           );
         },
         separatorBuilder: (context, index) { return Divider(

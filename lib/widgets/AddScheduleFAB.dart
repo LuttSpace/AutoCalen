@@ -79,8 +79,8 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
           backgroundColor: Color(0xFF323232),
           foregroundColor: Color(0xffefefef),
           onTap: (){
-            if(!widget.isMain) ScheduleInputModal.show(widget.isMain,context,null, date:widget.date);
-            else ScheduleInputModal.show(widget.isMain,context, null, date:DateTime.now());
+            if(!widget.isMain) ScheduleInputModal.show(false,widget.isMain,context,null, date:widget.date);
+            else ScheduleInputModal.show(false,widget.isMain,context, null, date:DateTime.now());
           },
         ),
         SpeedDialChild(
