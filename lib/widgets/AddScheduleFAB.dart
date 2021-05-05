@@ -25,47 +25,64 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
   final picker = ImagePicker();
 
   Future getImage(ImageSource imageSource) async{
-    final pickedFile = await picker.getImage(source: imageSource);
-    print('image_picker start');
-    setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-        showBarModalBottomSheet(
-          context: context,
-          builder: (context) {
-            return Container(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    alignment: Alignment.topRight,
-                    height: MediaQuery.of(context).size.height/15,
-                    child: TextButton(
-                      child: Text("확인",style: TextStyle(color: Colors.black),),
-                      onPressed: (){
-                        var userProvider = Provider.of<UserData>(context, listen: false);
-                        ImgUpload.uploadFile(_image, userProvider);
-                        Navigator.of(context).pop();
-                      },
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        Future.delayed(Duration(seconds: 2), () async {
+          Navigator.pop(context);
+          final pickedFile = await picker.getImage(source: imageSource);
+          print('image_picker start');
+          setState(() {
+            if (pickedFile != null) {
+              _image = File(pickedFile.path);
+              showBarModalBottomSheet(
+                context: context,
+                builder: (context) {
+                  return Container(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          alignment: Alignment.topRight,
+                          height: MediaQuery.of(context).size.height/15,
+                          child: TextButton(
+                            child: Text("확인",style: TextStyle(color: Colors.black),),
+                            onPressed: (){
+                              var userProvider = Provider.of<UserData>(context, listen: false);
+                              ImgUpload.uploadFile(_image, userProvider);
+                              Navigator.of(context).pop();
+                            },
+                          ),
+                        ),
+                        Container(
+                            height: MediaQuery.of(context).size.height/10*8,
+                            child: Container(
+                              alignment: Alignment.topCenter,
+                              child : _image!=null ? Image.file(_image): Icon(Icons.photo),
+                            )
+                        ),
+                      ],
                     ),
-                  ),
-                  Container(
-                      height: MediaQuery.of(context).size.height/10*8,
-                      child: Container(
-                        alignment: Alignment.topCenter,
-                        child : _image!=null ? Image.file(_image): Icon(Icons.photo),
-                      )
-                  ),
-                ],
-              ),
-            );
-          },
+                  );
+                },
+              );
+            } else {
+              print('No image selected.');
+            }
+          });
+          print('image_picker end');
+        });
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0)
+          ),
+          content: SizedBox(
+              height: 70,
+              child: Center(child: Text('✍️\n일정 (날짜) / 내용 / 시간 으로 적어주세요!\n날짜는 필수는 아니랍니다',textAlign: TextAlign.center,))
+          ),
         );
-      } else {
-        print('No image selected.');
-      }
-    });
-    print('image_picker end');
+      },
+    );
   }
 
   @override
