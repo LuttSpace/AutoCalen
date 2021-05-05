@@ -158,6 +158,7 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
     if(endInput.difference(startInput).isNegative){ // 시간 설정 오류시 처리
       showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           Future.delayed(Duration(seconds: 1), () {Navigator.pop(context);});
           return AlertDialog(
@@ -175,6 +176,7 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
     else if(titleController.text == ''){
       showDialog(
         context: context,
+        barrierDismissible: false,
         builder: (BuildContext context) {
           Future.delayed(Duration(seconds: 1), () {Navigator.pop(context);});
           return AlertDialog(

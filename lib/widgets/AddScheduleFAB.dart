@@ -26,6 +26,7 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
 
   Future getImage(ImageSource imageSource) async{
     showDialog(
+      barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
         Future.delayed(Duration(seconds: 2), () async {
