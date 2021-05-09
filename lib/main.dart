@@ -17,12 +17,15 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 void main() async {
   print('======================= void main 시작 ! ==================================');
@@ -131,12 +134,36 @@ class _CalendarPageState extends State<CalendarPage> {
   // 캘린더 데이터
   List<Schedule> schedules = <Schedule>[];
 
+  //notification
+  FlutterLocalNotificationsPlugin localNotifications;
+
   @override
   void initState(){
     _calendarController = CalendarController();
     super.initState();
+    tz.initializeTimeZones();
+    tz.setLocalLocation(tz.getLocation('Asia/Seoul'));
+    var androidInit = new AndroidInitializationSettings('ic_launcher'); //should change into our logo
+    var IOSInit = new IOSInitializationSettings();
+    var initSettings = new InitializationSettings(android: androidInit,iOS: IOSInit);
+    localNotifications=FlutterLocalNotificationsPlugin();
+    localNotifications.initialize(initSettings);
+    //_addNotifs();
   }
-
+  Future _addNotifs() async {
+    print('addNotifs start');
+      var androidDetails = new AndroidNotificationDetails("channelId", "Otto Calen", "channelDescription",importance: Importance.high);
+      var iosDetails = new IOSNotificationDetails();
+      var generalNotificationDetails = new NotificationDetails(android: androidDetails,iOS: iosDetails);
+      await localNotifications.zonedSchedule(
+          0,
+          "title :test",
+          "body:test",
+          tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
+          generalNotificationDetails,
+          uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+          androidAllowWhileIdle: true);
+  }
   void changeAppBarDateView(ViewChangedDetails viewChangedDetails){
     //앱바에 년월 바꾸기
     SchedulerBinding.instance
@@ -224,7 +251,6 @@ class _CalendarPageState extends State<CalendarPage> {
               schedules.clear();
               snapshot.data.docs.forEach((doc) {
                 print('doc ' + doc.id);
-
                 schedules.add(new Schedule(doc.id, doc['title'], doc['start'].toDate(), doc['end'].toDate(),
                     new Tag(doc['tag']['tid'],doc['tag']['name'], Color(int.parse(doc['tag']['color'].toString().substring(6, 16)))),doc['memo'], doc['isAllDay'],doc['needAlarm']));
               });

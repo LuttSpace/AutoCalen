@@ -108,7 +108,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                     alignment: Alignment.center,
                     child: SlideTransition(
                         position: _animation1,
-                        child: Image.asset('images/logo/logo_right_top.png',
+                        child: Image.asset('drawable/logo/logo_right_top.png',
                         width: size, height: size,)//Text('animation2', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                     ),
                   ),
@@ -116,7 +116,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                     alignment: Alignment.center,
                     child: SlideTransition(
                         position: _animation2,
-                        child: Image.asset('images/logo/logo_right_bottom.png',
+                        child: Image.asset('drawable/logo/logo_right_bottom.png',
                           width: size, height: size,)//Text('animation3', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                     ),
                   ),
@@ -124,7 +124,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                     alignment: Alignment.center,
                     child: SlideTransition(
                         position: _animation3,
-                        child: Image.asset('images/logo/logo_left_bottom.png',
+                        child: Image.asset('drawable/logo/logo_left_bottom.png',
                           width: size, height: size,)//Text('animation3', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                     ),
                   ),
@@ -132,7 +132,7 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
                     alignment: Alignment.center,
                     child: SlideTransition(
                         position: _animation4,
-                        child:Image.asset('images/logo/logo_left_top.png',
+                        child:Image.asset('drawable/logo/logo_left_top.png',
                           width: size, height: size,) //Text('animation1', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                     ),
                   ),
