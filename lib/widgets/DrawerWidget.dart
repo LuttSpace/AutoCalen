@@ -88,8 +88,6 @@ class _ShowDrawerState extends State<ShowDrawer> {
                         ],
                       ),
                       onTap: () {
-                        print('설정');
-                        //Navigator.push(context, MaterialPageRoute(builder: (context)=> TagSetting()));
                         Navigator.pushNamed(context, '/tagSetting');
                       },
                     ),
@@ -101,6 +99,7 @@ class _ShowDrawerState extends State<ShowDrawer> {
               title: Text('설정'),
               onTap: () {
                 print('설정');
+                Navigator.pushNamed(context, '/setting');
               },
             ),
             ListTile(
