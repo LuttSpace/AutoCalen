@@ -143,12 +143,12 @@ class _CalendarPageState extends State<CalendarPage> {
     super.initState();
     tz.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation('Asia/Seoul'));
-    var androidInit = new AndroidInitializationSettings('ic_launcher'); //should change into our logo
+    var androidInit = new AndroidInitializationSettings('logo_no'); //should change into our logo
     var IOSInit = new IOSInitializationSettings();
     var initSettings = new InitializationSettings(android: androidInit,iOS: IOSInit);
     localNotifications=FlutterLocalNotificationsPlugin();
     localNotifications.initialize(initSettings);
-    //_addNotifs();
+    _addNotifs();
   }
   Future _addNotifs() async {
     print('addNotifs start');
