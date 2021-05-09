@@ -1,4 +1,8 @@
+import 'package:autocalen/models/UserData.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_switch/flutter_switch.dart';
+import 'package:provider/provider.dart';
 
 class Setting extends StatefulWidget{
   @override
@@ -8,6 +12,9 @@ class Setting extends StatefulWidget{
 class _SettingState extends State<Setting> {
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserData>(context, listen: false);
+    // needAlams setting
+    bool needAlarms = userProvider.getNeedAlarms();
     return MaterialApp(
       theme: ThemeData(
           primaryColor: Colors.white,
@@ -23,7 +30,32 @@ class _SettingState extends State<Setting> {
         ),
         body: Column(
           children: [
-
+            Container(
+              margin: EdgeInsets.symmetric(vertical: 35,horizontal: 30),
+              //padding: EdgeInsets.symmetric(vertical: 15,horizontal: 15),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text('일정 알람', style: TextStyle(fontSize: 20.0)),
+                  FlutterSwitch(
+                      width: 60.0,
+                      height: 25.0,
+                      value: needAlarms,
+                      activeColor: Colors.black,
+                      onToggle: (val){
+                        setState((){
+                          needAlarms = val;
+                          FirebaseFirestore.instance.collection("UserList")
+                            .doc(userProvider.getUid())
+                            .update({'needAlarms':needAlarms})
+                            .then((value) => print('needAlarms changed ${needAlarms}'));
+                          userProvider.setNeedAlarms(needAlarms);
+                        });
+                      }
+                  ),
+                ],
+              ),
+            ),
           ],
         ),
       ),
