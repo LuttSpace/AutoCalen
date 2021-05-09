@@ -123,7 +123,9 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
   }
 
   bool isAllDay = false; // 하루종일 선택
+  bool needAlarm = false; // 하루종일 선택
   Color isAllDayTextColor = Colors.grey;
+  Color needAlarmTextColor = Colors.grey;
   bool isMemo = false; // 메모 옵션
 
   @override
@@ -207,10 +209,10 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
       }
 
       if(widget._details!=null){
-        widget._details = new Schedule(widget._details.sid,titleController.text,startInput,endInput,_currentTag,memoInput,isAllDay);
+        widget._details = new Schedule(widget._details.sid,titleController.text,startInput,endInput,_currentTag,memoInput,isAllDay,needAlarm);
         uploadSchedule(true,widget._details);
       } else{
-        widget._details = new Schedule('',titleController.text,startInput,endInput,_currentTag,memoInput,isAllDay);
+        widget._details = new Schedule('',titleController.text,startInput,endInput,_currentTag,memoInput,isAllDay,needAlarm);
         uploadSchedule(false,widget._details);
       }
 
@@ -449,6 +451,29 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                             ),
                           ),
                         ],
+                      ),
+                      Container(
+                        padding: EdgeInsets.fromLTRB(15.0, 20.0, 15.0, 0.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text('알림', style: TextStyle(fontSize: 20.0, color: needAlarmTextColor)),
+                            FlutterSwitch(
+                                width: 60.0,
+                                height: 25.0,
+                                value: needAlarm,
+                                activeColor: Colors.black,
+                                onToggle: (val){
+                                  setState((){
+                                    needAlarm = val;
+                                    print(needAlarm);
+                                    if(needAlarm) needAlarmTextColor = Colors.black87;
+                                    else needAlarmTextColor = Colors.grey;
+                                  });
+                                }
+                            ),
+                          ],
+                        ),
                       ),
                       isMemo? TextFormField(
                         style: inputTextStyle,
