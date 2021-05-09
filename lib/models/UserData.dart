@@ -12,6 +12,7 @@ class UserData with ChangeNotifier{
   String _email='';
   String _photoURL='';
   String _signInWith='';
+  bool _needAlarms = true;
 
   UserData(){
     if(auth.currentUser!=null){
@@ -26,6 +27,7 @@ class UserData with ChangeNotifier{
           _email =getUser.email;
           _photoURL = getUser.photoURL;
           _signInWith = getUser.signInWith;
+          _needAlarms = getUser.needAlarms;
         }
       });
     }
@@ -36,12 +38,14 @@ class UserData with ChangeNotifier{
   getEmail() => _email;
   getPhotoURL() => _photoURL;
   getSignInWith() => _signInWith;
+  getNeedAlarms() => _needAlarms;
 
   setUid(String uid)=> _uid =uid;
   setName(String name)=> _name= name;
   setEmail(String email)=> _email= email;
   setPhotoURL(String photoURL)=> _photoURL= photoURL;
   setSignInWith(String signInWith)=> _signInWith= signInWith;
+  setNeedAlarms(bool needAlarms)=> _needAlarms = needAlarms;
 
   void setUserData(String signInWith){ // 로그인 시 사용자 정보 저장
     _uid = auth.currentUser.uid;
@@ -49,6 +53,7 @@ class UserData with ChangeNotifier{
     _email= auth.currentUser.email;
     _photoURL = auth.currentUser.photoURL;
     _signInWith= signInWith;
+    _needAlarms = true;
 
     notifyListeners(); // 값이 변할때마다 플러터 프레임워크에 알려줌
   }
@@ -59,5 +64,6 @@ class UserData with ChangeNotifier{
     _email =null;
     _photoURL = null;
     _signInWith = null;
+    _needAlarms = null;
   }
 }

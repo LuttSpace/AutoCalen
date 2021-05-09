@@ -172,6 +172,7 @@ class _CalendarPageState extends State<CalendarPage> {
     print('=======================Calendar Page Build==========================');
     print('빌드 횟수!!! ${++buildCalled}');
     final userProvider = Provider.of<UserData>(context, listen: false);
+    print('userProvider needAlarms ${userProvider.getNeedAlarms()}');
     if(userProvider.getUid()!='' &&userProvider.getUid()!=null ){
       print('main page~~~~~ '+ userProvider.getEmail());
     }
