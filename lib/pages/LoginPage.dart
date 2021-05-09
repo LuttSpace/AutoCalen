@@ -264,7 +264,7 @@ class _LoginState extends State<Login> {
         .get()
         .then((DocumentSnapshot documentSnapshot) {
       if (!documentSnapshot.exists) { // Firestore에 사용자 정보 없을 경우 추가
-        userModel.User user = userModel.User(currentUser.displayName, currentUser.email, currentUser.photoURL, signInWith);
+        userModel.User user = userModel.User(currentUser.displayName, currentUser.email, currentUser.photoURL, signInWith,true); //alarm 무조건.
         users.doc(currentUser.uid).set(user.toJson());
       }
       else{ // Firestore에 사용자 정보 있는 경우 출력
