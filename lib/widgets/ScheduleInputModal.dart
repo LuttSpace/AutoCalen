@@ -146,7 +146,6 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
       titleController = TextEditingController();
       startInput = widget._date; endInput = widget._date.add(Duration(hours: 1));
       memoController = TextEditingController();
-
     }
     startDateController = TextEditingController(text : DateFormat('yyyy/MM/dd', 'ko').format(startInput).toString());
     startTimeController = TextEditingController(text : DateFormat('a h:mm', 'ko').format(startInput).toString());
@@ -319,7 +318,7 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                         ],
                       ),
                       Container(
-                        padding: EdgeInsets.fromLTRB(15.0, 20.0, 15.0, 0.0),
+                        padding: EdgeInsets.fromLTRB(15.0, 25.0, 15.0, 10.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -333,7 +332,24 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                                   setState((){
                                     isAllDay = val;
                                     print(isAllDay);
-                                    if(isAllDay) isAllDayTextColor = Colors.black87;
+                                    if(isAllDay) {
+                                      isAllDayTextColor = Colors.black87;
+
+                                      // 시작 날짜 설정 (0시로)
+                                      startInput = DateTime(startInput.year, startInput.month, startInput.day);
+                                      // 종료 날짜 설정 (시작날짜와 동일하게)
+                                      endInput = startInput;
+                                      // 하루종일 비활성화할 경우 대비해 시작시간, 종료날짜, 종료 시간 입력창 값 다시 설정
+                                      startTimeController.text = DateFormat('a h:mm', 'ko')
+                                          .format(endInput)
+                                          .toString();
+                                      endDateController.text = DateFormat('yyyy/MM/dd', 'ko')
+                                          .format(endInput)
+                                          .toString();
+                                      endTimeController.text = DateFormat('a h:mm', 'ko')
+                                          .format(endInput)
+                                          .toString();
+                                    }
                                     else isAllDayTextColor = Colors.grey;
                                   });
                                 }
@@ -351,7 +367,7 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                                 readOnly: true,
                                 controller: startDateController,
                                 style: inputTextStyle,
-                                decoration: inputDecoration('시작 날짜', '시작 날짜'),
+                                decoration: isAllDay? inputDecoration('날짜', '날짜'): inputDecoration('시작 날짜', '시작 날짜'),
                                 onTap: (){
                                   DatePicker.showDatePicker(context,
                                       showTitleActions: true,
@@ -364,12 +380,16 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                                             .toString(); // 데이터 바꾸기
                                         startInput = DateFormat('yyyy/MM/dd a h:mm', 'ko').parse(startDateController.text+" "+startTimeController.text);
                                         print('confirm data! $startInput');
+                                        if(isAllDay){
+                                          // 종료 날짜 설정 (시작날짜와 동일하게)
+                                          endInput = startInput;
+                                        }
                                       }, currentTime: startInput, locale: LocaleType.ko);
                                 },
                               ),
                             ),
                           ),
-                          isAllDay? SizedBox(width: 0,height: 0):Flexible(
+                          isAllDay? SizedBox(width: 0,height: 0): Flexible(
                             child: Padding(
                               padding: const EdgeInsets.only(left: 15),
                               child: TextField(
@@ -399,7 +419,7 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
-                          Flexible(
+                          isAllDay? SizedBox(width: 0,height: 0): Flexible(
                             child: Padding(
                               padding: const EdgeInsets.only(right: 15),
                               child: TextField(
@@ -530,24 +550,34 @@ class CustomTime12hPickerModel extends CommonPickerModel {
 
   @override
   String middleStringAtIndex(int index) {
-    if (index >= 0 && index < 12) {
-      if (index == 0) {
-        return digits(12, 2);
-      } else {
-        return digits(index, 2);
-      }
+    // 숫자 반복 안됨
+    // if (index >= 0 && index < 12) {
+    //   if (index == 0) {
+    //     return digits(12, 2);
+    //   } else {
+    //     return digits(index, 2);
+    //   }
+    // } else {
+    //   return null;
+    // }
+    // 숫자 반복되도록 > 오전 오후가 자동으로 바뀌가 하면 좋은데.. 아직 못함
+    if (index % 12 == 0) {
+      return digits(12, 2);
     } else {
-      return null;
+      return digits(index%12, 2);
     }
   }
 
   @override
   String rightStringAtIndex(int index) {
-    if (index >= 0 && index < 60) {
-      return digits(index, 2);
-    } else {
-      return null;
-    }
+    // 숫자 반복 안됨
+    // if (index >= 0 && index < 60) {
+    //   return digits(index, 2);
+    // } else {
+    //   return null;
+    // }
+    // 숫자 반복되도록
+    return digits(index%60, 2);
   }
 
   @override
@@ -567,11 +597,11 @@ class CustomTime12hPickerModel extends CommonPickerModel {
 
   @override
   DateTime finalTime() {
-    int hour = currentMiddleIndex() + 12 * currentLeftIndex();
+    int hour = currentMiddleIndex()%12 + 12 * currentLeftIndex();
     return currentTime.isUtc
         ? DateTime.utc(
-        currentTime.year, currentTime.month, currentTime.day, hour, currentRightIndex(), 0)
+        currentTime.year, currentTime.month, currentTime.day, hour, currentRightIndex()%60, 0)
         : DateTime(
-        currentTime.year, currentTime.month, currentTime.day, hour, currentRightIndex(), 0);
+        currentTime.year, currentTime.month, currentTime.day, hour, currentRightIndex()%60, 0);
   }
 }
