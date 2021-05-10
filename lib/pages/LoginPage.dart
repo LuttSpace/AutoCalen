@@ -131,7 +131,7 @@ class _LoginState extends State<Login> {
 
           children: [
             Container(
-              child: Image.asset('images/logo/logo_only.png', width: 250.0, height: 250),
+              child: Image.asset('drawable/logo/logo_only.png', width: 250.0, height: 250),
             ),
             SizedBox(height: 25.0),
             ElevatedButton(
@@ -146,7 +146,7 @@ class _LoginState extends State<Login> {
                     children: [
                       Expanded(
                         child: Image.asset(
-                          'images/icon/google_icon.png',
+                          'drawable/icon/google_icon.png',
                           width: 25,
                           height: 25,
                         ),
@@ -229,7 +229,7 @@ class _LoginState extends State<Login> {
                     children: [
                       Expanded(
                         child: Image.asset(
-                          'images/icon/naver_icon.png',
+                          'drawable/icon/naver_icon.png',
                           width: 30,
                           height: 30,
                         ),

@@ -265,7 +265,7 @@ class _CalendarPageState extends State<CalendarPage> {
                 print('doc ' + doc.id);
                 schedules.add(new Schedule(doc.id, doc['title'], doc['start'].toDate(), doc['end'].toDate(),
                     new Tag(doc['tag']['tid'],doc['tag']['name'], Color(int.parse(doc['tag']['color'].toString().substring(6, 16)))),doc['memo'], doc['isAllDay'],doc['needAlarm']));
-                if(DateTime.now().difference(doc['start'].toDate()).isNegative && doc['needAlarm']){
+                if(DateTime.now().difference(doc['start'].toDate()).isNegative && doc['needAlarm'] && userProvider.getNeedAlarms()){
                   print('add notif ${schedules.last}');
                   _addNotifs(schedules.last);
                 }

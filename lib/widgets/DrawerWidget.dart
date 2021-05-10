@@ -16,6 +16,16 @@ class _ShowDrawerState extends State<ShowDrawer> {
     await auth.signOut();
   }
 
+
+  @override
+  void dispose() {
+    super.dispose();
+    print('depose');
+    setState(() {
+      print('rebuild');
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserData>(context, listen: false);
