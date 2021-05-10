@@ -148,21 +148,33 @@ class _CalendarPageState extends State<CalendarPage> {
     var initSettings = new InitializationSettings(android: androidInit,iOS: IOSInit);
     localNotifications=FlutterLocalNotificationsPlugin();
     localNotifications.initialize(initSettings);
-    _addNotifs();
   }
-  Future _addNotifs() async {
+  Future _addNotifs(Schedule schedule) async {
     print('addNotifs start');
       var androidDetails = new AndroidNotificationDetails("channelId", "Otto Calen", "channelDescription",importance: Importance.high);
       var iosDetails = new IOSNotificationDetails();
       var generalNotificationDetails = new NotificationDetails(android: androidDetails,iOS: iosDetails);
+      String subtitle ='';
+      String formatString = schedule.isAllDay? 'M월 d일' : 'M월 d일 a h:mm';
+      // 시작날짜, 종료 날짜 비교
+      if(schedule.start.difference(schedule.end).inDays==0){ // 시작날짜, 종료날짜가 같으면
+        subtitle= DateFormat(formatString, 'ko').format(schedule.start).toString();
+        if((schedule.start.difference(schedule.end).inHours!=0||schedule.start.difference(schedule.end).inMinutes!=0)&& !schedule.isAllDay){ // 시간이 같지 않으면
+          subtitle= '${DateFormat('a h:mm', 'ko').format(schedule.start).toString()} ~ ${DateFormat('a h:mm', 'ko').format(schedule.end).toString()}';
+        }
+      } else{
+        subtitle='${DateFormat(formatString, 'ko').format(schedule.start).toString()} ~ ${DateFormat(formatString, 'ko').format(schedule.end).toString()}';
+      }
+      //String time = schedule.isAllDay? '하루 종일': '${schedule.start} - ${schedule.end}';
+      String content = '${schedule.title} ${subtitle}'; //+(schedule.isAllDay? '하루 종일': '${schedule.start} - ${schedule.end}');
       await localNotifications.zonedSchedule(
-          0,
-          "title :test",
-          "body:test",
-          tz.TZDateTime.now(tz.local).add(const Duration(seconds: 5)),
+          0,//should change
+          '🔔 곧 일정이 다가옵니다',
+          content, //"${schedule.title}",
+          tz.TZDateTime.from(schedule.start, tz.local),
           generalNotificationDetails,
           uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
-          androidAllowWhileIdle: true);
+          androidAllowWhileIdle: true).then((value) => print('noti '));
   }
   void changeAppBarDateView(ViewChangedDetails viewChangedDetails){
     //앱바에 년월 바꾸기
@@ -253,6 +265,10 @@ class _CalendarPageState extends State<CalendarPage> {
                 print('doc ' + doc.id);
                 schedules.add(new Schedule(doc.id, doc['title'], doc['start'].toDate(), doc['end'].toDate(),
                     new Tag(doc['tag']['tid'],doc['tag']['name'], Color(int.parse(doc['tag']['color'].toString().substring(6, 16)))),doc['memo'], doc['isAllDay'],doc['needAlarm']));
+                if(DateTime.now().difference(doc['start'].toDate()).isNegative && doc['needAlarm']){
+                  print('add notif ${schedules.last}');
+                  _addNotifs(schedules.last);
+                }
               });
               return SafeArea(
                 child: SfCalendar(

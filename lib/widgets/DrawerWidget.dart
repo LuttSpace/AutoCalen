@@ -48,7 +48,7 @@ class _ShowDrawerState extends State<ShowDrawer> {
                   color: Colors.white,
                   image: DecorationImage(
                     colorFilter: new ColorFilter.mode(Colors.white.withOpacity(0.2), BlendMode.dstATop),
-                    image: AssetImage("images/logo/logo_only.png"),
+                    image: AssetImage("drawable/logo/logo_only.png"),
                     fit: BoxFit.fitHeight,
                   ),
                 ),
