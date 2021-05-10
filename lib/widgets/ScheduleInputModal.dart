@@ -340,6 +340,9 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                                       // 종료 날짜 설정 (날짜: 동일, 시간: 오후 11시 59분)
                                       endInput = startInput.add(Duration(days: 1)).subtract(Duration(seconds: 1));
                                       // 하루종일 비활성화할 경우 대비해 시작시간, 종료날짜, 종료 시간 입력창 값 다시 설정
+                                      startTimeController.text = DateFormat('a h:mm', 'ko')
+                                          .format(startInput)
+                                          .toString();
                                       endDateController.text = DateFormat('yyyy/MM/dd', 'ko')
                                           .format(endInput)
                                           .toString();
