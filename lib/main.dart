@@ -166,7 +166,7 @@ class _CalendarPageState extends State<CalendarPage> {
         subtitle='${DateFormat(formatString, 'ko').format(schedule.start).toString()} ~ ${DateFormat(formatString, 'ko').format(schedule.end).toString()}';
       }
       //String time = schedule.isAllDay? '하루 종일': '${schedule.start} - ${schedule.end}';
-      String content = '${schedule.title} ${subtitle}'; //+(schedule.isAllDay? '하루 종일': '${schedule.start} - ${schedule.end}');
+      String content = '${subtitle} ${schedule.title}'; //+(schedule.isAllDay? '하루 종일': '${schedule.start} - ${schedule.end}');
       await localNotifications.zonedSchedule(
           0,//should change
           '🔔 곧 일정이 다가옵니다',
