@@ -29,50 +29,7 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
       barrierDismissible: false,
       context: context,
       builder: (BuildContext context) {
-        Future.delayed(Duration(seconds: 2), () async {
-          Navigator.pop(context);
-          final pickedFile = await picker.getImage(source: imageSource);
-          print('image_picker start');
-          setState(() {
-            if (pickedFile != null) {
-              _image = File(pickedFile.path);
-              showBarModalBottomSheet(
-                context: context,
-                builder: (context) {
-                  return Container(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          alignment: Alignment.topRight,
-                          height: MediaQuery.of(context).size.height/15,
-                          child: TextButton(
-                            child: Text("확인",style: TextStyle(color: Colors.black),),
-                            onPressed: (){
-                              var userProvider = Provider.of<UserData>(context, listen: false);
-                              ImgUpload.uploadFile(_image, userProvider);
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ),
-                        Container(
-                            height: MediaQuery.of(context).size.height/10*8,
-                            child: Container(
-                              alignment: Alignment.topCenter,
-                              child : _image!=null ? Image.file(_image): Icon(Icons.photo),
-                            )
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              );
-            } else {
-              print('No image selected.');
-            }
-          });
-          print('image_picker end');
-        });
+        Future.delayed(Duration(seconds: 2), () async { Navigator.pop(context);});
         return AlertDialog(
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(8.0)
@@ -83,7 +40,48 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
           ),
         );
       },
-    );
+    ).then((value) async {
+      final pickedFile = await picker.getImage(source: imageSource);
+      print('image_picker start ${pickedFile.toString()}');
+      setState(() {
+        if (pickedFile != null) {
+          _image = File(pickedFile.path);
+          showBarModalBottomSheet(
+            context: context,
+            builder: (context) {
+              return Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      alignment: Alignment.topRight,
+                      height: MediaQuery.of(context).size.height/15,
+                      child: TextButton(
+                        child: Text("확인",style: TextStyle(color: Colors.black),),
+                        onPressed: (){
+                          var userProvider = Provider.of<UserData>(context, listen: false);
+                          ImgUpload.uploadFile(_image, userProvider, widget.isMain, widget.date).then((value) => print("백엔드 처리 완료!!!!!!!!!!!!!!!!"));
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ),
+                    Container(
+                        height: MediaQuery.of(context).size.height/10*8,
+                        child: Container(
+                          alignment: Alignment.topCenter,
+                          child : _image!=null ? Image.file(_image): Icon(Icons.photo),
+                        )
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        } else {
+          print('No image selected.');
+        }
+      });
+    });
   }
 
   @override
