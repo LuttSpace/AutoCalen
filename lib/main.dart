@@ -150,7 +150,7 @@ class _CalendarPageState extends State<CalendarPage> {
     localNotifications.initialize(initSettings);
   }
   Future _addNotifs(Schedule schedule) async {
-    print('addNotifs start');
+    print('addNotifs start ${schedule.title}');
       var androidDetails = new AndroidNotificationDetails("channelId", "Otto Calen", "channelDescription",importance: Importance.high);
       var iosDetails = new IOSNotificationDetails();
       var generalNotificationDetails = new NotificationDetails(android: androidDetails,iOS: iosDetails);
@@ -171,7 +171,7 @@ class _CalendarPageState extends State<CalendarPage> {
           0,//should change
           '🔔 곧 일정이 다가옵니다',
           content, //"${schedule.title}",
-          tz.TZDateTime.from(schedule.start, tz.local),
+          tz.TZDateTime.from(schedule.start.subtract(new Duration(minutes: 30)), tz.local),
           generalNotificationDetails,
           uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
           androidAllowWhileIdle: true).then((value) => print('noti '));
@@ -200,7 +200,15 @@ class _CalendarPageState extends State<CalendarPage> {
     print('real '+schedules.length.toString());
     return ScheduleDataSource(schedules);
   }
-
+  Future _cancelNoti() async {
+    print('cancel start');
+    var androidInit = new AndroidInitializationSettings('logo_no'); //should change into our logo
+    var IOSInit = new IOSInitializationSettings();
+    var initSettings = new InitializationSettings(android: androidInit,iOS: IOSInit);
+    FlutterLocalNotificationsPlugin localNotifications=FlutterLocalNotificationsPlugin();
+    localNotifications.initialize(initSettings);
+    await localNotifications.cancelAll().then((value) => print('cancel succeed'));
+  }
   // 처음 인지 체크함
   bool isItFirstData = true;
 
@@ -210,7 +218,7 @@ class _CalendarPageState extends State<CalendarPage> {
   Widget build(BuildContext context) {
     print('=======================Calendar Page Build==========================');
     print('빌드 횟수!!! ${++buildCalled}');
-    final userProvider = Provider.of<UserData>(context, listen: false);
+    final userProvider = Provider.of<UserData>(context, listen: true);
     print('userProvider needAlarms ${userProvider.getNeedAlarms()}');
     if(userProvider.getUid()!='' &&userProvider.getUid()!=null ){
       print('main page~~~~~ '+ userProvider.getEmail());
@@ -260,12 +268,12 @@ class _CalendarPageState extends State<CalendarPage> {
             }
             else {
               print('start calling data on ${snapCalled} ');
-              schedules.clear();
+              schedules.clear(); _cancelNoti();
               snapshot.data.docs.forEach((doc) {
                 print('doc ' + doc.id);
                 schedules.add(new Schedule(doc.id, doc['title'], doc['start'].toDate(), doc['end'].toDate(),
                     new Tag(doc['tag']['tid'],doc['tag']['name'], Color(int.parse(doc['tag']['color'].toString().substring(6, 16)))),doc['memo'], doc['isAllDay'],doc['needAlarm']));
-                if(DateTime.now().difference(doc['start'].toDate()).isNegative && doc['needAlarm'] && userProvider.getNeedAlarms()){
+                if(DateTime.now().difference(doc['start'].toDate().subtract(new Duration(minutes: 30))).isNegative && doc['needAlarm'] && userProvider.getNeedAlarms()){
                   print('add notif ${schedules.last}');
                   _addNotifs(schedules.last);
                 }

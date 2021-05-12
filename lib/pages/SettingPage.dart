@@ -21,11 +21,18 @@ class _SettingState extends State<Setting> {
     await localNotifications.cancelAll().then((value) => print('cancel succeed'));
   }
 
+  bool needAlarms;
+  var userProvider;
+
+  @override
+  void initState() {
+    userProvider = Provider.of<UserData>(context, listen: false);
+    needAlarms=userProvider.getNeedAlarms();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserData>(context, listen: false);
     // needAlams setting
-    bool needAlarms = userProvider.getNeedAlarms();
     print(needAlarms);
     return MaterialApp(
       theme: ThemeData(
@@ -39,6 +46,22 @@ class _SettingState extends State<Setting> {
             icon: Icon(Icons.arrow_back_ios),
             onPressed: ()=> Navigator.of(context).pop(),
           ),
+          actions: [
+            IconButton(
+              icon:Icon(Icons.check),
+              onPressed: (){
+                FirebaseFirestore.instance.collection("UserList")
+                    .doc(userProvider.getUid())
+                    .update({'needAlarms':needAlarms})
+                    .then((value) => print('needAlarms changed ${needAlarms}'));
+                userProvider.setNeedAlarms(needAlarms);
+                userProvider.userNotifiListeners();
+                if(!needAlarms) _cancelNoti();
+                Navigator.of(context).pop();
+                Navigator.of(context).pop();
+              },
+            )
+          ],
         ),
         body: Column(
           children: [
@@ -57,13 +80,7 @@ class _SettingState extends State<Setting> {
                       onToggle: (val){
                         setState((){
                           needAlarms = val;
-                          FirebaseFirestore.instance.collection("UserList")
-                            .doc(userProvider.getUid())
-                            .update({'needAlarms':needAlarms})
-                            .then((value) => print('needAlarms changed ${needAlarms}'));
-                          userProvider.setNeedAlarms(needAlarms);
                         });
-                          if(!needAlarms) _cancelNoti();
                       }
                   ),
                 ],

@@ -21,9 +21,6 @@ class _ShowDrawerState extends State<ShowDrawer> {
   void dispose() {
     super.dispose();
     print('depose');
-    setState(() {
-      print('rebuild');
-    });
   }
 
   @override

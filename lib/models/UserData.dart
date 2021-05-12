@@ -57,6 +57,10 @@ class UserData with ChangeNotifier{
 
     notifyListeners(); // 값이 변할때마다 플러터 프레임워크에 알려줌
   }
+  void userNotifiListeners(){
+    notifyListeners();
+    print('noti listeners');
+  }
 
   void resetUserData(){ // 로그아웃 시 사용자 정보 초기화
     _uid = null;
