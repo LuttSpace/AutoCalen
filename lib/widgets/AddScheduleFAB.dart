@@ -29,7 +29,7 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
 
   // ocr 기능
   Future<dynamic> uploadFile(File imgFile, dynamic userProvider, bool isMain, DateTime dateTime) async {
-    String uploadName = userProvider.getUid()+'_img';
+    String uploadName = userProvider.getUid()+'_'+DateTime.now().millisecondsSinceEpoch.toString();
     var response;
     try {
       await firebase_storage.FirebaseStorage.instance
@@ -55,7 +55,6 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
       String downloadURL = await firebase_storage.FirebaseStorage.instance
           .ref(uploadName)
           .getDownloadURL();
-
       print('downloadURL ${downloadURL}');
       return callBackend(downloadURL, userId, isMain, dateTime);
     } on firebase_core.FirebaseException catch(e){

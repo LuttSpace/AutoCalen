@@ -6,7 +6,7 @@ import 'package:syncfusion_flutter_calendar/calendar.dart';
 /// information about the event data which will be rendered in calendar.
 class Schedule {
   /// Creates a schedule class with required details.
-  Schedule(this.sid, this.title, this.start, this.end, this.tag, this.memo, this.isAllDay, this.needAlarm);
+  Schedule(this.sid, this.title, this.start, this.end, this.tag, this.memo, this.isAllDay, this.needAlarm,this.imgUrl);
 
   String sid;
   /// Event name which is equivalent to subject property of [Appointment].
@@ -29,6 +29,8 @@ class Schedule {
   bool isAllDay; // 하루종일 여부
   bool needAlarm; // 알림 여부
 
+  String imgUrl; //사진
+
   setTitle(String _title)=> title =_title;
   void setStart(DateTime s) {this.start=s;}
   void setEnd(DateTime e) {this.end=e;}
@@ -45,6 +47,7 @@ class Schedule {
       'memo': memo,
       'isAllDay': isAllDay,
       'needAlarm':needAlarm,
+      'imgUrl':imgUrl,
     };
   }
 
