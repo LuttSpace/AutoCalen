@@ -149,6 +149,7 @@ class _CalendarPageState extends State<CalendarPage> {
     localNotifications=FlutterLocalNotificationsPlugin();
     localNotifications.initialize(initSettings);
   }
+
   Future _addNotifs(Schedule schedule) async {
     print('addNotifs start ${schedule.title}');
       var androidDetails = new AndroidNotificationDetails("channelId", "Otto Calen", "channelDescription",importance: Importance.high);
@@ -212,6 +213,7 @@ class _CalendarPageState extends State<CalendarPage> {
   // 처음 인지 체크함
   bool isItFirstData = true;
 
+  //
   int snapCalled=0;
   int buildCalled =0;
   @override
