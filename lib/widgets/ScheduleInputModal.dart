@@ -348,6 +348,7 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                       Container(
                         margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
                         padding: EdgeInsets.fromLTRB(15.0, 20.0, 15.0, 0.0),
+                        //padding: EdgeInsets.fromLTRB(15.0, 25.0, 15.0, 10.0),// 정민쓰
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -361,7 +362,24 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                                   setState((){
                                     isAllDay = val;
                                     print(isAllDay);
-                                    if(isAllDay) isAllDayTextColor = Colors.black87;
+                                    if(isAllDay) {
+                                      isAllDayTextColor = Colors.black87;
+
+                                      // 시작 날짜 설정 (0시로)
+                                      startInput = DateTime(startInput.year, startInput.month, startInput.day);
+                                      // 종료 날짜 설정 (날짜: 동일, 시간: 오후 11시 59분)
+                                      endInput = startInput.add(Duration(days: 1)).subtract(Duration(seconds: 1));
+                                      // 하루종일 비활성화할 경우 대비해 시작시간, 종료날짜, 종료 시간 입력창 값 다시 설정
+                                      startTimeController.text = DateFormat('a h:mm', 'ko')
+                                          .format(startInput)
+                                          .toString();
+                                      endDateController.text = DateFormat('yyyy/MM/dd', 'ko')
+                                          .format(endInput)
+                                          .toString();
+                                      endTimeController.text = DateFormat('a h:mm', 'ko')
+                                          .format(endInput)
+                                          .toString();
+                                    }
                                     else isAllDayTextColor = Colors.grey;
                                   });
                                 }
@@ -369,93 +387,100 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                           ],
                         ),
                       ),
-                      Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Flexible(
-                              child: Container(
-                                margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                padding: const EdgeInsets.only(right: 15),
-                                child: TextField(
-                                  readOnly: true,
-                                  controller: startDateController,
-                                  style: inputTextStyle,
-                                  decoration: inputDecoration('시작 날짜', '시작 날짜'),
-                                  onTap: (){
-                                    DatePicker.showDatePicker(context,
-                                        showTitleActions: true,
-                                        theme: datePickerTheme,
-                                        onChanged: (date){
-                                          print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
-                                        },onConfirm: (date) {
-                                          startDateController.text = DateFormat('yyyy/MM/dd', 'ko')
-                                              .format(date)
-                                              .toString(); // 데이터 바꾸기
-                                          startInput = DateFormat('yyyy/MM/dd a h:mm', 'ko').parse(startDateController.text+" "+startTimeController.text);
-                                          print('confirm data! $startInput');
-                                        }, currentTime: startInput, locale: LocaleType.ko);
-                                  },
-                                ),
-                              ),
-                            ),
-                            isAllDay? SizedBox(width: 0,height: 0):Flexible(
-                              child: Container(
-                                margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                padding: const EdgeInsets.only(left: 15),
-                                child: TextField(
-                                    readOnly: true,
-                                    controller: startTimeController,
-                                    style: inputTextStyle,
-                                    decoration: inputDecoration('시작 시간', '시작 시간'),
-                                    onTap: (){
-                                      DatePicker.showPicker(context,
-                                          showTitleActions: true,
-                                          pickerModel: CustomTime12hPickerModel(currentTime: startInput, locale: LocaleType.ko),
-                                          theme: datePickerTheme,
-                                          onChanged: (date) {
-                                            print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
-                                          }, onConfirm: (date) {
-                                            startInput = date;
-                                            startTimeController.text = DateFormat('a h:mm', 'ko')
-                                                .format(date)
-                                                .toString();
-                                          }, locale: LocaleType.ko);
-                                    }
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: <Widget>[
-                            Flexible(
-                              child: Container(
-                                margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                padding: const EdgeInsets.only(right: 15),
-                                child: TextField(
-                                  readOnly: true,
-                                  controller: endDateController,
-                                  style: inputTextStyle,
-                                  decoration: inputDecoration('종료 날짜', '종료 날짜'),
-                                  onTap: (){
-                                    //_selectDate(context, endDateController);
-                                    DatePicker.showDatePicker(context,
-                                        showTitleActions: true,
-                                        theme: datePickerTheme,
-                                        onChanged: (date){
-                                          print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
-                                        },onConfirm: (date) {
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          Flexible(
+                            child: Container(
+                              margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                              padding: const EdgeInsets.only(right: 15),
+                              child: TextField(
+                                readOnly: true,
+                                controller: startDateController,
+                                style: inputTextStyle,
+                                decoration: isAllDay? inputDecoration('날짜', '날짜'): inputDecoration('시작 날짜', '시작 날짜'),
+                                onTap: (){
+                                  DatePicker.showDatePicker(context,
+                                      showTitleActions: true,
+                                      theme: datePickerTheme,
+                                      onChanged: (date){
+                                        print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
+                                      },onConfirm: (date) {
+                                        startDateController.text = DateFormat('yyyy/MM/dd', 'ko')
+                                            .format(date)
+                                            .toString(); // 데이터 바꾸기
+                                        startInput = DateFormat('yyyy/MM/dd a h:mm', 'ko').parse(startDateController.text+" "+startTimeController.text);
+                                        print('confirm data! $startInput');
+                                        if(isAllDay){
+                                          // 종료 날짜 설정 (날짜: 동일, 시간: 오후 11시 59분)
+                                          endInput = startInput.add(Duration(days: 1)).subtract(Duration(seconds: 1));
                                           endDateController.text = DateFormat('yyyy/MM/dd', 'ko')
+                                              .format(endInput)
+                                              .toString();
+                                          endTimeController.text = DateFormat('a h:mm', 'ko')
+                                              .format(endInput)
+                                              .toString();
+                                          print(endInput);
+                                        }
+                                      }, currentTime: startInput, locale: LocaleType.ko);
+                                },
+                              ),
+                            ),
+                          ),
+                          isAllDay? SizedBox(width: 0,height: 0):Flexible(
+                            child: Container(
+                              margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                              padding: const EdgeInsets.only(left: 15),
+                              child: TextField(
+                                  readOnly: true,
+                                  controller: startTimeController,
+                                  style: inputTextStyle,
+                                  decoration: inputDecoration('시작 시간', '시작 시간'),
+                                  onTap: (){
+                                    DatePicker.showPicker(context,
+                                        showTitleActions: true,
+                                        pickerModel: CustomTime12hPickerModel(currentTime: startInput, locale: LocaleType.ko),
+                                        theme: datePickerTheme,
+                                        onChanged: (date) {
+                                          print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
+                                        }, onConfirm: (date) {
+                                          startInput = date;
+                                          startTimeController.text = DateFormat('a h:mm', 'ko')
                                               .format(date)
                                               .toString();
-                                          endInput = DateFormat('yyyy/MM/dd a h:mm', 'ko').parse(endDateController.text+" "+endTimeController.text);
-                                          print('confirm date! $endInput');
-                                        }, currentTime: endInput, locale: LocaleType.ko);
-                                  },
+                                        }, locale: LocaleType.ko);
+                                  }
+                              ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: <Widget>[
+                          isAllDay? SizedBox(width: 0,height: 0): Flexible(
+                            child: Container(
+                              margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                              padding: const EdgeInsets.only(right: 15),
+                              child: TextField(
+                                readOnly: true,
+                                controller: endDateController,
+                                style: inputTextStyle,
+                                decoration: inputDecoration('종료 날짜', '종료 날짜'),
+                                onTap: (){
+                                  //_selectDate(context, endDateController);
+                                  DatePicker.showDatePicker(context,
+                                      showTitleActions: true,
+                                      theme: datePickerTheme,
+                                      onChanged: (date){
+                                        print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
+                                      },onConfirm: (date) {
+                                        endDateController.text = DateFormat('yyyy/MM/dd', 'ko')
+                                            .format(date)
+                                            .toString();
+                                        endInput = DateFormat('yyyy/MM/dd a h:mm', 'ko').parse(endDateController.text+" "+endTimeController.text);
+                                        print('confirm date! $endInput');
+                                      }, currentTime: endInput, locale: LocaleType.ko);
+                                },
                                 ),
                               ),
                             ),
@@ -570,24 +595,34 @@ class CustomTime12hPickerModel extends CommonPickerModel {
 
   @override
   String middleStringAtIndex(int index) {
-    if (index >= 0 && index < 12) {
-      if (index == 0) {
-        return digits(12, 2);
-      } else {
-        return digits(index, 2);
-      }
+    // 숫자 반복 안됨
+    // if (index >= 0 && index < 12) {
+    //   if (index == 0) {
+    //     return digits(12, 2);
+    //   } else {
+    //     return digits(index, 2);
+    //   }
+    // } else {
+    //   return null;
+    // }
+    // 숫자 반복되도록 > 오전 오후가 자동으로 바뀌가 하면 좋은데.. 아직 못함
+    if (index % 12 == 0) {
+      return digits(12, 2);
     } else {
-      return null;
+      return digits(index%12, 2);
     }
   }
 
   @override
   String rightStringAtIndex(int index) {
-    if (index >= 0 && index < 60) {
-      return digits(index, 2);
-    } else {
-      return null;
-    }
+    // 숫자 반복 안됨
+    // if (index >= 0 && index < 60) {
+    //   return digits(index, 2);
+    // } else {
+    //   return null;
+    // }
+    // 숫자 반복되도록
+    return digits(index%60, 2);
   }
 
   @override
@@ -607,11 +642,11 @@ class CustomTime12hPickerModel extends CommonPickerModel {
 
   @override
   DateTime finalTime() {
-    int hour = currentMiddleIndex() + 12 * currentLeftIndex();
+    int hour = currentMiddleIndex()%12 + 12 * currentLeftIndex();
     return currentTime.isUtc
         ? DateTime.utc(
-        currentTime.year, currentTime.month, currentTime.day, hour, currentRightIndex(), 0)
+        currentTime.year, currentTime.month, currentTime.day, hour, currentRightIndex()%60, 0)
         : DateTime(
-        currentTime.year, currentTime.month, currentTime.day, hour, currentRightIndex(), 0);
+        currentTime.year, currentTime.month, currentTime.day, hour, currentRightIndex()%60, 0);
   }
 }
