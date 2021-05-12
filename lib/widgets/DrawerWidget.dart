@@ -16,6 +16,13 @@ class _ShowDrawerState extends State<ShowDrawer> {
     await auth.signOut();
   }
 
+
+  @override
+  void dispose() {
+    super.dispose();
+    print('depose');
+  }
+
   @override
   Widget build(BuildContext context) {
     final userProvider = Provider.of<UserData>(context, listen: false);
@@ -48,7 +55,7 @@ class _ShowDrawerState extends State<ShowDrawer> {
                   color: Colors.white,
                   image: DecorationImage(
                     colorFilter: new ColorFilter.mode(Colors.white.withOpacity(0.2), BlendMode.dstATop),
-                    image: AssetImage("images/logo/logo_only.png"),
+                    image: AssetImage("drawable/logo/logo_only.png"),
                     fit: BoxFit.fitHeight,
                   ),
                 ),
@@ -88,8 +95,6 @@ class _ShowDrawerState extends State<ShowDrawer> {
                         ],
                       ),
                       onTap: () {
-                        print('설정');
-                        //Navigator.push(context, MaterialPageRoute(builder: (context)=> TagSetting()));
                         Navigator.pushNamed(context, '/tagSetting');
                       },
                     ),
@@ -101,6 +106,7 @@ class _ShowDrawerState extends State<ShowDrawer> {
               title: Text('설정'),
               onTap: () {
                 print('설정');
+                Navigator.pushNamed(context, '/setting');
               },
             ),
             ListTile(

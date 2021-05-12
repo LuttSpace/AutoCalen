@@ -131,12 +131,12 @@ class _LoginState extends State<Login> {
 
           children: [
             Container(
-              child: Image.asset('images/logo/logo_only.png', width: 250.0, height: 250),
+              child: Image.asset('drawable/logo/logo_only.png', width: 250.0, height: 250),
             ),
             SizedBox(height: 25.0),
             ElevatedButton(
               onPressed: () => signInWithGoogle().then((value) {
-                addNewUser(context, value.user, 'google');
+                addNewUser(context, value.user, 'google',userProvider);
                 userProvider.setUserData('google');
               }), // 구글 로그인 후 사용자 정보 저장
               child: SizedBox(
@@ -146,7 +146,7 @@ class _LoginState extends State<Login> {
                     children: [
                       Expanded(
                         child: Image.asset(
-                          'images/icon/google_icon.png',
+                          'drawable/icon/google_icon.png',
                           width: 25,
                           height: 25,
                         ),
@@ -174,7 +174,7 @@ class _LoginState extends State<Login> {
             SizedBox(height: 15.0),
             ElevatedButton(
               onPressed: () =>signInWithKakao().then((value) {
-                addNewUser(context, value.user, 'kakao');
+                addNewUser(context, value.user, 'kakao',userProvider);
                 userProvider.setUserData('kakao');
               }), //
               child: SizedBox(
@@ -219,7 +219,7 @@ class _LoginState extends State<Login> {
             SizedBox(height: 15.0),
             ElevatedButton(
               onPressed: () => signInWithNaver().then((value) {
-                addNewUser(context, value.user, 'naver');
+                addNewUser(context, value.user, 'naver',userProvider);
                 userProvider.setUserData('naver');
               }),
               child: SizedBox(
@@ -229,7 +229,7 @@ class _LoginState extends State<Login> {
                     children: [
                       Expanded(
                         child: Image.asset(
-                          'images/icon/naver_icon.png',
+                          'drawable/icon/naver_icon.png',
                           width: 30,
                           height: 30,
                         ),
@@ -258,18 +258,19 @@ class _LoginState extends State<Login> {
   }
 
   // Firestore에 사용자 정보 저장
-  void addNewUser(BuildContext context, User currentUser, String signInWith){
+  void addNewUser(BuildContext context, User currentUser, String signInWith, var userProvider){
     CollectionReference users = _firebaseFirestore.collection("UserList");
     users.doc(currentUser.uid)
         .get()
         .then((DocumentSnapshot documentSnapshot) {
       if (!documentSnapshot.exists) { // Firestore에 사용자 정보 없을 경우 추가
-        userModel.User user = userModel.User(currentUser.displayName, currentUser.email, currentUser.photoURL, signInWith);
+        userModel.User user = userModel.User(currentUser.displayName, currentUser.email, currentUser.photoURL, signInWith, true); //alarm 무조건.
         users.doc(currentUser.uid).set(user.toJson());
       }
       else{ // Firestore에 사용자 정보 있는 경우 출력
         userModel.User getUser = userModel.User.fromJson(documentSnapshot.data());
-        print(getUser.name+", "+ getUser.email+", "+ getUser.photoURL+", "+ getUser.signInWith);
+        userProvider.setNeedAlarms(documentSnapshot.get('needAlarms'));
+        print(getUser.name+", "+ getUser.email+", "+ getUser.photoURL+", "+ getUser.signInWith+", "+userProvider.getNeedAlarms().toString());
       }
     });
   }

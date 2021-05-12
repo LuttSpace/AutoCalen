@@ -4,6 +4,7 @@ import 'package:autocalen/models/UserData.dart';
 import 'package:autocalen/models/Tag.dart';
 import 'package:autocalen/models/Schedule.dart';
 import 'package:autocalen/pages/LoginPage.dart';
+import 'package:autocalen/pages/SettingPage.dart';
 import 'package:autocalen/pages/SortedListByTagPage.dart';
 import 'package:autocalen/pages/SplashScreen.dart';
 import 'package:autocalen/pages/TagSettingPage.dart';
@@ -16,12 +17,15 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:intl/intl.dart';
 import 'package:month_picker_dialog/month_picker_dialog.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_calendar/calendar.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 
 void main() async {
   print('======================= void main 시작 ! ==================================');
@@ -63,6 +67,7 @@ class MainPage extends StatelessWidget{
             '/sortedListByTag':(context)=>SortedListByTag(),
             '/login': (context)=>Login(),
             '/splash': (context) => SplashScreen(),
+            '/setting': (context) => Setting(),
           },
         ),
     );
@@ -129,12 +134,48 @@ class _CalendarPageState extends State<CalendarPage> {
   // 캘린더 데이터
   List<Schedule> schedules = <Schedule>[];
 
+  //notification
+  FlutterLocalNotificationsPlugin localNotifications;
+
   @override
   void initState(){
     _calendarController = CalendarController();
     super.initState();
+    tz.initializeTimeZones();
+    tz.setLocalLocation(tz.getLocation('Asia/Seoul'));
+    var androidInit = new AndroidInitializationSettings('logo_no'); //should change into our logo
+    var IOSInit = new IOSInitializationSettings();
+    var initSettings = new InitializationSettings(android: androidInit,iOS: IOSInit);
+    localNotifications=FlutterLocalNotificationsPlugin();
+    localNotifications.initialize(initSettings);
   }
-
+  Future _addNotifs(Schedule schedule) async {
+    print('addNotifs start ${schedule.title}');
+      var androidDetails = new AndroidNotificationDetails("channelId", "Otto Calen", "channelDescription",importance: Importance.high);
+      var iosDetails = new IOSNotificationDetails();
+      var generalNotificationDetails = new NotificationDetails(android: androidDetails,iOS: iosDetails);
+      String subtitle ='';
+      String formatString = schedule.isAllDay? 'M월 d일' : 'M월 d일 a h:mm';
+      // 시작날짜, 종료 날짜 비교
+      if(schedule.start.difference(schedule.end).inDays==0){ // 시작날짜, 종료날짜가 같으면
+        subtitle= DateFormat(formatString, 'ko').format(schedule.start).toString();
+        if((schedule.start.difference(schedule.end).inHours!=0||schedule.start.difference(schedule.end).inMinutes!=0)&& !schedule.isAllDay){ // 시간이 같지 않으면
+          subtitle= '${DateFormat('a h:mm', 'ko').format(schedule.start).toString()} ~ ${DateFormat('a h:mm', 'ko').format(schedule.end).toString()}';
+        }
+      } else{
+        subtitle='${DateFormat(formatString, 'ko').format(schedule.start).toString()} ~ ${DateFormat(formatString, 'ko').format(schedule.end).toString()}';
+      }
+      //String time = schedule.isAllDay? '하루 종일': '${schedule.start} - ${schedule.end}';
+      String content = '${subtitle} ${schedule.title}'; //+(schedule.isAllDay? '하루 종일': '${schedule.start} - ${schedule.end}');
+      await localNotifications.zonedSchedule(
+          0,//should change
+          '🔔 곧 일정이 다가옵니다',
+          content, //"${schedule.title}",
+          tz.TZDateTime.from(schedule.start.subtract(new Duration(minutes: 30)), tz.local),
+          generalNotificationDetails,
+          uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
+          androidAllowWhileIdle: true).then((value) => print('noti '));
+  }
   void changeAppBarDateView(ViewChangedDetails viewChangedDetails){
     //앱바에 년월 바꾸기
     SchedulerBinding.instance
@@ -159,7 +200,15 @@ class _CalendarPageState extends State<CalendarPage> {
     print('real '+schedules.length.toString());
     return ScheduleDataSource(schedules);
   }
-
+  Future _cancelNoti() async {
+    print('cancel start');
+    var androidInit = new AndroidInitializationSettings('logo_no'); //should change into our logo
+    var IOSInit = new IOSInitializationSettings();
+    var initSettings = new InitializationSettings(android: androidInit,iOS: IOSInit);
+    FlutterLocalNotificationsPlugin localNotifications=FlutterLocalNotificationsPlugin();
+    localNotifications.initialize(initSettings);
+    await localNotifications.cancelAll().then((value) => print('cancel succeed'));
+  }
   // 처음 인지 체크함
   bool isItFirstData = true;
 
@@ -169,7 +218,8 @@ class _CalendarPageState extends State<CalendarPage> {
   Widget build(BuildContext context) {
     print('=======================Calendar Page Build==========================');
     print('빌드 횟수!!! ${++buildCalled}');
-    final userProvider = Provider.of<UserData>(context, listen: false);
+    final userProvider = Provider.of<UserData>(context, listen: true);
+    print('userProvider needAlarms ${userProvider.getNeedAlarms()}');
     if(userProvider.getUid()!='' &&userProvider.getUid()!=null ){
       print('main page~~~~~ '+ userProvider.getEmail());
     }
@@ -218,12 +268,15 @@ class _CalendarPageState extends State<CalendarPage> {
             }
             else {
               print('start calling data on ${snapCalled} ');
-              schedules.clear();
+              schedules.clear(); _cancelNoti();
               snapshot.data.docs.forEach((doc) {
                 print('doc ' + doc.id);
-
                 schedules.add(new Schedule(doc.id, doc['title'], doc['start'].toDate(), doc['end'].toDate(),
-                    new Tag(doc['tag']['tid'],doc['tag']['name'], Color(int.parse(doc['tag']['color'].toString().substring(6, 16)))),doc['memo'], doc['isAllDay']));
+                    new Tag(doc['tag']['tid'],doc['tag']['name'], Color(int.parse(doc['tag']['color'].toString().substring(6, 16)))),doc['memo'], doc['isAllDay'],doc['needAlarm']));
+                if(DateTime.now().difference(doc['start'].toDate().subtract(new Duration(minutes: 30))).isNegative && doc['needAlarm'] && userProvider.getNeedAlarms()){
+                  print('add notif ${schedules.last}');
+                  _addNotifs(schedules.last);
+                }
               });
               return SafeArea(
                 child: SfCalendar(
