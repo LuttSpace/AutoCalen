@@ -35,6 +35,7 @@ class _SettingState extends State<Setting> {
     // needAlams setting
     print(needAlarms);
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
           primaryColor: Colors.white,
           accentColor: Colors.black

@@ -10,7 +10,8 @@ class User{
       : _name = json['name'],
         _email = json['email'],
         _photoURL = json['photoURL'],
-        _signInWith = json['signInWith'];
+        _signInWith = json['signInWith'],
+        _needAlarms = json['needAlarms'];
 
   String get name => _name;
   String get email => _email;

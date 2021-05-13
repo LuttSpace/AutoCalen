@@ -28,6 +28,7 @@ class UserData with ChangeNotifier{
           _photoURL = getUser.photoURL;
           _signInWith = getUser.signInWith;
           _needAlarms = getUser.needAlarms;
+          print('${_signInWith} !userprovider needAlarms! ${_needAlarms}');
         }
       });
     }

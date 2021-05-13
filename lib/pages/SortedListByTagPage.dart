@@ -20,6 +20,7 @@ class _SortedListByTagState extends State<SortedListByTag> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
         primaryColor: Colors.white,
         accentColor: Colors.black

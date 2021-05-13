@@ -266,6 +266,7 @@ class _TagSettingState extends State<TagSetting> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: ThemeData(
             primaryColor: Colors.white,
             accentColor: Colors.black
