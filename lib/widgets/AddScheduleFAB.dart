@@ -32,6 +32,9 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
   var responseCode=0;
 
   // ocr 기능
+  // Future<dynamic> uploadingManager(File imgFile,dynamic userProvider,bool isMain,DateTime)async{
+  //
+  // }
   Future<dynamic> uploadFile(File imgFile, dynamic userProvider, bool isMain, DateTime dateTime) async {
     String uploadName = userProvider.getUid()+'_'+DateTime.now().millisecondsSinceEpoch.toString();
     var response;
@@ -139,13 +142,14 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
                         child: Text("확인",style: TextStyle(color: Colors.black),),
                         onPressed: (){
                           var userProvider = Provider.of<UserData>(context, listen: false);
-                          uploadFile(_image, userProvider, widget.isMain, widget.date).then((value) {
+
+                          uploadFile(_image, userProvider, widget.isMain, widget.date).then((value) async {
                             print("백엔드 처리 완료!!!!!!!!!!!!!!!! $value");
-                            responseState =1; // 로딩중
-                            // 로딩화면 띄우기
-                            _showLoadingStatusDialog();
                           });
                           Navigator.of(context).pop();
+                          responseState =1; // 로딩중
+                          // 로딩화면 띄우기
+                          _showLoadingStatusDialog();
                         },
                       ),
                     ),
@@ -169,21 +173,68 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
   }
 
   _showLoadingStatusDialog() {
-    String content;
+    Widget content;
 
     showGeneralDialog(
       context: context,
       barrierDismissible: false,
       pageBuilder: (BuildContext context, Animation animation, Animation secondAnimation){
         if(responseState==1){ // 로딩중
-          content= "일정 등록중";
+          content = Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children:[
+                Image.asset(
+                  "drawable/logo/loading.gif",
+                  width: MediaQuery.of(context).size.width,//200.0,
+                ),
+                Text("등록 중",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20.0,
+                  ),
+                ),
+              ]
+          );
         }
         else if(responseState==2){ //처리 완료
-          Future.delayed(Duration(seconds: 2), () async { Navigator.pop(context);});
+          Future.delayed(Duration(seconds: 4), () async { Navigator.pop(context);});
 
           if(responseCode!=0){
-            if(responseCode==200) content= "일정 등록 완료!";
-            else content = "일정 등록 실패!";
+            if(responseCode==200) content= Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children:[
+                  Text('🥰',style:TextStyle(fontSize: 50)),
+                  // Image.asset(
+                  //   "drawable/logo/logo.png",
+                  //   width: MediaQuery.of(context).size.width,//200.0,
+                  // ),
+                  Text("등록 완료",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20.0,
+                    ),
+                  ),
+                ]
+            );
+            else content = Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children:[
+                  Text('😥',style:TextStyle(fontSize: 50)),
+                  // Image.asset(
+                  //   "drawable/logo/logo.png",
+                  //   width: MediaQuery.of(context).size.width,//200.0,
+                  // ),
+                  Text("등록 실패\n다시 시도해주세요.",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 20.0,
+                    ),
+                  ),
+                ]
+            );
           }
           responseState =0; // 처리 완료 후 다시 초기 상태로
         }
@@ -194,23 +245,7 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
                 color: Colors.white,
-                child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children:[
-                      Image.asset(
-                        "drawable/logo/loading.gif",
-                        height: 200.0,
-                        width: 200.0,
-                      ),
-                      Text("$content",
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 20.0,
-                        ),
-                      ),
-                    ]
-                ),
+                child: content,
               ),
             ),
         );
