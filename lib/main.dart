@@ -47,6 +47,7 @@ class MainPage extends StatelessWidget{
           //Provider<String>.value(value: "Park")
         ],
         child: MaterialApp(
+          debugShowCheckedModeBanner: false,
           localizationsDelegates: [
             GlobalMaterialLocalizations.delegate,
             GlobalWidgetsLocalizations.delegate,
@@ -128,7 +129,7 @@ class _CalendarPageState extends State<CalendarPage> {
   // 선택한 날짜에 등록된 일정 있는지
   bool isEmpty = true;
   DateTime _date;
-
+  DateTime today;
   //Calendar Controller
   CalendarController _calendarController;
   // 캘린더 데이터
@@ -136,10 +137,10 @@ class _CalendarPageState extends State<CalendarPage> {
 
   //notification
   FlutterLocalNotificationsPlugin localNotifications;
-
   @override
   void initState(){
     _calendarController = CalendarController();
+    today=DateTime.now();
     super.initState();
     tz.initializeTimeZones();
     tz.setLocalLocation(tz.getLocation('Asia/Seoul'));
@@ -172,10 +173,10 @@ class _CalendarPageState extends State<CalendarPage> {
           0,//should change
           '🔔 곧 일정이 다가옵니다',
           content, //"${schedule.title}",
-          tz.TZDateTime.from(schedule.start.subtract(new Duration(minutes: 30)), tz.local),
+          tz.TZDateTime.from(schedule.start.subtract(new Duration(minutes: 30)), tz.local), //.subtract(new Duration(minutes: 30))
           generalNotificationDetails,
           uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
-          androidAllowWhileIdle: true).then((value) => print('noti '));
+          androidAllowWhileIdle: true).then((value) => print('noti ${content}'));
   }
   void changeAppBarDateView(ViewChangedDetails viewChangedDetails){
     //앱바에 년월 바꾸기
@@ -203,11 +204,6 @@ class _CalendarPageState extends State<CalendarPage> {
   }
   Future _cancelNoti() async {
     print('cancel start');
-    var androidInit = new AndroidInitializationSettings('logo_no'); //should change into our logo
-    var IOSInit = new IOSInitializationSettings();
-    var initSettings = new InitializationSettings(android: androidInit,iOS: IOSInit);
-    FlutterLocalNotificationsPlugin localNotifications=FlutterLocalNotificationsPlugin();
-    localNotifications.initialize(initSettings);
     await localNotifications.cancelAll().then((value) => print('cancel succeed'));
   }
   // 처음 인지 체크함
@@ -244,8 +240,8 @@ class _CalendarPageState extends State<CalendarPage> {
                 onPressed: (){
                   showMonthPicker(
                     context: context,
-                    firstDate: DateTime(DateTime.now().year - 10),
-                    lastDate: DateTime(DateTime.now().year + 10),
+                    firstDate: DateTime(today.year - 10),
+                    lastDate: DateTime(today.year + 10),
                     initialDate: DateTime.now(),
                   ).then((date) {
                     if (date != null) {
@@ -270,14 +266,18 @@ class _CalendarPageState extends State<CalendarPage> {
             }
             else {
               print('start calling data on ${snapCalled} ');
+
               schedules.clear(); _cancelNoti();
               snapshot.data.docs.forEach((doc) {
-                print('doc ' + doc.id);
+                //print('doc ' + doc.id);
                 schedules.add(new Schedule(doc.id, doc['title'], doc['start'].toDate(), doc['end'].toDate(),
                     new Tag(doc['tag']['tid'],doc['tag']['name'], Color(int.parse(doc['tag']['color'].toString().substring(6, 16)))),doc['memo'], doc['isAllDay'],doc['needAlarm'],doc['imgUrl']));
-                if(DateTime.now().difference(doc['start'].toDate().subtract(new Duration(minutes: 30))).isNegative && doc['needAlarm'] && userProvider.getNeedAlarms()){
-                  print('add notif ${schedules.last}');
-                  _addNotifs(schedules.last);
+
+                if(userProvider.getNeedAlarms() && doc['needAlarm'] && today.difference(doc['start'].toDate().subtract(new Duration(minutes: 30))).isNegative &&
+                   today.year== schedules.last.start.year && today.month == schedules.last.start.month
+                    && (today.day == schedules.last.start.day || today.day+1==schedules.last.start.day)){ //.subtract(new Duration(minutes: 30))
+                  print('adding notif ${schedules.last} time : ${DateTime.now().difference(doc['start'].toDate().subtract(new Duration(minutes: 30))).isNegative}');
+                  _addNotifs(schedules.last).then((value) => print('adding notif done'));
                 }
               });
               return SafeArea(
