@@ -24,8 +24,12 @@ class AddScheduleFAB extends StatefulWidget {
 class _AddScheduleFABState extends State<AddScheduleFAB>
     with SingleTickerProviderStateMixin {
   //Camera (image_picker) Area
-  File _image =null;
+  File _image = null;
   final picker = ImagePicker();
+
+  // response 상태 확인 (로딩화면)
+  var responseState= 0; // 기본
+  var responseCode=0;
 
   // ocr 기능
   Future<dynamic> uploadFile(File imgFile, dynamic userProvider, bool isMain, DateTime dateTime) async {
@@ -39,6 +43,9 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
         print(uploadName);
         downloadURLExample(uploadName, userProvider.getUid(), isMain, dateTime).then((value) {
           response = value;
+          responseState = 2; // 처리 완료
+          Navigator.pop(context); // '로딩 중' 다이얼로그 pop
+          _showLoadingStatusDialog(); // '처리 완료' 다이얼로그
           return response;
         });
         print('url 성공');
@@ -51,6 +58,7 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
   }
 
   Future<dynamic> downloadURLExample(String uploadName, String userId, bool isMain, DateTime dateTime) async {
+    print('downloadURLExample 함수 호출');
     try{
       String downloadURL = await firebase_storage.FirebaseStorage.instance
           .ref(uploadName)
@@ -65,7 +73,9 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
   }
 
   Future<dynamic> callBackend(String downloadURL, String id, bool isMain, DateTime dateTime) async{
+    print('callBackend 함수 호출');
     String frontURL = 'https://autocalen1-sw4ivbhnwa-de.a.run.app/?_url=';
+    // String frontURL = 'https://autocalen2-sw4ivbhnwa-de.a.run.app/?_url=';
     String userId = '&_id=${id}';
     String date;
 
@@ -79,29 +89,14 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
     }
 
     print('full url ${frontURL+downloadURL+userId+date}');
-    // showDialog(
-    //     context: context,
-    //     builder: (context){
-    //       //Future.delayed() //(Duration(seconds: 1), () {Navigator.pop(context);});
-    //       return AlertDialog(
-    //         shape: RoundedRectangleBorder(
-    //             borderRadius: BorderRadius.circular(8.0)
-    //         ),
-    //         content: SizedBox(
-    //             height: 50,
-    //             child: Center(child: Text('로딩'))
-    //         ),
-    //       );
-    //     }
-    // );
 
     var response = await http.get(Uri.parse(frontURL+downloadURL+userId+date));
-    //
-    // }
+
     var statusCode = response.statusCode;
     var responseHeaders = response.headers;
     var responseBody = response.body;
 
+    responseCode = statusCode;
     print("statusCode: ${statusCode}");
     print("responseHeaders: ${responseHeaders}");
     print("responseBody: ${responseBody}");
@@ -144,8 +139,12 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
                         child: Text("확인",style: TextStyle(color: Colors.black),),
                         onPressed: (){
                           var userProvider = Provider.of<UserData>(context, listen: false);
-                          uploadFile(_image, userProvider, widget.isMain, widget.date).then((value) => print("백엔드 처리 완료!!!!!!!!!!!!!!!!"));
-                          //ImgUpload.uploadFile(_image, userProvider, widget.isMain, widget.date).then((value) => print("백엔드 처리 완료!!!!!!!!!!!!!!!!"));
+                          uploadFile(_image, userProvider, widget.isMain, widget.date).then((value) {
+                            print("백엔드 처리 완료!!!!!!!!!!!!!!!! $value");
+                            responseState =1; // 로딩중
+                            // 로딩화면 띄우기
+                            _showLoadingStatusDialog();
+                          });
                           Navigator.of(context).pop();
                         },
                       ),
@@ -167,6 +166,56 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
         }
       });
     });
+  }
+
+  _showLoadingStatusDialog() {
+    String content;
+
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: false,
+      pageBuilder: (BuildContext context, Animation animation, Animation secondAnimation){
+        if(responseState==1){ // 로딩중
+          content= "일정 등록중";
+        }
+        else if(responseState==2){ //처리 완료
+          Future.delayed(Duration(seconds: 2), () async { Navigator.pop(context);});
+
+          if(responseCode!=0){
+            if(responseCode==200) content= "일정 등록 완료!";
+            else content = "일정 등록 실패!";
+          }
+          responseState =0; // 처리 완료 후 다시 초기 상태로
+        }
+        return Material(
+            type: MaterialType.transparency,
+            child: Center(
+              child: Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                color: Colors.white,
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children:[
+                      Image.asset(
+                        "drawable/logo/logo_loading.gif",
+                        height: 200.0,
+                        width: 200.0,
+                      ),
+                      Text("$content",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 20.0,
+                        ),
+                      ),
+                    ]
+                ),
+              ),
+            ),
+        );
+      }
+    );
   }
 
   @override
