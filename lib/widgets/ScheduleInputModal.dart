@@ -575,7 +575,7 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                                 switch(state.extendedImageLoadState){
                                   case LoadState.loading:
                                     return Image.asset(
-                                      "drawable/logo/logo_only.png",
+                                      "drawable/logo/loading.gif",
                                       fit: BoxFit.fill,
                                     ); break;
                                   case LoadState.completed:
