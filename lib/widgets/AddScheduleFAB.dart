@@ -198,7 +198,7 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children:[
                       Image.asset(
-                        "drawable/logo/logo_loading.gif",
+                        "drawable/logo/loading.gif",
                         height: 200.0,
                         width: 200.0,
                       ),
