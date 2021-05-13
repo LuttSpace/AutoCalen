@@ -149,6 +149,7 @@ class _CalendarPageState extends State<CalendarPage> {
     localNotifications=FlutterLocalNotificationsPlugin();
     localNotifications.initialize(initSettings);
   }
+
   Future _addNotifs(Schedule schedule) async {
     print('addNotifs start ${schedule.title}');
       var androidDetails = new AndroidNotificationDetails("channelId", "Otto Calen", "channelDescription",importance: Importance.high);
@@ -212,6 +213,7 @@ class _CalendarPageState extends State<CalendarPage> {
   // 처음 인지 체크함
   bool isItFirstData = true;
 
+  //
   int snapCalled=0;
   int buildCalled =0;
   @override
@@ -272,7 +274,7 @@ class _CalendarPageState extends State<CalendarPage> {
               snapshot.data.docs.forEach((doc) {
                 print('doc ' + doc.id);
                 schedules.add(new Schedule(doc.id, doc['title'], doc['start'].toDate(), doc['end'].toDate(),
-                    new Tag(doc['tag']['tid'],doc['tag']['name'], Color(int.parse(doc['tag']['color'].toString().substring(6, 16)))),doc['memo'], doc['isAllDay'],doc['needAlarm']));
+                    new Tag(doc['tag']['tid'],doc['tag']['name'], Color(int.parse(doc['tag']['color'].toString().substring(6, 16)))),doc['memo'], doc['isAllDay'],doc['needAlarm'],doc['imgUrl']));
                 if(DateTime.now().difference(doc['start'].toDate().subtract(new Duration(minutes: 30))).isNegative && doc['needAlarm'] && userProvider.getNeedAlarms()){
                   print('add notif ${schedules.last}');
                   _addNotifs(schedules.last);

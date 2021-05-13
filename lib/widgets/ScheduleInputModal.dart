@@ -2,6 +2,7 @@ import 'package:autocalen/models/Tag.dart';
 import 'package:autocalen/models/Schedule.dart';
 import 'package:autocalen/models/UserData.dart';
 import 'package:autocalen/widgets/TagListDialog.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -129,6 +130,7 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
   Color needAlarmTextColor = Colors.black;
   bool isMemo = false; // 메모 옵션
 
+  String imgUrl='';
   @override
   void initState() {
     print('init ${widget._tagList.length}');
@@ -144,12 +146,14 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
       else memoController = TextEditingController();
       isAllDay = widget._details.isAllDay;
       needAlarm = widget._details.needAlarm;
+      imgUrl= widget._details.imgUrl;
     }
     else{ // details==null && date!=null
       _currentTag = widget._tagList[0];
       titleController = TextEditingController();
       startInput = widget._date; endInput = widget._date.add(Duration(hours: 1));
       memoController = TextEditingController();
+      imgUrl='';
     }
     startDateController = TextEditingController(text : DateFormat('yyyy/MM/dd', 'ko').format(startInput).toString());
     startTimeController = TextEditingController(text : DateFormat('a h:mm', 'ko').format(startInput).toString());
@@ -157,6 +161,7 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
     endTimeController = TextEditingController(text : DateFormat('a h:mm', 'ko').format(endInput).toString());
     isAllDayTextColor = isAllDay? Colors.black: Colors.grey;
     needAlarmTextColor = needAlarm? Colors.black:Colors.grey;
+    print('img url :: ${imgUrl}');
   }
   void submit(){
     if(endInput.difference(startInput).isNegative){ // 시간 설정 오류시 처리
@@ -209,12 +214,12 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
         memoInput = memoController.text;
         print('memo: ${memoController.text}');
       }
-
+      //직접쓰기는 imgURL=''
       if(widget._details!=null){
-        widget._details = new Schedule(widget._details.sid,titleController.text,startInput,endInput,_currentTag,memoInput,isAllDay,needAlarm);
+        widget._details = new Schedule(widget._details.sid,titleController.text,startInput,endInput,_currentTag,memoInput,isAllDay,needAlarm,'');
         uploadSchedule(true,widget._details);
       } else{
-        widget._details = new Schedule('',titleController.text,startInput,endInput,_currentTag,memoInput,isAllDay,needAlarm);
+        widget._details = new Schedule('',titleController.text,startInput,endInput,_currentTag,memoInput,isAllDay,needAlarm,'');
         uploadSchedule(false,widget._details);
       }
 
@@ -560,6 +565,41 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                         ],
                       ),
                     ),
+                    imgUrl==''?
+                        SizedBox(width: 0,height: 0) :
+                        Container(
+                          margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                          child: ExtendedImage.network(
+                              imgUrl,
+                            loadStateChanged: (ExtendedImageState state){
+                                switch(state.extendedImageLoadState){
+                                  case LoadState.loading:
+                                    return Image.asset(
+                                      "drawable/logo/logo_only.png",
+                                      fit: BoxFit.fill,
+                                    ); break;
+                                  case LoadState.completed:
+                                    break;
+                                  case LoadState.failed:
+                                    return GestureDetector(
+                                      child: Center(
+                                          child: Column(
+                                            children: [
+                                              Icon(Icons.refresh),
+                                              Text('로딩 실패하였습니다.')
+                                            ],
+                                          )
+                                      ),
+                                      onTap: () {
+                                        state.reLoadImage();
+                                      },
+                                    );
+                                    break;
+                                }
+                                return null;
+                            },
+                          ),
+                        )
                   ],
                 )
             )

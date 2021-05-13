@@ -117,7 +117,7 @@ class _TagCalendarState extends State<TagCalendar> {
                 snapshot.data.docs.forEach((doc) {
                   print('doc ' + doc.id);
                   schedules.add(new Schedule(doc.id, doc['title'], doc['start'].toDate(), doc['end'].toDate(),
-                      new Tag('',doc['tag']['name'], Color(int.parse(doc['tag']['color'].toString().substring(6, 16)))),doc['memo'], doc['isAllDay'],doc['needAlarm'])); //''여기에 tid 넣어야함
+                      new Tag('',doc['tag']['name'], Color(int.parse(doc['tag']['color'].toString().substring(6, 16)))),doc['memo'], doc['isAllDay'],doc['needAlarm'],'')); //''여기에 tid 넣어야함
                 });
                 return SafeArea(
                   child: SfCalendar(
