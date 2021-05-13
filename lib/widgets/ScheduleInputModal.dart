@@ -581,6 +581,19 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                                   case LoadState.completed:
                                     break;
                                   case LoadState.failed:
+                                    return GestureDetector(
+                                      child: Center(
+                                          child: Column(
+                                            children: [
+                                              Icon(Icons.refresh),
+                                              Text('로딩 실패하였습니다.')
+                                            ],
+                                          )
+                                      ),
+                                      onTap: () {
+                                        state.reLoadImage();
+                                      },
+                                    );
                                     break;
                                 }
                                 return null;
