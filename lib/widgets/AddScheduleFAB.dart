@@ -117,7 +117,7 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
               borderRadius: BorderRadius.circular(8.0)
           ),
           content: SizedBox(
-              height: 70,
+              height: MediaQuery.of(context).size.height*0.13, // 70
               child: Center(child: Text('✍️\n일정 (날짜) / 내용 / 시간 으로 적어주세요!\n날짜는 필수는 아니랍니다',textAlign: TextAlign.center,))
           ),
         );
@@ -204,11 +204,12 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
             if(responseCode==200) content= Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children:[
-                  Text('🥰',style:TextStyle(fontSize: 50)),
+                  Text('😊',style:TextStyle(fontSize: 50)),
                   // Image.asset(
                   //   "drawable/logo/logo.png",
                   //   width: MediaQuery.of(context).size.width,//200.0,
                   // ),
+                  SizedBox(width: 100, height: 15,),
                   Text("등록 완료",
                     textAlign: TextAlign.center,
                     style: TextStyle(
@@ -226,6 +227,7 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
                   //   "drawable/logo/logo.png",
                   //   width: MediaQuery.of(context).size.width,//200.0,
                   // ),
+                  SizedBox(width: 100, height: 15,),
                   Text("등록 실패\n다시 시도해주세요.",
                     textAlign: TextAlign.center,
                     style: TextStyle(

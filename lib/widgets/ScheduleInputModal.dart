@@ -236,9 +236,16 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
               borderRadius: BorderRadius.circular(8.0)
           ),
           content: SizedBox(
-              height: 70,
+              height: MediaQuery.of(context).size.height*0.1, //70,
               //width: 150,
-              child: Center(child: Text('              😥\n정말 삭제 하실 건가요?\n복구하실 수 없습니다.'))
+              child: Center(child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("😥"),
+                  SizedBox(height: 10,),
+                  Text("정말 삭제 하실 건가요?\n복구하실 수 없습니다.")//Text('              😥\n정말 삭제 하실 건가요?\n복구하실 수 없습니다.'))
+                ]),
+              )
           ),
           actions: [
             TextButton(
