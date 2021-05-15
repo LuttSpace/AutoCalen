@@ -377,10 +377,11 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                                   if(isAllDay) {
                                     isAllDayTextColor = Colors.black87;
 
-                                    // 시작 날짜 설정 (0시로)
+                                    // 시작 날짜 설정 (시간: 오전 12시 00분)
                                     startInput = DateTime(startInput.year, startInput.month, startInput.day);
-                                    // 종료 날짜 설정 (날짜: 동일, 시간: 오후 11시 59분)
-                                    endInput = startInput.add(Duration(days: 1)).subtract(Duration(seconds: 1));
+                                    // 종료 날짜 설정 (시간: 오후 11시 59분)
+                                    endInput = DateTime(endInput.year, endInput.month,endInput.day).add(Duration(days: 1)).subtract(Duration(seconds: 1));
+                                    print("하루종일 활성화 시 endInput : $endInput");
                                     // 하루종일 비활성화할 경우 대비해 시작시간, 종료날짜, 종료 시간 입력창 값 다시 설정
                                     startTimeController.text = DateFormat('a h:mm', 'ko')
                                         .format(startInput)
@@ -410,7 +411,7 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                               readOnly: true,
                               controller: startDateController,
                               style: inputTextStyle,
-                              decoration: isAllDay? inputDecoration('날짜', '날짜'): inputDecoration('시작 날짜', '시작 날짜'),
+                              decoration: inputDecoration('시작 날짜', '시작 날짜'),
                               onTap: (){
                                 DatePicker.showDatePicker(context,
                                     showTitleActions: true,
@@ -423,17 +424,6 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                                           .toString(); // 데이터 바꾸기
                                       startInput = DateFormat('yyyy/MM/dd a h:mm', 'ko').parse(startDateController.text+" "+startTimeController.text);
                                       print('confirm data! $startInput');
-                                      if(isAllDay){
-                                        // 종료 날짜 설정 (날짜: 동일, 시간: 오후 11시 59분)
-                                        endInput = startInput.add(Duration(days: 1)).subtract(Duration(seconds: 1));
-                                        endDateController.text = DateFormat('yyyy/MM/dd', 'ko')
-                                            .format(endInput)
-                                            .toString();
-                                        endTimeController.text = DateFormat('a h:mm', 'ko')
-                                            .format(endInput)
-                                            .toString();
-                                        print(endInput);
-                                      }
                                     }, currentTime: startInput, locale: LocaleType.ko);
                               },
                             ),
@@ -470,7 +460,7 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        isAllDay? SizedBox(width: 0,height: 0): Flexible(
+                        Flexible(
                           child: Container(
                             margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
                             padding: const EdgeInsets.only(right: 15),
