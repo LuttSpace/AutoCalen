@@ -20,7 +20,6 @@ class _ShowDrawerState extends State<ShowDrawer> {
   @override
   void dispose() {
     super.dispose();
-    print('depose');
   }
 
   @override
@@ -109,16 +108,16 @@ class _ShowDrawerState extends State<ShowDrawer> {
                 Navigator.pushNamed(context, '/setting');
               },
             ),
-            ListTile(
-              leading: Icon(Icons.logout),
-              title: Text('로그아웃'),
-              onTap: (){
-                print('로그아웃');
-                Navigator.pop(context);
-                signOut();
-                userProvider.resetUserData(); // Provider 사용자 정보 초기화
-              },
-            ),
+            // ListTile(
+            //   leading: Icon(Icons.logout),
+            //   title: Text('로그아웃'),
+            //   onTap: (){
+            //     print('로그아웃');
+            //     Navigator.pop(context);
+            //     signOut();
+            //     userProvider.resetUserData(); // Provider 사용자 정보 초기화
+            //   },
+            // ),
           ],
         ): null,
     );
