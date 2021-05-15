@@ -69,7 +69,7 @@ class _ShowDayDialogState extends State<ShowDayDialog> {
 
   @override
   void initState() {
-    _dateText = DateFormat('yyyy년 MM월 dd일 (E)', 'ko').format(widget._date).toString();
+    _dateText = DateFormat('yyyy년 M월 d일 (E)', 'ko').format(widget._date).toString();
 
     super.initState();
   }
