@@ -279,7 +279,7 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                 child: Row(
                   children: [
                     SizedBox(
-                      width: MediaQuery.of(context).size.width*0.73,
+                      width: MediaQuery.of(context).size.width*0.715,
                     ),
                     widget._isUpdate? IconButton(
                         onPressed:() => delete(),
