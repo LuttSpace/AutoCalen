@@ -273,10 +273,10 @@ class _CalendarPageState extends State<CalendarPage> {
                 schedules.add(new Schedule(doc.id, doc['title'], doc['start'].toDate(), doc['end'].toDate(),
                     new Tag(doc['tag']['tid'],doc['tag']['name'], Color(int.parse(doc['tag']['color'].toString().substring(6, 16)))),doc['memo'], doc['isAllDay'],doc['needAlarm'],doc['imgUrl']));
 
-                if(userProvider.getNeedAlarms() && doc['needAlarm'] && today.difference(doc['start'].toDate().subtract(new Duration(minutes: 30))).isNegative &&
-                   today.year== schedules.last.start.year && today.month == schedules.last.start.month
-                    && (today.day == schedules.last.start.day || today.day+1==schedules.last.start.day)){ //.subtract(new Duration(minutes: 30))
-                  print('adding notif ${schedules.last} time : ${DateTime.now().difference(doc['start'].toDate().subtract(new Duration(minutes: 30))).isNegative}');
+                if(userProvider.getNeedAlarms() && doc['needAlarm'] && DateTime.now().difference(doc['start'].toDate().subtract(new Duration(minutes: 30))).isNegative &&
+                    DateTime.now().year== schedules.last.start.year && DateTime.now().month == schedules.last.start.month
+                    && (DateTime.now().day == schedules.last.start.day || DateTime.now().day+1==schedules.last.start.day)){ //.subtract(new Duration(minutes: 30))
+                  print('adding notif ${schedules.last.title} time : ${DateTime.now().difference(doc['start'].toDate().subtract(new Duration(minutes: 30))).isNegative}');
                   _addNotifs(schedules.last).then((value) => print('adding notif done'));
                 }
               });

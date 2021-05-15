@@ -56,7 +56,28 @@ class _ShowDayDialogState extends State<ShowDayDialog> {
             contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
             title: Text(details.appointments[i].title),
             subtitle: Text(subtitleDate(details.appointments[i].start, details.appointments[i].end, details.appointments[i].isAllDay)),
-            onTap: () => ScheduleInputModal.show(true,false,context,details.appointments[i]),
+            onTap: () {
+              if(widget.isOrigin) ScheduleInputModal.show(true,false,context,details.appointments[i]);
+              else{
+                showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      Future.delayed(Duration(seconds: 1), () {
+                        Navigator.pop(context);
+                      });
+                      return AlertDialog(
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0)
+                        ),
+                        content: SizedBox(
+                            height: 50,
+                            child: Center(child: Text('수정은 메인 화면에서 해주세요.'))
+                        ),
+                      );
+                    }
+                );
+              }
+            }
           );
         },
         separatorBuilder: (context, index) { return Divider(
