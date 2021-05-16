@@ -1,5 +1,6 @@
 import 'package:autocalen/models/UserData.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_web_auth/flutter_web_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -147,16 +148,20 @@ class _LoginState extends State<Login> {
                       Expanded(
                         child: Image.asset(
                           'drawable/icon/google_icon.png',
-                          width: 25,
-                          height: 25,
+                          width: 27,
+                          height: 27,
                         ),
                       ),
                       Expanded(
                         flex: 8,
-                        child: Text("구글 로그인",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.black87,
+                        child: Opacity(
+                          opacity: 0.85,
+                          child: Text("구글 로그인",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
+                            ),
                           ),
                         ),
                       ),
@@ -166,9 +171,9 @@ class _LoginState extends State<Login> {
               style: ElevatedButton.styleFrom(
                 // background color
                 //minimumSize: Size(300,50),
+                shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(12.0)),
                 primary: Colors.white,
                 //padding: EdgeInsets.fromLTRB(20, 10, 50, 10),
-                textStyle: TextStyle(fontSize: 20, color: Colors.black87),
               ),
             ),
             SizedBox(height: 15.0),
@@ -183,37 +188,36 @@ class _LoginState extends State<Login> {
                   child: Row(
                     children: [
                       Expanded(
-                        child: Container(
-                          width: 30,
-                          height: 30,
-                          decoration: BoxDecoration(
-                            color: Colors.yellow,
-                            borderRadius: BorderRadius.all(
-                                Radius.circular(5.0) //
-                            ),
+                        child: Padding(
+                          padding: EdgeInsets.all(0),
+                          child: Image.asset(
+                            'drawable/icon/kakao_icon.png',
+                            width: 25,
+                            height: 25,
                           ),
-                          child: Icon(Icons.chat_bubble,
-                          color: Color(0xFF000000),
-                          size: 20,
-                        ),
-                      )),
+                        )
+                      ),
                       Expanded(
                         flex: 8,
-                        child: Text("카카오 로그인",
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.black87,
+                        child: Opacity(
+                          opacity: 0.85,
+                          child: Text("카카오 로그인",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
+                              ),
                           ),
-                        ),
+                        )
                       ),
                     ],
                   )
               ),
               style: ElevatedButton.styleFrom(
                 // background color
+                shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(12.0)),
                 primary: Colors.white, //Color(0xFFFEE500),
                 //padding: EdgeInsets.fromLTRB(20, 10, 50, 10),
-                textStyle: TextStyle(fontSize: 20, color: Colors.black87),
               ),
             ),
             SizedBox(height: 15.0),
@@ -228,27 +232,34 @@ class _LoginState extends State<Login> {
                   child: Row(
                     children: [
                       Expanded(
-                        child: Image.asset(
-                          'drawable/icon/naver_icon.png',
-                          width: 30,
-                          height: 30,
-                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(0),
+                          child: Image.asset(
+                            'drawable/icon/naver_icon.png',
+                            width: 25,
+                            height: 25,
+                          ),
+                        )
                       ),
                       Expanded(
                         flex: 8,
-                        child: Text("네이버 로그인",textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Colors.black87,
+                        child: Opacity(
+                          opacity: 0.85,
+                          child: Text("네이버 로그인",textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 20,
+                              color: Colors.black,
+                            ),
                           ),
-                        ),
+                        )
                       ),
                     ],
                   )
               ),
               style: ElevatedButton.styleFrom(
                 // background color
+                shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(12.0)),
                 primary: Colors.white, //Color(0xFF1EC800),
-                textStyle: TextStyle(fontSize: 20, color: Colors.black87),
               ),
             ),
           ],
@@ -264,7 +275,8 @@ class _LoginState extends State<Login> {
         .get()
         .then((DocumentSnapshot documentSnapshot) {
       if (!documentSnapshot.exists) { // Firestore에 사용자 정보 없을 경우 추가
-        userModel.User user = userModel.User(currentUser.displayName, currentUser.email, currentUser.photoURL, signInWith, true); //alarm 무조건.
+        //userModel.User user = userModel.User(currentUser.displayName, currentUser.email, currentUser.photoURL, signInWith, true); //alarm 무조건.
+        userModel.User user = userModel.User(currentUser.displayName, currentUser.email, '', signInWith, true); //alarm 무조건.
         users.doc(currentUser.uid).set(user.toJson());
       }
       else{ // Firestore에 사용자 정보 있는 경우 출력
