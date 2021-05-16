@@ -41,48 +41,53 @@ class _ShowDayDialogState extends State<ShowDayDialog> {
           child: Text('등록된 일정이 없습니다'),);
     }
     else{
-      return ListView.separated(
-        itemCount: details.appointments.length,
-        itemBuilder: (BuildContext _context, int i){
-          return ListTile(
-            minLeadingWidth: 10, // leading 부분 최소 넓이
-            leading: SizedBox(
-              width: 8,
-              child: Container(
-                  color: details.appointments[i].tag.getTagColor()
-              ),
-            ),
-            minVerticalPadding: 4.0, // 각 일정 탭 별 padding 값
-            contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
-            title: Text(details.appointments[i].title),
-            subtitle: Text(subtitleDate(details.appointments[i].start, details.appointments[i].end, details.appointments[i].isAllDay)),
-            onTap: () {
-              if(widget.isOrigin) ScheduleInputModal.show(true,false,context,details.appointments[i]);
-              else{
-                showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      Future.delayed(Duration(seconds: 1), () {
-                        Navigator.pop(context);
-                      });
-                      return AlertDialog(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8.0)
-                        ),
-                        content: SizedBox(
-                            height: 50,
-                            child: Center(child: Text('수정은 메인 화면에서 해주세요.'))
-                        ),
-                      );
-                    }
-                );
-              }
-            }
-          );
-        },
-        separatorBuilder: (context, index) { return Divider(
-          height: 0.0, // 구분선 높이 조정
-        );},
+      return Scrollbar(
+        isAlwaysShown: true,
+        child: ListView.separated(
+          itemCount: details.appointments.length,
+          itemBuilder: (BuildContext _context, int i){
+            return ListTile(
+                minLeadingWidth: 10, // leading 부분 최소 넓이
+                leading: SizedBox(
+                  width: 8,
+                  child: Container(
+                      color: details.appointments[i].tag.getTagColor()
+                  ),
+                ),
+                minVerticalPadding: 4.0, // 각 일정 탭 별 padding 값
+                contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
+                title: Text(details.appointments[i].title),
+                subtitle: Text(subtitleDate(details.appointments[i].start, details.appointments[i].end, details.appointments[i].isAllDay),
+                  style: TextStyle(fontSize: 12.0),
+                ),
+                onTap: () {
+                  if(widget.isOrigin) ScheduleInputModal.show(true,false,context,details.appointments[i]);
+                  else{
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          Future.delayed(Duration(seconds: 1), () {
+                            Navigator.pop(context);
+                          });
+                          return AlertDialog(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8.0)
+                            ),
+                            content: SizedBox(
+                                height: 50,
+                                child: Center(child: Text('수정은 메인 화면에서 해주세요.'))
+                            ),
+                          );
+                        }
+                    );
+                  }
+                }
+            );
+          },
+          separatorBuilder: (context, index) { return Divider(
+            height: 0.0, // 구분선 높이 조정
+          );},
+        ),
       );
     }
   }
@@ -119,6 +124,9 @@ class _ShowDayDialogState extends State<ShowDayDialog> {
               ),
               Positioned(
                   top: 40,
+                  bottom: 0,
+                  left: 0,
+                  right: 0,
                   child: Container(
                     height: MediaQuery.of(context).size.height*1.8,
                     width: MediaQuery.of(context).size.width*0.9,
