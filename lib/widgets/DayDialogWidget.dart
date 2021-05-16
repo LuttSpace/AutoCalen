@@ -55,7 +55,9 @@ class _ShowDayDialogState extends State<ShowDayDialog> {
             minVerticalPadding: 4.0, // 각 일정 탭 별 padding 값
             contentPadding: EdgeInsets.symmetric(horizontal: 10.0, vertical: 0.0),
             title: Text(details.appointments[i].title),
-            subtitle: Text(subtitleDate(details.appointments[i].start, details.appointments[i].end, details.appointments[i].isAllDay)),
+            subtitle: Text(subtitleDate(details.appointments[i].start, details.appointments[i].end, details.appointments[i].isAllDay),
+              style: TextStyle(fontSize: 12.0),
+            ),
             onTap: () {
               if(widget.isOrigin) ScheduleInputModal.show(true,false,context,details.appointments[i]);
               else{
