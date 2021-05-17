@@ -77,8 +77,8 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
 
   Future<dynamic> callBackend(String downloadURL, String id, bool isMain, DateTime dateTime) async{
     print('callBackend 함수 호출');
-    //String frontURL = 'https://autocalen1-sw4ivbhnwa-de.a.run.app/?_url=';
-    String frontURL = 'https://autocalen2-sw4ivbhnwa-de.a.run.app/?_url=';
+    //String frontURL = 'https://autocalen2-sw4ivbhnwa-de.a.run.app/?_url=';
+    String frontURL = 'http://27.96.134.227:5000/?_url=';
     String userId = '&_id=${id}';
     String date;
 
@@ -103,6 +103,7 @@ class _AddScheduleFABState extends State<AddScheduleFAB>
     print("statusCode: ${statusCode}");
     print("responseHeaders: ${responseHeaders}");
     print("responseBody: ${responseBody}");
+
     return responseBody;
   }
   //이미지 불러오기
