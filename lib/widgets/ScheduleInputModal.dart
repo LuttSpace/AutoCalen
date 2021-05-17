@@ -29,7 +29,7 @@ void show(bool isUpdate,bool isMain,BuildContext context, Schedule details, {Dat
             }
             else{
               List<DocumentSnapshot> documents = snapshot.data.docs;
-              return ScheduleInputModal(isUpdate,details,date, userProvider,
+              return ScheduleInputModal(isMain,isUpdate,details,date, userProvider,
                   documents.map((e){
                     return new Tag(e.id,e['name'],Color(int.parse(e['color'].toString().substring(6,16))));
                   }).toList()
@@ -39,9 +39,7 @@ void show(bool isUpdate,bool isMain,BuildContext context, Schedule details, {Dat
       );
     },
     expand: true,
-  ).then((value){
-    if(!isMain) Navigator.of(context).pop();
-  });
+  ); //then에서 pop부분 수정
 }
 
 // ignore: must_be_immutable
@@ -51,7 +49,8 @@ class ScheduleInputModal extends StatefulWidget{
   List<Tag> _tagList;
   final _userProvider;
   bool _isUpdate;
-  ScheduleInputModal(this._isUpdate,this._details,this._date,this._userProvider,this._tagList);
+  bool _isMain;
+  ScheduleInputModal(this._isMain,this._isUpdate,this._details,this._date,this._userProvider,this._tagList);
 
   @override
   _ScheduleInputModalState createState() => _ScheduleInputModalState();
@@ -224,6 +223,7 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
       }
 
       Navigator.of(context).pop();
+      if(!widget._isMain) Navigator.of(context).pop();
     }
   }
   void delete(){
@@ -259,6 +259,7 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                       .delete().then((value) {
                     Navigator.of(context).pop();
                     Navigator.of(context).pop();
+                    if(!widget._isMain) Navigator.of(context).pop();
                   });
                 },
                 child: Text('확인',style: TextStyle(color: Colors.black),)
