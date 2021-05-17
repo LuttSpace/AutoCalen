@@ -148,9 +148,14 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
       imgUrl= widget._details.imgUrl;
     }
     else{ // details==null && date!=null
+      print(widget._date);
       _currentTag = widget._tagList[0];
       titleController = TextEditingController();
-      startInput = widget._date; endInput = widget._date.add(Duration(hours: 1));
+      if(widget._isMain)
+        startInput = widget._date;
+      else
+        startInput = widget._date.add(Duration(hours: DateTime.now().hour, minutes: DateTime.now().minute));
+      endInput = startInput.add(Duration(hours: 1));
       memoController = TextEditingController();
       imgUrl='';
     }
@@ -163,25 +168,25 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
     print('img url :: ${imgUrl}');
   }
   void submit(){
-    if(endInput.difference(startInput).isNegative){ // 시간 설정 오류시 처리
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          Future.delayed(Duration(seconds: 1), () {Navigator.pop(context);});
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8.0)
-            ),
-            content: SizedBox(
-                height: 50,
-                child: Center(child: Text('시간 설정을 다시 해주세요.'))
-            ),
-          );
-        },
-      );
-    }
-    else if(titleController.text == ''){
+    // if(endInput.difference(startInput).isNegative){ // 시간 설정 오류시 처리
+    //   showDialog(
+    //     context: context,
+    //     barrierDismissible: false,
+    //     builder: (BuildContext context) {
+    //       Future.delayed(Duration(seconds: 1), () {Navigator.pop(context);});
+    //       return AlertDialog(
+    //         shape: RoundedRectangleBorder(
+    //             borderRadius: BorderRadius.circular(8.0)
+    //         ),
+    //         content: SizedBox(
+    //             height: 50,
+    //             child: Center(child: Text('시간 설정을 다시 해주세요.'))
+    //         ),
+    //       );
+    //     },
+    //   );
+    // }
+    if(titleController.text == ''){
       showDialog(
         context: context,
         barrierDismissible: false,
@@ -265,6 +270,24 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                 child: Text('확인',style: TextStyle(color: Colors.black),)
             )
           ],
+        );
+      },
+    );
+  }
+  void incorrectDate(String datetime){
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        Future.delayed(Duration(seconds: 1), () {Navigator.pop(context);});
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8.0)
+          ),
+          content: SizedBox(
+              height: 50,
+              child: Center(child: Text('${datetime} 설정을 다시 해주세요.'))
+          ),
         );
       },
     );
@@ -425,6 +448,13 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                                           .toString(); // 데이터 바꾸기
                                       startInput = DateFormat('yyyy/MM/dd a h:mm', 'ko').parse(startDateController.text+" "+startTimeController.text);
                                       print('confirm data! $startInput');
+                                      print('시작, 종료날짜 차이! ${endInput.difference(startInput).inDays}');
+                                      if(endInput.difference(startInput).isNegative) {
+                                        // '변경된 시작날짜 > 종료날짜' 이면 종료날짜 자동 변경
+                                        endInput = startInput.add(Duration(hours: 1));
+                                        endDateController.text = DateFormat('yyyy/MM/dd', 'ko').format(endInput).toString();
+                                        endTimeController.text = DateFormat('a h:mm', 'ko').format(endInput).toString();
+                                      }
                                     }, currentTime: startInput, locale: LocaleType.ko);
                               },
                             ),
@@ -451,6 +481,14 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                                         startTimeController.text = DateFormat('a h:mm', 'ko')
                                             .format(date)
                                             .toString();
+                                        print('startInput $startInput');
+                                        print('endInput $endInput');
+                                        if(endInput.difference(startInput).isNegative) {
+                                          // '변경된 시작날짜 > 종료날짜' 이면 종료날짜 자동 변경
+                                          endInput = startInput.add(Duration(hours: 1));
+                                          endDateController.text = DateFormat('yyyy/MM/dd', 'ko').format(endInput).toString();
+                                          endTimeController.text = DateFormat('a h:mm', 'ko').format(endInput).toString();
+                                        }
                                       }, locale: LocaleType.ko);
                                 }
                             ),
@@ -478,11 +516,19 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                                     onChanged: (date){
                                       print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
                                     },onConfirm: (date) {
-                                      endDateController.text = DateFormat('yyyy/MM/dd', 'ko')
-                                          .format(date)
-                                          .toString();
-                                      endInput = DateFormat('yyyy/MM/dd a h:mm', 'ko').parse(endDateController.text+" "+endTimeController.text);
-                                      print('confirm date! $endInput');
+                                      String endDateStr = DateFormat('yyyy/MM/dd', 'ko').format(date).toString();
+                                      DateTime changeDate = DateFormat('yyyy/MM/dd a h:mm', 'ko').parse(endDateStr +" "+endTimeController.text);
+                                      print(changeDate);
+                                      if(changeDate.difference(startInput).isNegative) {
+                                        // '변경된 종료날짜 < 시간날짜' 이면 다이얼로그 띄우기(경고창)
+                                        incorrectDate('📆 종료 날짜');
+                                      }
+                                      else{
+                                        // '변경된 종료날짜 > 시간날짜' 이면 다이얼로그 띄우기(경고창)
+                                        endDateController.text = endDateStr;
+                                        endInput = DateFormat('yyyy/MM/dd a h:mm', 'ko').parse(endDateController.text+" "+endTimeController.text);
+                                        print('confirm date! $endInput');
+                                      }
                                     }, currentTime: endInput, locale: LocaleType.ko);
                               },
                             ),
@@ -505,8 +551,16 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                                       onChanged: (date) {
                                         print('change $date in time zone ' + date.timeZoneOffset.inHours.toString());
                                       }, onConfirm: (date) {
-                                        endInput = date;
-                                        endTimeController.text = DateFormat('a h:mm', 'ko').format(date).toString();
+                                        if(date.difference(startInput).isNegative) {
+                                          // '변경된 종료날짜 < 시간날짜' 이면 다이얼로그 띄우기(경고창)
+                                          incorrectDate('⏰ 종료 시간');
+                                        }
+                                        else{
+                                          // '변경된 종료날짜 > 시간날짜' 이면 다이얼로그 띄우기(경고창)
+                                          endInput = date;
+                                          endTimeController.text = DateFormat('a h:mm', 'ko').format(date).toString();
+                                          print('confirm date! $endInput');
+                                        }
                                       }, locale: LocaleType.ko);
                                 }
                             ),
