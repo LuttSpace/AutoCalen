@@ -42,7 +42,7 @@ class _ShowDayDialogState extends State<ShowDayDialog> {
     }
     else{
       return Scrollbar(
-        isAlwaysShown: true,
+        isAlwaysShown: false,
         child: ListView.separated(
           itemCount: details.appointments.length,
           itemBuilder: (BuildContext _context, int i){
