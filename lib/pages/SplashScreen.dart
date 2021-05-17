@@ -32,10 +32,8 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
         _controller.forward();
       else if (status == AnimationStatus.completed){
         print("animation 끝남!!!");
-        _controller.reverse();
-        Navigator.pushNamed(context, '/home');
-        //메인 페이지 위젯으로 이동하면서 연결된 모든 위젯을 트리에서 삭제
-        //Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+        //_controller.reverse();
+        Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
       }
     });
 
@@ -89,6 +87,12 @@ class _SplashScreenState extends State<SplashScreen> with TickerProviderStateMix
         curve: Curves.ease,
       ),
     ));
+  }
+
+  @override
+  dispose() {
+    _controller.dispose(); // you need this
+    super.dispose();
   }
 
   @override

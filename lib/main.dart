@@ -120,6 +120,8 @@ class CalendarPage extends StatefulWidget{
   _CalendarPageState createState() => _CalendarPageState();
 }
 
+final globalScaffoldKey = GlobalKey<ScaffoldState>();
+
 class _CalendarPageState extends State<CalendarPage> {
   // bool loginState = false; // 로그인 상태 확인
   //appbar
@@ -229,6 +231,7 @@ class _CalendarPageState extends State<CalendarPage> {
     width = MediaQuery.of(context).size.width;
     var userAuth = FirebaseAuth.instance;
     return Scaffold(
+        key: globalScaffoldKey,
         appBar: AppBar(
           title: Text(
             '$_yearName년 $_monthName',
