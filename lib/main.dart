@@ -212,6 +212,8 @@ class _CalendarPageState extends State<CalendarPage> {
   //
   int snapCalled=0;
   int buildCalled =0;
+
+  double width;
   @override
   Widget build(BuildContext context) {
     print('=======================Calendar Page Build==========================');
@@ -219,11 +221,12 @@ class _CalendarPageState extends State<CalendarPage> {
     final userProvider = Provider.of<UserData>(context, listen: true);
     print('userProvider needAlarms ${userProvider.getNeedAlarms()}');
     if(userProvider.getUid()!='' &&userProvider.getUid()!=null ){
-      print('main page~~~~~ '+ userProvider.getEmail());
+      //print('main page~~~~~ '+ userProvider.getEmail());
     }
     else{
       print('main page~~~~~ ');
     }
+    width = MediaQuery.of(context).size.width;
     var userAuth = FirebaseAuth.instance;
     return Scaffold(
         appBar: AppBar(
@@ -231,7 +234,7 @@ class _CalendarPageState extends State<CalendarPage> {
             '$_yearName년 $_monthName',
             style: TextStyle(
                 color: Colors.black,
-                fontSize: 18
+                fontSize: width/23
             ),
           ),
           actions: [
@@ -280,24 +283,25 @@ class _CalendarPageState extends State<CalendarPage> {
                   _addNotifs(schedules.last).then((value) => print('adding notif done'));
                 }
               });
+              double fontsize = MediaQuery.of(context).size.width/33;
               return SafeArea(
                 child: SfCalendar(
                     view: CalendarView.month,
                     controller: _calendarController,
                     onViewChanged: viewChanged,
                     todayTextStyle: TextStyle(
-                        color: Colors.white, fontSize: 11),
+                        color: Colors.white, fontSize: fontsize), //11
                     headerHeight: 0,
                     monthViewSettings: MonthViewSettings(
                         appointmentDisplayMode: MonthAppointmentDisplayMode
                             .appointment,
                         monthCellStyle: MonthCellStyle(
                             trailingDatesTextStyle: TextStyle(
-                                color: Colors.black26, fontSize: 11),
+                                color: Colors.black26, fontSize: fontsize),//11
                             leadingDatesTextStyle: TextStyle(
-                                color: Colors.black26, fontSize: 11),
+                                color: Colors.black26, fontSize: fontsize),
                             textStyle: TextStyle(
-                              color: Colors.black, fontSize: 11,)
+                              color: Colors.black, fontSize: fontsize,)
                         )
                     ),
                     selectionDecoration: BoxDecoration(
