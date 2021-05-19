@@ -49,12 +49,30 @@ class UserData with ChangeNotifier{
   setNeedAlarms(bool needAlarms)=> _needAlarms = needAlarms;
 
   void setUserData(String signInWith){ // 로그인 시 사용자 정보 저장
-    _uid = auth.currentUser.uid;
-    _name = auth.currentUser.displayName;
-    _email= auth.currentUser.email;
-    _photoURL = auth.currentUser.photoURL;
-    _signInWith= signInWith;
-    _needAlarms = true;
+    users.doc(auth.currentUser.uid)
+        .get()
+        .then((DocumentSnapshot documentSnapshot) {
+      if (documentSnapshot.exists) {
+        print("파이어스토어 documentSnapshot.exists TRUE");
+        userModel.User getUser = userModel.User.fromJson(documentSnapshot.data());
+        _uid = auth.currentUser.uid;
+        _name =getUser.name;
+        _email =getUser.email;
+        _photoURL = getUser.photoURL;
+        _signInWith = getUser.signInWith;
+        _needAlarms = getUser.needAlarms;
+        print('${_signInWith} !userprovider needAlarms! ${_needAlarms}');
+      }
+      else{
+        print("파이어스토어 documentSnapshot.exist FALSE");
+        _uid = auth.currentUser.uid;
+        _name = auth.currentUser.displayName;
+        _email= auth.currentUser.email;
+        _photoURL = auth.currentUser.photoURL;
+        _signInWith= signInWith;
+        _needAlarms = true;
+      }
+    });
 
     notifyListeners(); // 값이 변할때마다 플러터 프레임워크에 알려줌
   }
