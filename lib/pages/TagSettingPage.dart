@@ -4,6 +4,7 @@ import 'dart:ui';
 import 'package:autocalen/models/Tag.dart';
 import 'package:autocalen/models/UserData.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -236,6 +237,9 @@ class TagSetting extends StatefulWidget{
   _TagSettingState createState() => _TagSettingState();
 }
 
+var userAuth = FirebaseAuth.instance;
+int tagCount =0;
+
 class _TagSettingState extends State<TagSetting> {
   Color _currentColor = Color(0xff276cce);
   Color _pickedColor = Color(0xff276cce);
@@ -262,6 +266,26 @@ class _TagSettingState extends State<TagSetting> {
     tags = [];
     print('tag길이 '+tags.length.toString());
   }
+  void tagNullDialog() {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          Future.delayed(Duration(seconds: 1), () {
+            Navigator.pop(context);
+          });
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0)
+            ),
+            content: SizedBox(
+                height: 50,
+                child: Center(child: Text('태그를 하나 이상 추가해주세요❗'))
+            ),
+          );
+        }
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -277,7 +301,10 @@ class _TagSettingState extends State<TagSetting> {
             title: Text('태그 설정'),
             leading: IconButton(
               icon: Icon(Icons.arrow_back_ios),
-              onPressed: ()=> Navigator.of(context).pop(),
+              onPressed: (){
+                if(tagCount>0) Navigator.of(context).pop();
+                else tagNullDialog();
+              }
             ),
           ),
           body: SingleChildScrollView(
@@ -420,7 +447,6 @@ class _TagSettingState extends State<TagSetting> {
               ],
             ),
           )
-
         )
     );
   }
