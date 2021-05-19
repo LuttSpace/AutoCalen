@@ -37,7 +37,6 @@ class _TagTileState extends State<TagTile> {
 
     scheduleHub.where('tag.tid',isEqualTo: currentTag.tid).get().then((response){
         response.docs.forEach((doc){
-            print('doc id ${doc.id}');
             var docRef = scheduleHub.doc(doc.id);
             docRef.update({'tag':currentTag.toJson()}).then((value) {print('tag update');});
         });
@@ -91,26 +90,26 @@ class _TagTileState extends State<TagTile> {
                                 _pickedColor=color;
                               });
                             },
-                            width: 40,
-                            height: 40,
+                            width: MediaQuery.of(context).size.width/7.5,
+                            height: MediaQuery.of(context).size.width/13,
                             borderRadius: 4,
                             spacing: 5,
                             runSpacing: 5,
                             wheelDiameter: 155,
                             heading: Text(
-                              'Select color',
-                              style: Theme.of(context).textTheme.subtitle1,
+                              '색을 선택해주세요',
+                              style: TextStyle(fontSize: 15)
                             ),
                             subheading: Text(
-                              'Select color shade',
-                              style: Theme.of(context).textTheme.subtitle1,
+                              '\n명도',
+                                style: TextStyle(fontSize: 15)
                             ),
                             wheelSubheading: Text(
-                              'Selected color and its shades',
-                              style: Theme.of(context).textTheme.subtitle1,
+                              '\n명도',
+                                style: TextStyle(fontSize: 15)
                             ),
-                            showMaterialName: true,
-                            showColorName: true,
+                            showMaterialName: false,
+                            showColorName: false,
                             showColorCode: true,
                             materialNameTextStyle: Theme.of(context).textTheme.caption,
                             colorNameTextStyle: Theme.of(context).textTheme.caption,
@@ -128,13 +127,35 @@ class _TagTileState extends State<TagTile> {
                         actions: [
                           TextButton(
                               onPressed: (){
-                                print(_pickedColor.toString());
-                                setState(() {
-                                  _currentColor=_pickedColor;
-                                });
-                                print(widget._tag.getTagColor());
-                                print(_currentColor);
-                                Navigator.of(context).pop();
+                                print('tag 수정');
+                                if(_pickedColor==null){
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (BuildContext context) {
+                                      Future.delayed(Duration(seconds: 1), () {Navigator.pop(context);});
+                                      return AlertDialog(
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(8.0)
+                                        ),
+                                        content: SizedBox(
+                                            height: 50,
+                                            child: Center(child: Text('색 선택을 해주세요!'))
+                                        ),
+                                      );
+                                    },
+                                  );
+                                }
+                                else{
+                                  print(_pickedColor.toString());
+                                  setState(() {
+                                    _currentColor=_pickedColor;
+                                  });
+                                  print(widget._tag.getTagColor());
+                                  print(_currentColor);
+                                  Navigator.of(context).pop();
+                                }
+
                               },
                               child: Text('확인')
                           )
@@ -310,26 +331,26 @@ class _TagSettingState extends State<TagSetting> {
                                             _pickedColor=color;
                                           });
                                         },
-                                        width: 40,
-                                        height: 40,
+                                        width: MediaQuery.of(context).size.width/7.5,
+                                        height: MediaQuery.of(context).size.width/13,
                                         borderRadius: 4,
                                         spacing: 5,
                                         runSpacing: 5,
                                         wheelDiameter: 155,
                                         heading: Text(
-                                          'Select color',
-                                          style: Theme.of(context).textTheme.subtitle1,
+                                            '색을 선택해주세요',
+                                            style: TextStyle(fontSize: 15)
                                         ),
                                         subheading: Text(
-                                          'Select color shade',
-                                          style: Theme.of(context).textTheme.subtitle1,
+                                            '\n명도',
+                                            style: TextStyle(fontSize: 15)
                                         ),
                                         wheelSubheading: Text(
-                                          'Selected color and its shades',
-                                          style: Theme.of(context).textTheme.subtitle1,
+                                            '\n명도',
+                                            style: TextStyle(fontSize: 15)
                                         ),
-                                        showMaterialName: true,
-                                        showColorName: true,
+                                        showMaterialName: false,
+                                        showColorName: false,
                                         showColorCode: true,
                                         materialNameTextStyle: Theme.of(context).textTheme.caption,
                                         colorNameTextStyle: Theme.of(context).textTheme.caption,
@@ -347,11 +368,32 @@ class _TagSettingState extends State<TagSetting> {
                                     actions: [
                                       TextButton(
                                           onPressed: (){ //색깔 고르기
-                                            print(_pickedColor.toString());
-                                            setState(() {
-                                              _currentColor=_pickedColor;
-                                            });
-                                            Navigator.of(context).pop();
+                                            if(_pickedColor==null){
+                                              showDialog(
+                                                context: context,
+                                                barrierDismissible: false,
+                                                builder: (BuildContext context) {
+                                                  Future.delayed(Duration(seconds: 1), () {Navigator.pop(context);});
+                                                  return AlertDialog(
+                                                    shape: RoundedRectangleBorder(
+                                                        borderRadius: BorderRadius.circular(8.0)
+                                                    ),
+                                                    content: SizedBox(
+                                                        height: 50,
+                                                        child: Center(child: Text('색 선택을 해주세요!'))
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            }
+                                            else{
+                                              print('origin ${_pickedColor.toString()}');
+                                              setState(() {
+                                                _currentColor=_pickedColor;
+                                              });
+                                              Navigator.of(context).pop();
+                                            }
+
                                           },
                                           child: Text('확인')
                                       )
