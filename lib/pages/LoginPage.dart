@@ -270,13 +270,15 @@ class _LoginState extends State<Login> {
 
   // Firestore에 사용자 정보 저장
   void addNewUser(BuildContext context, User currentUser, String signInWith, var userProvider){
+    FirebaseAuth auth = FirebaseAuth.instance;
     CollectionReference users = _firebaseFirestore.collection("UserList");
     users.doc(currentUser.uid)
         .get()
         .then((DocumentSnapshot documentSnapshot) {
       if (!documentSnapshot.exists) { // Firestore에 사용자 정보 없을 경우 추가
         //userModel.User user = userModel.User(currentUser.displayName, currentUser.email, currentUser.photoURL, signInWith, true); //alarm 무조건.
-        userModel.User user = userModel.User(currentUser.displayName, currentUser.email, '', signInWith, true); //alarm 무조건.
+        // userModel.User user = userModel.User(currentUser.displayName, currentUser.email, '', signInWith, true); //alarm 무조건.
+        userModel.User user = userModel.User(auth.currentUser.displayName, auth.currentUser.email, '', signInWith, true);
         users.doc(currentUser.uid).set(user.toJson());
       }
       else{ // Firestore에 사용자 정보 있는 경우 출력
