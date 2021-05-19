@@ -132,7 +132,6 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
   String imgUrl='';
   @override
   void initState() {
-    print('init ${widget._tagList.length}');
     if(widget._details!=null){ // details!=null (o) && date==null (x)
       print('sid '+widget._details.sid);
       _currentTag = widget._details.tag;
@@ -168,24 +167,6 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
     print('img url :: ${imgUrl}');
   }
   void submit(){
-    // if(endInput.difference(startInput).isNegative){ // 시간 설정 오류시 처리
-    //   showDialog(
-    //     context: context,
-    //     barrierDismissible: false,
-    //     builder: (BuildContext context) {
-    //       Future.delayed(Duration(seconds: 1), () {Navigator.pop(context);});
-    //       return AlertDialog(
-    //         shape: RoundedRectangleBorder(
-    //             borderRadius: BorderRadius.circular(8.0)
-    //         ),
-    //         content: SizedBox(
-    //             height: 50,
-    //             child: Center(child: Text('시간 설정을 다시 해주세요.'))
-    //         ),
-    //       );
-    //     },
-    //   );
-    // }
     if(titleController.text == ''){
       showDialog(
         context: context,
@@ -205,15 +186,6 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
       );
     }
     else{ //정상 처리
-      print('diffrence ${endInput.difference(startInput).isNegative}');
-      print('last: '+_currentTag.getTagName());
-      print('submit');
-      print('title: ${titleController.text}');
-      print('startDate: ${startDateController.text}');
-      print('endDate: ${endDateController.text}');
-      print('startTime: ${startTimeController.text}');
-      print('endTime: ${endTimeController.text}');
-
       if(memoController!= null){
         memoInput = memoController.text;
         print('memo: ${memoController.text}');
@@ -241,12 +213,12 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
               borderRadius: BorderRadius.circular(8.0)
           ),
           content: SizedBox(
-              height: MediaQuery.of(context).size.height*0.1, //70,
+              height: MediaQuery.of(context).size.height*0.14, //70,
               //width: 150,
               child: Center(child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text("😥"),
+                  Text("😥",style: TextStyle(fontSize: 30),),
                   SizedBox(height: 10,),
                   Text("정말 삭제 하실 건가요?\n복구하실 수 없습니다.")//Text('              😥\n정말 삭제 하실 건가요?\n복구하실 수 없습니다.'))
                 ]),
@@ -373,7 +345,6 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
                               onToggle: (val){
                                 setState((){
                                   needAlarm = val;
-                                  print(needAlarm);
                                   if(needAlarm) needAlarmTextColor = Colors.black87;
                                   else needAlarmTextColor = Colors.grey;
                                 });
@@ -688,16 +659,6 @@ class CustomTime12hPickerModel extends CommonPickerModel {
 
   @override
   String middleStringAtIndex(int index) {
-    // 숫자 반복 안됨
-    // if (index >= 0 && index < 12) {
-    //   if (index == 0) {
-    //     return digits(12, 2);
-    //   } else {
-    //     return digits(index, 2);
-    //   }
-    // } else {
-    //   return null;
-    // }
     // 숫자 반복되도록 > 오전 오후가 자동으로 바뀌가 하면 좋은데.. 아직 못함
     if (index % 12 == 0) {
       return digits(12, 2);
