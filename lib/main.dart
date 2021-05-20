@@ -151,6 +151,46 @@ class _CalendarPageState extends State<CalendarPage> {
     var initSettings = new InitializationSettings(android: androidInit,iOS: IOSInit);
     localNotifications=FlutterLocalNotificationsPlugin();
     localNotifications.initialize(initSettings);
+
+    countTagDocuments().then((value){
+      // 태그 데이터 개수 확인
+      if(value==0){
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              // Future.delayed(Duration(seconds: 1), () {
+              //   Navigator.pop(context);
+              // });
+              return AlertDialog(
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0)
+                ),
+                content: SizedBox(
+                    height: 50,
+                    child: Center(child: Text('태그를 하나 이상 추가해주세요❗'))
+                ),
+                actions: [
+                  TextButton(
+                      child: Text("확인"),
+                      onPressed: (){
+                        Navigator.pop(context);
+                        Navigator.pushNamed(context, '/tagSetting');
+                      }
+                  )
+                ],
+              );
+            }
+        );
+      }
+    });
+  }
+
+  Future<int> countTagDocuments() async {
+    QuerySnapshot _myDoc = await FirebaseFirestore.instance.collection('UserList').doc(userAuth.currentUser.uid).collection('TagHub').get();
+    List<DocumentSnapshot> _myDocCount = _myDoc.docs;
+    print('태그 개수 확인!!!! ${_myDocCount.length}');  // Count of Documents in Collection
+    return _myDocCount.length;
   }
 
   Future _addNotifs(Schedule schedule) async {
