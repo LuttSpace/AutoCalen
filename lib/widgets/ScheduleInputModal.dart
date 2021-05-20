@@ -192,7 +192,7 @@ class _ScheduleInputModalState extends State<ScheduleInputModal> {
       }
       //직접쓰기는 imgURL=''
       if(widget._details!=null){
-        widget._details = new Schedule(widget._details.sid,titleController.text,startInput,endInput,_currentTag,memoInput,isAllDay,needAlarm,'');
+        widget._details = new Schedule(widget._details.sid,titleController.text,startInput,endInput,_currentTag,memoInput,isAllDay,needAlarm,imgUrl);
         uploadSchedule(true,widget._details);
       } else{
         widget._details = new Schedule('',titleController.text,startInput,endInput,_currentTag,memoInput,isAllDay,needAlarm,'');
