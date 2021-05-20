@@ -477,6 +477,7 @@ class _TagSettingState extends State<TagSetting> {
                       }
                       else{
                         List<DocumentSnapshot> documents = snapshot.data.docs;
+                        tagCount = documents.length;
                         return ListView(
                           scrollDirection: Axis.vertical,
                           shrinkWrap: true,
