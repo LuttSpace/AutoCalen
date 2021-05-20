@@ -47,7 +47,7 @@ class _SettingState extends State<Setting> {
 
 작품명 오또칼렌은 "Automatic"과 "Calendar"를 합친 것을 한글로 발음하여 표기했습니다.''';
   //launch url
-  String _videoUrl = 'https://youtu.be/B-4G6ynEttA';
+  String _videoUrl = 'https://youtu.be/4prgEn_bIYg';
   String _githubUrl = 'https://github.com/LuttSpace';
   void _launchURL(String url) async {
     await canLaunch(url) ? await launch(url, forceWebView: true, forceSafariVC: true,enableJavaScript: true) : throw 'Could not launch $url';
