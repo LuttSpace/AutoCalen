@@ -163,26 +163,26 @@ class _TagSelectMenuState extends State<TagSelectMenu>
                                                               _pickedColor=color;
                                                             });
                                                           },
-                                                          width: 40,
-                                                          height: 40,
+                                                          width: MediaQuery.of(context).size.width/7.5,
+                                                          height: MediaQuery.of(context).size.width/13,
                                                           borderRadius: 4,
                                                           spacing: 5,
                                                           runSpacing: 5,
                                                           wheelDiameter: 155,
                                                           heading: Text(
-                                                            'Select color',
-                                                            style: Theme.of(context).textTheme.subtitle1,
+                                                              '색을 선택해주세요',
+                                                              style: TextStyle(fontSize: 15)
                                                           ),
                                                           subheading: Text(
-                                                            'Select color shade',
-                                                            style: Theme.of(context).textTheme.subtitle1,
+                                                              '\n명도',
+                                                              style: TextStyle(fontSize: 15)
                                                           ),
                                                           wheelSubheading: Text(
-                                                            'Selected color and its shades',
-                                                            style: Theme.of(context).textTheme.subtitle1,
+                                                              '\n명도',
+                                                              style: TextStyle(fontSize: 15)
                                                           ),
-                                                          showMaterialName: true,
-                                                          showColorName: true,
+                                                          showMaterialName: false,
+                                                          showColorName: false,
                                                           showColorCode: true,
                                                           materialNameTextStyle: Theme.of(context).textTheme.caption,
                                                           colorNameTextStyle: Theme.of(context).textTheme.caption,
