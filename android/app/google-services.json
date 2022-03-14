@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "805713946587",
+    "project_id": "autocalen-1c7f1",
+    "storage_bucket": "autocalen-1c7f1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:805713946587:android:8afcef60b3f02b954469fe",
+        "android_client_info": {
+          "package_name": "com.lutt.autocalen"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "805713946587-nh9c01sirgssv4f93miei6is9vqgot20.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.lutt.autocalen",
+            "certificate_hash": "077b567bbcc67a5dca2b0180a90e932c1e7e78ec"
+          }
+        },
+        {
+          "client_id": "805713946587-qcb0efpabo4l2ibed9cdncqmv4bdn7r8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDopiF7ieKsDLWf1TcfVYiKADA3sA4pie4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "805713946587-qcb0efpabo4l2ibed9cdncqmv4bdn7r8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

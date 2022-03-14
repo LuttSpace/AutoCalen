@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>805713946587-n6347jjmf02q2chtl8d9cl903gl91j7j.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.805713946587-n6347jjmf02q2chtl8d9cl903gl91j7j</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>805713946587-l8s1apdnjbr3hilvvhpicmm2msi80ijo.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyAtGQ6Ywv2mcm8hyujfuPOvV99a9NlPjas</string>
+	<key>GCM_SENDER_ID</key>
+	<string>805713946587</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.lutt.ottocalen</string>
+	<key>PROJECT_ID</key>
+	<string>autocalen-1c7f1</string>
+	<key>STORAGE_BUCKET</key>
+	<string>autocalen-1c7f1.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:805713946587:ios:cc5f418e2873976a4469fe</string>
+</dict>
+</plist>
